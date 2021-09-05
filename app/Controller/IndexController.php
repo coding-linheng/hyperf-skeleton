@@ -45,8 +45,8 @@ class IndexController extends AbstractController
 
     public function add(\App\Request\Member $request)
     {
-        $validated = $request->scene('a')->validated();
-        var_dump($validated);
+        $request->scene('test')->validateResolved();
+        return $request->all();
     }
 
     public function login()

@@ -37,7 +37,7 @@
         "hyperf/rpc-client": "~2.2.0",
         "hyperf/rpc-server": "~2.2.0",
         "hyperf/translation": "^2.2",
-        "hyperf/validation": "^2.2",
+        "hyperf/validation": "2.2.x-dev",
         "openzipkin/zipkin": "2.0.x-dev"
     },
     "require-dev": {
