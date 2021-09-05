@@ -81,7 +81,7 @@
             "rm -rf runtime/container"
         ],
         "test": "co-phpunit --prepend test/bootstrap.php -c phpunit.xml --colors=always",
-        "cs-fix": "php-cs-fixer fix . --config=./.php-cs-fixer.dist.php",
+        "m": "php-cs-fixer fix ./app --config=./.php-cs-fixer.dist.php",
         "analyse": "phpstan analyse --memory-limit 300M -l 0 -c phpstan.neon ./app ./config",
         "start": [
             "Composer\\Config::disableProcessTimeout",

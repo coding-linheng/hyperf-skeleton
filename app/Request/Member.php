@@ -4,17 +4,26 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://www.hyperf.io
+ * @see     https://www.hyperf.io
  * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace App\Request;
 
 use Hyperf\Validation\Request\FormRequest;
 
 class Member extends FormRequest
 {
+    /**
+     * Set scene values.
+     */
+    public $scenes = [
+        'add'  => ['mobile', 'name'],
+        'test' => ['mobile'],
+    ];
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -30,15 +39,7 @@ class Member extends FormRequest
     {
         return [
             'mobile' => 'required',
-            'name' => 'required',
+            'name'   => 'required',
         ];
     }
-
-    /**
-     * Set scene values.
-     */
-    public $scenes = [
-        'add' => ['mobile', 'name'],
-        'test' => ['mobile'],
-    ];
 }

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * This file is part of Hyperf.
  *
@@ -13,5 +14,5 @@ declare(strict_types=1);
 use Hyperf\HttpServer\CoreMiddleware;
 
 return [
-    CoreMiddleware::class             =>  App\Middleware\CoreMiddleware::class
+//    CoreMiddleware::class => App\Middleware\CoreMiddleware::class
 ];

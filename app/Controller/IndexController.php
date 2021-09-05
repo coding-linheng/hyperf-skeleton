@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://www.hyperf.io
+ * @see     https://www.hyperf.io
  * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
@@ -36,14 +36,17 @@ class IndexController extends AbstractController
 
         return [
             'method'  => $method,
-            'message' => "Hello $user.",
+            'message' => "Hello {$user}.",
         ];
     }
 
-    public function add(\App\Request\Member $request): array
+    public function add(\App\Request\Member $request)
     {
         $request->scene('test')->validateResolved();
-        return $request->all();
+        return $this->response->success([
+            'method'  => $this->request->getMethod(),
+            'message' => 'Hello 123.',
+        ]);
     }
 
     public function login()

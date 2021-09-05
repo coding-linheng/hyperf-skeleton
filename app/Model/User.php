@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://www.hyperf.io
+ * @see     https://www.hyperf.io
  * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
@@ -57,6 +57,8 @@ use Qbhy\HyperfAuth\Authenticatable;
  */
 class User extends Model implements Authenticatable
 {
+    public $contentId;
+
     /**
      * The table associated with the model.
      *
@@ -73,7 +75,7 @@ class User extends Model implements Authenticatable
         'id', 'openid', 'unionid', 'parent_id', 'username', 'nickname', 'imghead', 'email', 'sex', 'subscribe',
         'usertype', 'password', 'address', 'content', 'vip', 'score', 'dc', 'money', 'sheng', 'city', 'qu', 'qi',
         'fans', 'guan', 'isarr', 'lvip', 'isview', 'isbrand', 'ispaint', 'iszj', 'isyczj', 'qq', 'wx', 'time',
-        'logintime', 'jinzhi', 'get_score', 'scoretime', 'invitecode'
+        'logintime', 'jinzhi', 'get_score', 'scoretime', 'invitecode',
     ];
 
     /**
@@ -87,11 +89,8 @@ class User extends Model implements Authenticatable
         'qu'        => 'integer', 'qi' => 'integer', 'fans' => 'integer', 'guan' => 'integer', 'isarr' => 'integer',
         'lvip'      => 'integer', 'isview' => 'integer', 'isbrand' => 'integer', 'ispaint' => 'integer',
         'iszj'      => 'integer', 'isyczj' => 'integer', 'time' => 'integer', 'logintime' => 'integer',
-        'get_score' => 'integer', 'scoretime' => 'integer'
+        'get_score' => 'integer', 'scoretime' => 'integer',
     ];
-
-    public $contentId;
-
 
     public function getId()
     {

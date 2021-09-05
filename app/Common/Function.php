@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use Hyperf\Utils\ApplicationContext;
 use Psr\Http\Message\ServerRequestInterface;
 
 if (!function_exists('user')) {
     /**
-     * jwt用户信息
+     * jwt用户信息.
      */
-
     function user()
     {
         $request = ApplicationContext::getContainer()->get(ServerRequestInterface::class);
