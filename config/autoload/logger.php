@@ -11,18 +11,35 @@ declare(strict_types=1);
  */
 return [
     'default' => [
-        'handler' => [
-            'class' => Monolog\Handler\StreamHandler::class,
+        'handler'   => [
+            'class'       => Monolog\Handler\RotatingFileHandler::class,
             'constructor' => [
-                'stream' => BASE_PATH . '/runtime/logs/hyperf.log',
-                'level' => Monolog\Logger::DEBUG,
+                'filename' => BASE_PATH . '/runtime/logs/hyperf.log',
+                'level'    => Monolog\Logger::DEBUG,
             ],
         ],
         'formatter' => [
-            'class' => Monolog\Formatter\LineFormatter::class,
+            'class'       => Monolog\Formatter\LineFormatter::class,
             'constructor' => [
-                'format' => null,
-                'dateFormat' => 'Y-m-d H:i:s',
+                'format'                => "%datetime%||%channel%||%level_name%||%message%||%context%||%extra%\n",
+                'dateFormat'            => 'Y-m-d H:i:s',
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
+    'request' => [   //请求channel  在request中间件生成请求日志
+        'handler'   => [
+            'class'       => Monolog\Handler\RotatingFileHandler::class,
+            'constructor' => [
+                'filename' => BASE_PATH . '/runtime/logs/request/request.log',
+                'level'    => Monolog\Logger::INFO,
+            ],
+        ],
+        'formatter' => [
+            'class'       => Monolog\Formatter\LineFormatter::class,
+            'constructor' => [
+                'format'                => "[%datetime%]--[%message%]\r\n%context%\r\n",
+                'dateFormat'            => 'Y-m-d H:i:s',
                 'allowInlineLineBreaks' => true,
             ],
         ],

@@ -18,11 +18,23 @@ class Response
     #[Inject]
     protected ResponseInterface $response;
 
+    /**
+     * 调用responseInterface方法
+     * @param $name
+     * @param $arguments
+     * @return PsrResponseInterface
+     */
     public function __call($name, $arguments): PsrResponseInterface
     {
         return $this->response->{$name}(...$arguments);
     }
 
+    /**
+     * success响应  方便以后扩展
+     * @param $data
+     * @param string $msg
+     * @return PsrResponseInterface
+     */
     public function success($data, string $msg = 'success'): PsrResponseInterface
     {
         $data = [
@@ -34,6 +46,12 @@ class Response
         return $this->json($data);
     }
 
+    /**
+     * error响应  方便以后扩展
+     * @param $data
+     * @param string $msg
+     * @return PsrResponseInterface
+     */
     public function error($data, string $msg = 'error'): PsrResponseInterface
     {
         $data = [
