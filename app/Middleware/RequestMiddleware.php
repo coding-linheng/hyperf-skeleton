@@ -26,7 +26,7 @@ class RequestMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $params = $request->getServerParams();
-        $params = array_merge($params, ['token' => $request->getHeader('authorization')[0]]);
+        $params = array_merge($params, ['token' => $request->getHeader('authorization')[0]] ?? "");
         $this->logger->info('server_params', $params);
         $this->logger->info('request_params', $request->getParsedBody());
         return $handler->handle($request);
