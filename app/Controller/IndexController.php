@@ -54,7 +54,7 @@ class IndexController extends AbstractController
         /** @var User $user */
         $user = User::query()->where('id', 29928)->first();
         $user->setId($user['id']);
-        return $this->auth->login($user);
+        return $this->auth->guard('jwt')->login($user);
     }
 
     #[Middleware(JwtMiddleware::class)]

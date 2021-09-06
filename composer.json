@@ -38,7 +38,8 @@
         "hyperf/rpc-server": "~2.2.0",
         "hyperf/translation": "^2.2",
         "hyperf/validation": "2.2.x-dev",
-        "openzipkin/zipkin": "2.0.x-dev"
+        "openzipkin/zipkin": "2.0.x-dev",
+        "ext-redis": "*"
     },
     "require-dev": {
         "hyperf/devtool": "~2.2.0",
@@ -52,8 +53,7 @@
         "ext-openssl": "Required to use HTTPS.",
         "ext-json": "Required to use JSON.",
         "ext-pdo": "Required to use MySQL Client.",
-        "ext-pdo_mysql": "Required to use MySQL Client.",
-        "ext-redis": "Required to use Redis Client."
+        "ext-pdo_mysql": "Required to use MySQL Client."
     },
     "autoload": {
         "psr-4": {
