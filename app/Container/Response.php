@@ -35,7 +35,7 @@ class Response
      * @param string $msg
      * @return PsrResponseInterface
      */
-    public function success($data, string $msg = 'success'): PsrResponseInterface
+    public function success($data = null, string $msg = 'success'): PsrResponseInterface
     {
         $data = [
             'code' => 0,

@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Hyperf\Scout\Searchable;
+
 /**
  * @property int $id
  * @property int $aid 专辑ID
@@ -59,6 +61,7 @@ namespace App\Model;
  */
 class Albumlist extends Model
 {
+    use Searchable;
     /**
      * The table associated with the model.
      *

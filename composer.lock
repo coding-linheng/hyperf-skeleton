@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "db722b8e5b498761d5104921577fc9da",
+    "content-hash": "b3e1ed178ab82c9835406728eab7d6d9",
     "packages": [
         {
             "name": "96qbhy/hyperf-auth",
@@ -3157,6 +3157,63 @@
                 "issues": "https://github.com/hyperf/hyperf/issues",
                 "pull-request": "https://github.com/hyperf/hyperf/pulls",
                 "source": "https://github.com/hyperf/hyperf"
+            },
+            "time": "2021-07-18T06:50:14+00:00"
+        },
+        {
+            "name": "hyperf/scout",
+            "version": "v2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hyperf/scout.git",
+                "reference": "4ef1295dd9824bcb3fefd3d452a85541e58a9bf6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hyperf/scout/zipball/4ef1295dd9824bcb3fefd3d452a85541e58a9bf6",
+                "reference": "4ef1295dd9824bcb3fefd3d452a85541e58a9bf6",
+                "shasum": ""
+            },
+            "require": {
+                "hyperf/command": "~2.2.0",
+                "hyperf/contract": "~2.2.0",
+                "hyperf/database": "~2.2.0",
+                "hyperf/event": "~2.2.0",
+                "hyperf/model-listener": "~2.2.0",
+                "hyperf/utils": "~2.2.0",
+                "php": ">=7.2",
+                "psr/event-dispatcher": "^1.0"
+            },
+            "suggest": {
+                "hyperf/elasticsearch": "Required to use elasticsearch driver.",
+                "hyperf/paginator": "Required to use paginate method."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.2-dev"
+                },
+                "hyperf": {
+                    "config": "Hyperf\\Scout\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hyperf\\Scout\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Hyperf Scout provides a driver based solution to searching your Eloquent models. Inspired By Laravel Scout.",
+            "keywords": [
+                "hyperf",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/hyperf/scout/issues",
+                "source": "https://github.com/hyperf/scout/tree/v2.2.0"
             },
             "time": "2021-07-18T06:50:14+00:00"
         },
@@ -9191,7 +9248,8 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.0"
+        "php": ">=8.0",
+        "ext-redis": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"

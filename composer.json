@@ -13,6 +13,7 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=8.0",
+        "ext-redis": "*",
         "96qbhy/hyperf-auth": "^2.4",
         "friendsofphp/php-cs-fixer": "^3.0",
         "hyperf/amqp": "~2.2.0",
@@ -23,7 +24,7 @@
         "hyperf/constants": "~2.2.0",
         "hyperf/database": "~2.2.0",
         "hyperf/db-connection": "~2.2.0",
-        "hyperf/elasticsearch": "~2.2.0",
+        "hyperf/elasticsearch": "^2.2",
         "hyperf/framework": "~2.2.0",
         "hyperf/guzzle": "~2.2.0",
         "hyperf/http-server": "~2.2.0",
@@ -36,10 +37,10 @@
         "hyperf/rpc": "~2.2.0",
         "hyperf/rpc-client": "~2.2.0",
         "hyperf/rpc-server": "~2.2.0",
+        "hyperf/scout": "^2.2",
         "hyperf/translation": "^2.2",
         "hyperf/validation": "2.2.x-dev",
-        "openzipkin/zipkin": "2.0.x-dev",
-        "ext-redis": "*"
+        "openzipkin/zipkin": "2.0.x-dev"
     },
     "require-dev": {
         "hyperf/devtool": "~2.2.0",

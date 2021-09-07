@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Middleware\JwtMiddleware;
+use App\Model\Albumlist;
 use App\Model\Member;
 use App\Model\User;
 use Hyperf\Di\Annotation\Inject;
@@ -43,10 +44,34 @@ class IndexController extends AbstractController
     public function add(\App\Request\Member $request)
     {
         $request->scene('test')->validateResolved();
-        return $this->response->success([
-            'method'  => $this->request->getMethod(),
-            'message' => 'Hello 123.',
-        ]);
+        $mobile = $request->post('mobile');
+        $name   = $request->post('name');
+        $member = new Member;
+
+        $member->nickname = $name;
+        $member->username = $name;
+        $member->mobile   = (string)$mobile;
+        $member->password = md5('123456');
+        $member->save();
+        return $this->response->success();
+    }
+
+    public function elasticsearch()
+    {
+        $albumlist = new Albumlist;
+        $start     = time();
+        $count     = $albumlist->where('title', 'like', '%海报%')->count();
+        $list      = $albumlist->where('title', 'like', '%海报%')->limit(100)->get();
+        return $this->response->success(['count' => $count, 'list' => $list, 'start' => $start, 'end' => time()]);
+    }
+
+    public function demo()
+    {
+        $albumlist = new Albumlist;
+        $start     = time();
+        $count     = $albumlist::search()->take(100)->get()->count();
+        $list      = $albumlist::search()->take(100)->get();
+        return $this->response->success(['count' => $count, 'list' => $list, 'start' => $start, 'end' => time()]);
     }
 
     public function login()

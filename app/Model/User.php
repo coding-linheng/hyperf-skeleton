@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Hyperf\Scout\Searchable;
 use Qbhy\HyperfAuth\Authenticatable;
 
 /**
@@ -57,6 +58,8 @@ use Qbhy\HyperfAuth\Authenticatable;
  */
 class User extends Model implements Authenticatable
 {
+    use Searchable;
+
     public $contentId;
 
     /**

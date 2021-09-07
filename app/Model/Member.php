@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Hyperf\Scout\Searchable;
+
 /**
  * @property int $id 用户ID
  * @property string $nickname 昵称
@@ -28,6 +30,9 @@ namespace App\Model;
  */
 class Member extends Model
 {
+    use Searchable;
+
+
     /**
      * The name of the "created at" column.
      *
