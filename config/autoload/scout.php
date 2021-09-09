@@ -19,11 +19,18 @@ return [
     'soft_delete' => false,
     'concurrency' => 100,
     'engine' => [
+        'my_elasticsearch' => [
+            'driver' => \App\Container\MyElasticsearchEngine::class,
+            'index' => null,
+            'hosts' => [
+                env('ELASTICSEARCH_HOST', 'http://119.23.59.3:19200'),
+            ],
+        ],
         'elasticsearch' => [
             'driver' => Hyperf\Scout\Provider\ElasticsearchProvider::class,
-            'index' => 'string',
+            'index' => null,
             'hosts' => [
-                env('ELASTICSEARCH_HOST', 'http://119.23.59.3:9200'),
+                env('ELASTICSEARCH_HOST', 'http://119.23.59.3:19200'),
             ],
         ],
     ],

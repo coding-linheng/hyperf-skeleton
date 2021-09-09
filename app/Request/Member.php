@@ -20,8 +20,8 @@ class Member extends FormRequest
      * Set scene values.
      */
     public $scenes = [
-        'add'  => ['mobile', 'name'],
-        'test' => ['mobile'],
+        'add'  => ['name'],
+        'edit' => ['mobile'],
     ];
 
     /**
@@ -38,7 +38,7 @@ class Member extends FormRequest
     public function rules(): array
     {
         return [
-            'mobile' => 'required',
+            'mobile' => 'required|unique:member,mobile',
             'name'   => 'required',
         ];
     }

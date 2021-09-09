@@ -43,14 +43,14 @@ class IndexController extends AbstractController
 
     public function add(\App\Request\Member $request)
     {
-        $request->scene('test')->validateResolved();
-        $mobile = $request->post('mobile');
-        $name   = $request->post('name');
-        $member = new Member;
+//        $request->scene('edit')->validateResolved();
+        $mobile = $request->post('mobile', 111);
+        $name   = $request->post('name', 111);
+        $member = new Member();
 
         $member->nickname = $name;
         $member->username = $name;
-        $member->mobile   = (string)$mobile;
+        $member->mobile   = (string) $mobile;
         $member->password = md5('123456');
         $member->save();
         return $this->response->success();
@@ -58,7 +58,7 @@ class IndexController extends AbstractController
 
     public function elasticsearch()
     {
-        $albumlist = new Albumlist;
+        $albumlist = new Albumlist();
         $start     = time();
         $count     = $albumlist->where('title', 'like', '%海报%')->count();
         $list      = $albumlist->where('title', 'like', '%海报%')->limit(100)->get();
@@ -67,7 +67,7 @@ class IndexController extends AbstractController
 
     public function demo()
     {
-        $albumlist = new Albumlist;
+        $albumlist = new Albumlist();
         $start     = time();
         $count     = $albumlist::search()->take(100)->get()->count();
         $list      = $albumlist::search()->take(100)->get();
