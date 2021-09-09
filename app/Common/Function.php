@@ -23,7 +23,7 @@ if (!function_exists('user')) {
 
 if (!function_exists('di')) {
     /**
-     * 获取di容器
+     * 获取di容器.
      */
     function di(): ContainerInterface
     {
@@ -33,7 +33,8 @@ if (!function_exists('di')) {
 
 if (!function_exists('redis')) {
     /**
-     * 获取redis连接池实例
+     * 获取redis连接池实例.
+     * @param mixed $name
      */
     function redis($name = 'default'): RedisProxy
     {
@@ -43,10 +44,7 @@ if (!function_exists('redis')) {
 
 if (!function_exists('logger')) {
     /**
-     * 获取指定日志实例
-     * @param string $name
-     * @param string $group
-     * @return LoggerInterface
+     * 获取指定日志实例.
      */
     function logger(string $name = 'hyperf', string $group = 'default'): LoggerInterface
     {

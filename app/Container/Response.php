@@ -19,10 +19,9 @@ class Response
     protected ResponseInterface $response;
 
     /**
-     * 调用responseInterface方法
+     * 调用responseInterface方法.
      * @param $name
      * @param $arguments
-     * @return PsrResponseInterface
      */
     public function __call($name, $arguments): PsrResponseInterface
     {
@@ -30,10 +29,8 @@ class Response
     }
 
     /**
-     * success响应  方便以后扩展
+     * success响应  方便以后扩展.
      * @param $data
-     * @param string $msg
-     * @return PsrResponseInterface
      */
     public function success($data = null, string $msg = 'success'): PsrResponseInterface
     {
@@ -47,10 +44,8 @@ class Response
     }
 
     /**
-     * error响应  方便以后扩展
+     * error响应  方便以后扩展.
      * @param $data
-     * @param string $msg
-     * @return PsrResponseInterface
      */
     public function error($data, string $msg = 'error'): PsrResponseInterface
     {

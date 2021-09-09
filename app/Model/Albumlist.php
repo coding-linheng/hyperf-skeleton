@@ -62,6 +62,7 @@ use Hyperf\Scout\Searchable;
 class Albumlist extends Model
 {
     use Searchable;
+
     /**
      * The table associated with the model.
      *

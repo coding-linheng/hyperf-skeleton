@@ -32,7 +32,6 @@ class Member extends Model
 {
     use Searchable;
 
-
     /**
      * The name of the "created at" column.
      *
