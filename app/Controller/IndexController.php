@@ -69,8 +69,8 @@ class IndexController extends AbstractController
     {
         $albumlist = new Albumlist();
         $start     = time();
-        $count     = $albumlist::search()->take(100)->get()->count();
-        $list      = $albumlist::search()->take(100)->get();
+        $count     = $albumlist::search('海报')->get();
+        $list      = $albumlist::search('海报')->get();
         return $this->response->success(['count' => $count, 'list' => $list, 'start' => $start, 'end' => time()]);
     }
 
