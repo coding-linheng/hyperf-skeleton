@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace App\Controller;
+namespace App\Controller\V1;
 
 use App\Middleware\JwtMiddleware;
 use App\Model\Albumlist;
@@ -20,8 +20,10 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Qbhy\HyperfAuth\AuthManager;
+use App\Controller\AbstractController;
+
 #[AutoController]
-class IndexController extends AbstractController
+class ApiController extends AbstractController
 {
     #[Inject]
     protected Member $memberModel;

@@ -12,8 +12,8 @@ declare(strict_types=1);
 use Hyperf\HttpServer\Router\Router;
 
 Router::addRoute(['GET', 'POST', 'HEAD'], '/', 'App\Controller\IndexController@index');
-//Router::addRoute(['GET', 'POST', 'HEAD'], '/index/add', 'App\Controller\IndexController@add');
-
+//Router::addRoute(['GET', 'POST', 'HEAD'], '/index/add', 'App\Controller\ApiController@add');
+Router::addRoute(['GET', 'POST', 'HEAD'], '/V1', 'App\Controller\V1\ApiController@index');
 Router::get('/favicon.ico', static function () {
     return '';
 });
