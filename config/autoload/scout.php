@@ -9,6 +9,7 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 return [
     'default' => env('SCOUT_ENGINE', 'elasticsearch'),
     'chunk' => [
@@ -19,18 +20,11 @@ return [
     'soft_delete' => false,
     'concurrency' => 100,
     'engine' => [
-        'my_elasticsearch' => [
-            'driver' => \App\Container\MyElasticsearchEngine::class,
-            'index' => null,
-            'hosts' => [
-                env('ELASTICSEARCH_HOST', 'http://119.23.59.3:19200'),
-            ],
-        ],
         'elasticsearch' => [
             'driver' => Hyperf\Scout\Provider\ElasticsearchProvider::class,
-            'index' => null,
+            'index' => 'string',
             'hosts' => [
-                env('ELASTICSEARCH_HOST', 'http://119.23.59.3:19200'),
+                env('ELASTICSEARCH_HOST', 'http://119.23.59.3:9200'),
             ],
         ],
     ],

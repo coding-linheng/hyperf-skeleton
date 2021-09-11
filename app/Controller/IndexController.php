@@ -46,11 +46,11 @@ class IndexController extends AbstractController
 //        $request->scene('edit')->validateResolved();
         $mobile = $request->post('mobile', 111);
         $name   = $request->post('name', 111);
-        $member = new Member();
+        $member = new Member;
 
         $member->nickname = $name;
         $member->username = $name;
-        $member->mobile   = (string) $mobile;
+        $member->mobile   = (string)$mobile;
         $member->password = md5('123456');
         $member->save();
         return $this->response->success();
@@ -58,7 +58,7 @@ class IndexController extends AbstractController
 
     public function elasticsearch()
     {
-        $albumlist = new Albumlist();
+        $albumlist = new Albumlist;
         $start     = time();
         $count     = $albumlist->where('title', 'like', '%海报%')->count();
         $list      = $albumlist->where('title', 'like', '%海报%')->limit(100)->get();
@@ -67,11 +67,20 @@ class IndexController extends AbstractController
 
     public function demo()
     {
-        $albumlist = new Albumlist();
+        $albumlist = new Albumlist;
         $start     = time();
-        $count     = $albumlist::search('海报1')->get();
-        $list      = $albumlist::search('海报1')->get();
-        return $this->response->success(['count' => $count, 'list' => $list, 'start' => $start, 'end' => time()]);
+        //自定义闭包搜索  可以改变搜索方式  demo如下
+        $callback  = function ($client, $builder, $params){
+            $params['body']['query']['bool']['must'] = [[
+                'query_string' => [
+                    'query' => '海报',
+                    'default_field' => 'title',
+                ]
+            ]];
+            return $client->search($params);
+        };
+        $count     = $albumlist::search('',$callback)->raw();
+        return $this->response->success(['list' => $count,'start' => $start, 'end' => time()]);
     }
 
     public function login()
