@@ -66,7 +66,7 @@ class ApiController extends AbstractController
         return $this->response->success(['count' => $count, 'list' => $list, 'start' => $start, 'end' => time()]);
     }
 
-    public function demo()
+    public function loginOut()
     {
         $albumlist = new Albumlist();
         $start     = time();
