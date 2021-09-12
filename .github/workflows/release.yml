@@ -2,7 +2,7 @@ on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'v*' # Push events to matching v*, i.e. V2.0, v20.15.10
 
 name: Release
 
@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@V2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
