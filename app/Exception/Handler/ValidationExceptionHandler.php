@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace App\Exception\Handler;
 
+use App\Constants\ErrorCode;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Validation\ValidationException;
@@ -30,15 +31,12 @@ class ValidationExceptionHandler extends ExceptionHandler
     {
         $this->stopPropagation();
         /** @var ValidationException $throwable */
-        $body = $throwable->validator->errors()->first();
-
-        if (!$response->hasHeader('content-type')) {
-            $response = $response->withAddedHeader('content-type', 'text/plain; charset=utf-8');
-        }
+        $body           = $throwable->validator->errors()->first();
         $format         = $this->format;
-        $format['code'] = 500;
+        $format['code'] = ErrorCode::VALIDATE_FAIL;
         $format['msg']  = $body;
         return $response->withAddedHeader('content-type', 'application/json')
+            ->withStatus(200)
             ->withBody(new SwooleStream(json_encode($format, JSON_UNESCAPED_UNICODE)));
     }
 

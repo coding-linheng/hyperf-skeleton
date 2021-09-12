@@ -30,7 +30,7 @@ class Response
 
     /**
      * success响应  方便以后扩展.
-     * @param $data
+     * @param null $data
      */
     public function success($data = null, string $msg = 'success'): PsrResponseInterface
     {
@@ -45,9 +45,9 @@ class Response
 
     /**
      * error响应  方便以后扩展.
-     * @param $data
+     * @param null $data
      */
-    public function error($data, string $msg = 'error'): PsrResponseInterface
+    public function error($data = null, string $msg = 'error'): PsrResponseInterface
     {
         $data = [
             'code' => 1,

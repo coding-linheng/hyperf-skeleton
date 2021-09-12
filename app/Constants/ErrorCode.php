@@ -24,4 +24,11 @@ class ErrorCode extends AbstractConstants
      * @Message("Server Error！")
      */
     public const SERVER_ERROR = 500;
+
+    public const VALIDATE_FAIL = 10000; ##验证错误
+
+    /**
+     * @Message("登录失败:用户名或密码错误")
+     */
+    public const LOGIN_FAIL = 10001;
 }

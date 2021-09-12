@@ -15,11 +15,11 @@ namespace App\Controller;
 use App\Middleware\JwtMiddleware;
 use App\Model\Albumlist;
 use App\Model\Member;
-use App\Model\User;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Qbhy\HyperfAuth\AuthManager;
+
 #[AutoController]
 class IndexController extends AbstractController
 {
@@ -80,14 +80,6 @@ class IndexController extends AbstractController
         };
         $count     = $albumlist::search('', $callback)->raw();
         return $this->response->success(['list' => $count, 'start' => $start, 'end' => time()]);
-    }
-
-    public function login()
-    {
-        /** @var User $user */
-        $user = User::query()->where('id', 29928)->first();
-        $user->setId($user['id']);
-        return $this->auth->guard('jwt')->login($user);
     }
 
     #[Middleware(JwtMiddleware::class)]

@@ -16,7 +16,7 @@ use Hyperf\HttpServer\Router\Router;
 $routerPath = env('API_BASE_URL', '/v1');
 
 #公用部分
-Router::post($routerPath . '/login', [App\Controller\V1\ApiController::class, 'login']);
+Router::post($routerPath . '/login', [App\Controller\V1\ApiController::class, 'Login']);
 Router::post($routerPath . '/logout', [App\Controller\V1\ApiController::class, 'logout']);
 Router::addGroup($routerPath . '/', function () {
  // Router::post('api/index', [App\Controller\V1\ApiController::class, 'index']);
