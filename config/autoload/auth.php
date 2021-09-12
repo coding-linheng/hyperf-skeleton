@@ -119,19 +119,19 @@ return [
              * 可选配置
              * jwt 生命周期，单位分钟
              */
-            'ttl' => (int) env('SIMPLE_JWT_TTL', 60 * 60),
+            'ttl' => (int) env('SIMPLE_JWT_TTL', 1),
 
             /*
              * 可选配置
              * 允许过期多久以内的 token 进行刷新
              */
-            'refresh_ttl' => (int) env('SIMPLE_JWT_REFRESH_TTL', 60 * 60 * 24 * 7),
+            'refresh_ttl' => (int) env('SIMPLE_JWT_REFRESH_TTL', 3600),
 
             /*
              * 可选配置
              * 默认使用的加密类
              */
-            'default' => Encrypter\PasswordHashEncrypter::class,
+            'default' => Encrypter\SHA1Encrypter::class,
 
             /*
              * 可选配置

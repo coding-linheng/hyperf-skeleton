@@ -28,7 +28,7 @@ class JwtMiddleware implements MiddlewareInterface
 
         $isValidToken = false;
         // 根据具体业务判断逻辑走向，这里假设用户携带的token有效
-
+        // jwt所能获得获得用户信息在此添加
         if ($auth->check()) {
             $user         = $auth->user();
             $user         = [

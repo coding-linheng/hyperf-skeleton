@@ -130,7 +130,7 @@ class User extends Model implements Authenticatable
         if (md5($password) != $user['password']) {
             throw new BusinessException(ErrorCode::LOGIN_FAIL, '密码错误');
         }
-        $this->contentId = $user['id'];
+        $user->contentId = $user['id'];
 
         return $user;
     }

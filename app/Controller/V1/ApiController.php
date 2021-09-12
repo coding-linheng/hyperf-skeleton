@@ -19,6 +19,9 @@ class ApiController extends AbstractController
     #[Inject]
     protected AuthManager $auth;
 
+    /**
+     * 用户登录.
+     */
     public function Login(User $request): ResponseInterface
     {
         $request->scene('login')->validateResolved();
@@ -27,5 +30,10 @@ class ApiController extends AbstractController
         $user     = make(\App\Model\User::class)->login($username, $password);
         $token    = $this->auth->guard('jwt')->login($user);
         return $this->response->success(['token' => $token]);
+    }
+
+    public function Logout(): ResponseInterface
+    {
+        return $this->response->success($this->auth->logout());
     }
 }
