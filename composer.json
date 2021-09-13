@@ -25,6 +25,7 @@
         "hyperf/database": "~2.2.0",
         "hyperf/db-connection": "~2.2.0",
         "hyperf/elasticsearch": "^2.2",
+        "hyperf/filesystem": "^2.2",
         "hyperf/framework": "~2.2.0",
         "hyperf/guzzle": "~2.2.0",
         "hyperf/http-server": "~2.2.0",
@@ -40,7 +41,8 @@
         "hyperf/scout": "^2.2",
         "hyperf/translation": "^2.2",
         "hyperf/validation": "2.2.x-dev",
-        "openzipkin/zipkin": "2.0.x-dev"
+        "openzipkin/zipkin": "2.0.x-dev",
+        "overtrue/flysystem-qiniu": "^1.0"
     },
     "require-dev": {
         "hyperf/devtool": "~2.2.0",
@@ -83,7 +85,7 @@
         ],
         "test": "co-phpunit --prepend test/bootstrap.php -c phpunit.xml --colors=always",
         "m": "php-cs-fixer fix ./app --config=./.php-cs-fixer.dist.php",
-        "analyse": "phpstan analyse --memory-limit 300M -l 0 -c phpstan.neon ./app ./config",
+        "analyse": "phpstan analyse --memory-limit 300M -l 0 -c phpstan.neon ./app",
         "start": [
             "Composer\\Config::disableProcessTimeout",
             "php ./bin/hyperf.php start"

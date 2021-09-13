@@ -11,7 +11,8 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-use App\Controller\V1\Index\UserController;
+use App\Controller\Utils;
+use App\Controller\V1\UserCenter\UserController;
 use App\Middleware\JwtMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
@@ -25,6 +26,11 @@ Router::addGroup($routerPath . '/', function () {
     #用户相关
     Router::addGroup('user/', function () {
         Router::post('getUserinfo', [UserController::class, 'getUserinfo']);
+    });
+
+    #工具类
+    Router::addGroup('utils/', function () {
+        Router::post('upload', [Utils::class, 'upload']);
     });
 
 }, ['middleware' => [JwtMiddleware::class]]);

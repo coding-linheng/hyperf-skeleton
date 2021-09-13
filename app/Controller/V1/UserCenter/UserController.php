@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\V1\Index;
+namespace App\Controller\V1\UserCenter;
 
 use App\Controller\AbstractController;
 use Psr\Http\Message\ResponseInterface;

@@ -31,4 +31,9 @@ class ErrorCode extends AbstractConstants
      * @Message("登录失败:用户名或密码错误")
      */
     public const LOGIN_FAIL = 10001;
+
+    /**
+     * @Message("上传失败")
+     */
+    public const UPLOAD_FAIL = 20001;
 }
