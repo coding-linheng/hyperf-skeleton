@@ -10,9 +10,9 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace App\Exception\Handler;
+namespace App\Core\Exception\Handler;
 
-use App\Constants\ErrorCode;
+use App\Core\Constants\ErrorCode;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Validation\ValidationException;

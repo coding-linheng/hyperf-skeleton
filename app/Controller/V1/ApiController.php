@@ -6,7 +6,7 @@ namespace App\Controller\V1;
 
 use App\Controller\AbstractController;
 use App\Model\Member;
-use App\Request\User;
+use App\Core\Request\User;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 use Qbhy\HyperfAuth\AuthManager;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Middleware;
+namespace App\Core\Middleware;
 
-use App\Exception\BusinessException;
+use App\Core\Exception\BusinessException;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;

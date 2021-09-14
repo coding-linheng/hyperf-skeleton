@@ -10,7 +10,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
-namespace App\Request;
+namespace App\Core\Request;
 
 use Hyperf\Validation\Request\FormRequest;
 

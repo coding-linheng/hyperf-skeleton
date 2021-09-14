@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Container;
+namespace App\Core\Container;
 
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;

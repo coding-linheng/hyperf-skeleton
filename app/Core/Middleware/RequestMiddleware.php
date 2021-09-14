@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Middleware;
+namespace App\Core\Middleware;
 
 use Hyperf\Logger\LoggerFactory;
 use Psr\Container\ContainerInterface;

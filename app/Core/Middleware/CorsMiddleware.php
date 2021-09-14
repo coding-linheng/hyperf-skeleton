@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Middleware;
+namespace App\Core\Middleware;
 
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Utils\Context;

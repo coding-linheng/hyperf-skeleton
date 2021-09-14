@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Middleware\JwtMiddleware;
+use App\Core\Middleware\JwtMiddleware;
 use App\Model\Albumlist;
 use App\Model\Member;
 use Hyperf\Di\Annotation\Inject;
