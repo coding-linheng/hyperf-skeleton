@@ -13,13 +13,14 @@ declare(strict_types=1);
 
 use App\Controller\Utils;
 use App\Controller\V1\UserCenter\UserController;
-use App\Middleware\JwtMiddleware;
+use App\Core\Middleware\JwtMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
 #当前项目总路径
 $routerPath = env('API_BASE_URL', '/v1');
 
 #公用部分
+Router::Get($routerPath . '/test', [App\Controller\V1\ApiController::class, 'Login']);
 Router::post($routerPath . '/login', [App\Controller\V1\ApiController::class, 'Login']);
 Router::post($routerPath . '/logout', [App\Controller\V1\ApiController::class, 'Logout'], ['middleware' => [JwtMiddleware::class]]);
 Router::addGroup($routerPath . '/', function () {
