@@ -5,51 +5,41 @@ declare(strict_types=1);
  * Created by PhpStorm.
  */
 
-
 namespace App\Core\Services;
 
+use App\Core\Constants\ErrorCode;
 use App\Core\Exception\BusinessException;
+use App\Model\User;
 
 /**
  * UserService
- * 类的介绍
- * @package Core\Services
+ * 用户相关逻辑.
  *
  * @property \APP\Model\User $userModel
  */
 class UserService extends BaseService
 {
-
     /**
-     * getInfo
-     * 获取用户数据
-     * User：YM
-     * Date：2020/1/8
-     * Time：下午7:52
-     * @param string|array $id 可以传入数组
-     * @param bool $type 是否使用缓存
-     * @return \Hyperf\Database\Model\Model|null|array
-     *
+     * 用户登录.
      */
-    public function getInfo($id, $type = true)
+    public function login(string $username, string $password): User
     {
-        $res = $this->userModel->getInfo($id, $type);
-        if (count($res) == count($res, 1)) {
-            unset($res['password']);
-            unset($res['session_id']);
-            unset($res['deleted_at']);
-        } else {
-            foreach ($res as &$v) {
-                unset($v['password']);
-                unset($v['session_id']);
-                unset($v['deleted_at']);
-            }
-            unset($v);
+        /** @var User $user */
+        $user = User::query()->where('username', $username)->first();
+
+        if (empty($user)) {
+            throw new BusinessException(ErrorCode::LOGIN_FAIL, '账号不存在');
         }
 
-        return $res;
+        if ($user['jinzhi'] == 2) {
+            throw new BusinessException(ErrorCode::LOGIN_FAIL, '您的账号因涉嫌违规操作，被系统临时冻结，如有问题，请联系客服');
+        }
+
+        if (md5($password) != $user['password']) {
+            throw new BusinessException(ErrorCode::LOGIN_FAIL, '密码错误');
+        }
+        $user->contentId = $user['id'];
+
+        return $user;
     }
-
-
-
 }

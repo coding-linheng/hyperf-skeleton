@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * Created by PhpStorm.
  *​
- * UserRepository.php
+ * UserRepository.php.
  *
  * 文件描述
  *
@@ -12,36 +12,26 @@ declare(strict_types=1);
  * Date：2021/9/15
  */
 
-
 namespace App\Core\Repositories\Admin;
 
-
-use Core\Common\Container\Auth;
-use Core\Repositories\BaseRepository;
-use Hyperf\Di\Annotation\Inject;
+use App\Core\Repositories\BaseRepository;
 
 /**
  * UserRepository
- * 类的介绍
- * @package Core\Repositories\Admin
- * User：Willion
- * Date：2021/9/15
+ * 类的介绍.
  *
  * @property App\Core\Services\UserService $userService
- *
  */
 class UserRepository extends BaseRepository
 {
-
-
     /**
      * getInfo
      * 根据id获取信息
      * User：YM
      * Date：2020/2/5
-     * Time：下午4:28
+     * Time：下午4:28.
      * @param $id
-     * @return \Hyperf\Database\Model\Model|null
+     * @return null|\Hyperf\Database\Model\Model
      */
     public function getInfo($id)
     {
@@ -49,7 +39,4 @@ class UserRepository extends BaseRepository
         $info['user_roles'] = $this->rolesService->getUserRoles($id);
         return $info;
     }
-
-
-
 }

@@ -40,7 +40,7 @@ class IndexController extends AbstractController
         ];
     }
 
-    public function add(\App\Request\Member $request)
+    public function add(\App\Core\Request\Member $request)
     {
 //        $request->scene('edit')->validateResolved();
         $mobile = $request->post('mobile', 111);

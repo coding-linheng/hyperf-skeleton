@@ -3,12 +3,11 @@
 declare(strict_types=1);
 
 namespace App\Task\Producer;
-use App\Task\Producer\BaseProducer;
 
 class TaskSchedulerProducer extends BaseProducer
 {
     /**
-     * 队列名称
+     * 队列名称.
      * @var string
      */
     protected $queueName = 'job_task_scheduler';

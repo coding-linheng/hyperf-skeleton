@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * Created by PhpStorm.
  *​
- * BaseRepository.php
+ * BaseRepository.php.
  *
  * 仓库基类
  *
@@ -13,21 +13,15 @@ declare(strict_types=1);
  * Time：下午2:36
  */
 
+namespace App\Core\Repositories;
 
-namespace Core\Repositories;
-
-
-use Psr\Container\ContainerInterface;
+use App\Core\Constants\StatusCode;
 use Hyperf\Di\Annotation\Inject;
-use App\Constants\StatusCode;
+use Psr\Container\ContainerInterface;
 
 /**
  * BaseRepository
- * 仓库基类
- * @package Core\Repositories
- * User：YM
- * Date：2019/11/21
- * Time：下午2:36
+ * 仓库基类.
  */
 class BaseRepository
 {
@@ -42,16 +36,16 @@ class BaseRepository
      * 可以实现自动注入的业务容器
      * User：YM
      * Date：2020/1/12
-     * Time：上午8:18
+     * Time：上午8:18.
      */
-    protected $businessContainerKey = ['auth','adminPermission'];
+    protected $businessContainerKey = ['auth', 'adminPermission'];
 
     /**
      * __get
      * 隐式注入服务类
      * User：YM
      * Date：2019/11/21
-     * Time：上午9:27
+     * Time：上午9:27.
      * @param $key
      * @return \Psr\Container\ContainerInterface|void
      */
@@ -59,13 +53,16 @@ class BaseRepository
     {
         if ($key == 'app') {
             return $this->container;
-        } elseif (in_array($key,$this->businessContainerKey)) {
-            return $this->getBusinessContainerInstance($key);
-        }elseif (substr($key, -7) == 'Service') {
-            return $this->getServiceInstance($key);
-        } else {
-            throw new \RuntimeException("服务{$key}不存在，书写错误！", StatusCode::ERR_SERVER);
         }
+
+        if (in_array($key, $this->businessContainerKey)) {
+            return $this->getBusinessContainerInstance($key);
+        }
+
+        if (substr($key, -7) == 'Service') {
+            return $this->getServiceInstance($key);
+        }
+        throw new \RuntimeException("服务{$key}不存在，书写错误！", StatusCode::ERR_SERVER);
     }
 
     /**
@@ -73,21 +70,20 @@ class BaseRepository
      * 获取业务容器实例
      * User：YM
      * Date：2020/1/12
-     * Time：上午8:15
+     * Time：上午8:15.
      * @param $key
      * @return mixed
      */
     public function getBusinessContainerInstance($key)
     {
-        $key = ucfirst($key);
-        $fileName = BASE_PATH."/app/Core/Common/Container/{$key}.php";
+        $key       = ucfirst($key);
+        $fileName  = BASE_PATH . "/app/Core/Common/Container/{$key}.php";
         $className = "Core\\Common\\Container\\{$key}";
 
         if (file_exists($fileName)) {
             return $this->container->get($className);
-        } else {
-            throw new \RuntimeException("通用容器{$key}不存在，文件不存在！", StatusCode::ERR_SERVER);
         }
+        throw new \RuntimeException("通用容器{$key}不存在，文件不存在！", StatusCode::ERR_SERVER);
     }
 
     /**
@@ -95,20 +91,19 @@ class BaseRepository
      * 获取服务类实例
      * User：YM
      * Date：2019/11/21
-     * Time：上午10:30
+     * Time：上午10:30.
      * @param $key
      * @return mixed
      */
     public function getServiceInstance($key)
     {
-        $key = ucfirst($key);
-        $fileName = BASE_PATH."/app/Core/Services/{$key}.php";
+        $key       = ucfirst($key);
+        $fileName  = BASE_PATH . "/app/Core/Services/{$key}.php";
         $className = "Core\\Services\\{$key}";
 
         if (file_exists($fileName)) {
             return $this->container->get($className);
-        } else {
-            throw new \RuntimeException("服务{$key}不存在，文件不存在！", StatusCode::ERR_SERVER);
         }
+        throw new \RuntimeException("服务{$key}不存在，文件不存在！", StatusCode::ERR_SERVER);
     }
 }

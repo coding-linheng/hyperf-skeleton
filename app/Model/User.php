@@ -12,8 +12,6 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-use App\Constants\ErrorCode;
-use App\Exception\BusinessException;
 use Hyperf\Scout\Searchable;
 use Qbhy\HyperfAuth\Authenticatable;
 
@@ -62,7 +60,7 @@ class User extends Model implements Authenticatable
 {
     use Searchable;
 
-    public $contentId;
+    public int $contentId;
 
     /**
      * The table associated with the model.
@@ -102,36 +100,10 @@ class User extends Model implements Authenticatable
         return $this->contentId;
     }
 
-    public function setId($id)
-    {
-        $this->contentId = $id;
-    }
-
     public static function retrieveById($key): ?Authenticatable
     {
         /** @var User $user */
         $user = User::query()->where('id', $key)->first();
         return $user ?? null;
-    }
-
-    public function login(string $username, string $password): self
-    {
-        /** @var self $user */
-        $user = self::query()->where('username', $username)->first();
-
-        if (empty($user)) {
-            throw new BusinessException(ErrorCode::LOGIN_FAIL, '账号不存在');
-        }
-
-        if ($user['jinzhi'] == 2) {
-            throw new BusinessException(ErrorCode::LOGIN_FAIL, '您的账号因涉嫌违规操作，被系统临时冻结，如有问题，请联系客服');
-        }
-
-        if (md5($password) != $user['password']) {
-            throw new BusinessException(ErrorCode::LOGIN_FAIL, '密码错误');
-        }
-        $user->contentId = $user['id'];
-
-        return $user;
     }
 }

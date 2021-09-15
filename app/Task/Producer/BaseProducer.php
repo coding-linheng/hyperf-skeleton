@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Task\Producer;
 
+use App\Task\Consumer\ConsumerJob;
 use Hyperf\AsyncQueue\Driver\DriverFactory;
 use Hyperf\AsyncQueue\Driver\DriverInterface;
-use App\Task\Consumer\ConsumerJob;
 use Psr\Container\ContainerInterface;
 
 class BaseProducer
 {
     /**
-     * 队列名称
+     * 队列名称.
      * @var string
      */
     protected $queueName = 'default';
@@ -30,16 +30,11 @@ class BaseProducer
     public function __construct(ContainerInterface $container)
     {
         $this->driverFactory = $container->get(DriverFactory::class);
-        $this->queueDriver = $this->driverFactory->get($this->queueName);
+        $this->queueDriver   = $this->driverFactory->get($this->queueName);
     }
 
     /**
-     * 加入队列
-     *
-     * @param array $data
-     * @param int $delay
-     *
-     * @return bool
+     * 加入队列.
      */
     protected function push(array $data, int $delay = 0): bool
     {
