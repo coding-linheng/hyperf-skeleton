@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4cc9bc478f73670413813988919e428c",
+    "content-hash": "80d40f82591189ff39f2131ae92efaa8",
     "packages": [
         {
             "name": "96qbhy/hyperf-auth",
@@ -5367,6 +5367,62 @@
             "time": "2020-05-12T15:16:56+00:00"
         },
         {
+            "name": "riverslei/payment",
+            "version": "v4.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/helei112g/payment.git",
+                "reference": "e8b0fdd2566d75c82686737fd14856c1e3006b75"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/helei112g/payment/zipball/e8b0fdd2566d75c82686737fd14856c1e3006b75",
+                "reference": "e8b0fdd2566d75c82686737fd14856c1e3006b75",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "ext-mbstring": "*",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "endroid/qrcode": "~1.9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Payment\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "helei",
+                    "email": "dayugog@gmail.com",
+                    "homepage": "https://helei112g.github.io/categories/payment-3/"
+                }
+            ],
+            "description": "支付宝支付、微信支付、招商一网通支付php SDK。方便快速接入，最完整的开源支付 php sdk",
+            "homepage": "https://helei112g.github.io/categories/payment-3/",
+            "keywords": [
+                "alipay",
+                "weixin",
+                "一网通",
+                "微信支付",
+                "招商一网通",
+                "支付宝支付",
+                "集成支付接口SDK"
+            ],
+            "support": {
+                "issues": "https://github.com/helei112g/payment/issues",
+                "source": "https://github.com/helei112g/payment/tree/master"
+            },
+            "time": "2017-07-05T15:13:35+00:00"
+        },
+        {
             "name": "symfony/console",
             "version": "v5.3.7",
             "source": {
@@ -9442,5 +9498,5 @@
         "ext-redis": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }
