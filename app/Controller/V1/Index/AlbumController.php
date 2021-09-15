@@ -5,20 +5,22 @@ declare(strict_types=1);
 namespace App\Controller\V1\Index;
 
 use App\Controller\AbstractController;
+use App\Core\Repositories\Index\AlbumRepository;
 use Psr\Http\Message\ResponseInterface;
-
 /*
  * 专辑以及专辑列表相关操作
  */
-
 class AlbumController extends AbstractController
 {
+  #[Inject]
+  protected AlbumRepository $albumRepo;
     /**
      * 获取专辑列表.
      */
     public function getList(): ResponseInterface
     {
-        return $this->response->success();
+        $data= $this->albumRepo->getListPageRand([]);
+        return $this->response->success($data);
     }
 
     /**

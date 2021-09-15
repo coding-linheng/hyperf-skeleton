@@ -12,7 +12,7 @@ declare(strict_types=1);
  * Date：2021/9/15
  */
 
-namespace App\Core\Repositories\Admin;
+namespace App\Core\Repositories\Index;
 
 use App\Core\Repositories\BaseRepository;
 
