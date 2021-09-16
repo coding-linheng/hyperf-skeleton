@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 use App\Controller\Utils;
 use App\Controller\V1\UserCenter\UserController;
+use App\Controller\V1\Index\AlbumController;
 use App\Core\Middleware\JwtMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
@@ -36,6 +37,14 @@ Router::addGroup($routerPath . '/', function () {
 
 }, ['middleware' => [JwtMiddleware::class]]);
 
+//无需登录也可以访问的前端页面接口
+Router::addGroup($routerPath . '/', function () {
+  #灵感
+  Router::addGroup('album/', function () {
+    Router::get('getList', [AlbumController::class, 'getList']);
+  });
+
+} );
 Router::get('/favicon.ico', static function () {
     return '';
 });

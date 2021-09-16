@@ -9,11 +9,11 @@ declare(strict_types=1);
  * Date：2021/9/15
  */
 
-namespace App\Core\Repositories\Index;
+namespace App\Core\Repositories\V1;
 
 use App\Core\Repositories\BaseRepository;
 use App\Core\Services\AlbumService;
-
+use Hyperf\Di\Annotation\Inject;
 /**
  * 类的介绍.
  *
