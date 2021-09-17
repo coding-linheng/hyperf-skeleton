@@ -1,10 +1,11 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
+
 namespace App\Model;
 
 /**
- * @property int $id 
+ * @property int $id
  * @property int $uid 用户ID
  * @property int $img_id 灵感图片Id
  * @property string $img_url 图片预览url
@@ -22,12 +23,14 @@ class AlbumCollect extends Model
      * @var string
      */
     protected $table = 'album_collect';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = ['id', 'uid', 'img_id', 'img_url', 'album_id', 'img_uid', 'type', 'c_time', 'remark'];
+
     /**
      * The attributes that should be cast to native types.
      *

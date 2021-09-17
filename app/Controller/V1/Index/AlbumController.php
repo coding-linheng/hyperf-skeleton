@@ -5,24 +5,24 @@ declare(strict_types=1);
 namespace App\Controller\V1\Index;
 
 use App\Controller\AbstractController;
-use App\Core\Repositories\V1\AlbumRepository;
-use App\Model\Member;
-use Psr\Http\Message\ResponseInterface;
+use App\Core\Repositories\Index\AlbumRepository;
 use Hyperf\Di\Annotation\Inject;
+use Psr\Http\Message\ResponseInterface;
+
 /*
  * 专辑以及专辑列表相关操作
  */
-
 class AlbumController extends AbstractController
 {
-  #[Inject]
+    #[Inject]
   protected AlbumRepository $albumRepo;
+
     /**
      * 获取专辑列表.
      */
     public function getList(): ResponseInterface
     {
-        $data= $this->albumRepo->getListPageRand([]);
+        $data = $this->albumRepo->getListPageRand([]);
         return $this->response->success($data);
     }
 
