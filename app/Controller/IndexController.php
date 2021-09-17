@@ -69,16 +69,18 @@ class IndexController extends AbstractController
         $albumlist = new Albumlist();
         $start     = time();
         //自定义闭包搜索  可以改变搜索方式  demo如下
-        $callback  = function ($client, $builder, $params) {
-            $params['body']['query']['bool']['must'] = [[
-                'query_string' => [
-                    'query'         => '海报',
-                    'default_field' => 'title',
+        $callback = function ($client, $builder, $params) {
+            $params['body']['query']['bool']['must'] = [
+                [
+                    'query_string' => [
+                        'query'         => '海报',
+                        'default_field' => 'title',
+                    ],
                 ],
-            ]];
+            ];
             return $client->search($params);
         };
-        $count     = $albumlist::search('', $callback)->raw();
+        $count    = $albumlist::search('', $callback)->raw();
         return $this->response->success(['list' => $count, 'start' => $start, 'end' => time()]);
     }
 
@@ -87,5 +89,10 @@ class IndexController extends AbstractController
     {
         $user = user();
         var_dump($user);
+    }
+
+    public function phpinfo()
+    {
+        echo phpinfo();
     }
 }
