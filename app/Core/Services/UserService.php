@@ -1,9 +1,6 @@
 <?php
 
 declare(strict_types=1);
-/**
- * Created by PhpStorm.
- */
 
 namespace App\Core\Services;
 
@@ -14,8 +11,6 @@ use App\Model\User;
 /**
  * UserService
  * 用户相关逻辑.
- *
- * @property \APP\Model\User $userModel
  */
 class UserService extends BaseService
 {

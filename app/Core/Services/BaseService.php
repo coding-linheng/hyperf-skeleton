@@ -29,7 +29,7 @@ class BaseService
      * @Inject
      * @var ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * Created by PhpStorm.
@@ -38,7 +38,7 @@ class BaseService
      * Date：2020/1/12
      * Time：上午8:18.
      */
-    protected $businessContainerKey = ['auth', 'adminPermission'];
+    protected array $businessContainerKey = ['auth', 'adminPermission'];
 
     /**
      * __get
@@ -47,7 +47,7 @@ class BaseService
      * Date：2019/11/21
      * Time：上午9:27.
      * @param $key
-     * @return \Psr\Container\ContainerInterface|void
+     * @return ContainerInterface|void
      */
     public function __get($key)
     {
@@ -59,12 +59,12 @@ class BaseService
             return $this->getBusinessContainerInstance($key);
         }
 
-        if (substr($key, -5) == 'Model') {
+        if (str_ends_with($key, 'Model')) {
             $key = strstr($key, 'Model', true);
             return $this->getModelInstance($key);
         }
 
-        if (substr($key, -7) == 'Service') {
+        if (str_ends_with($key, 'Service')) {
             return $this->getServiceInstance($key);
         }
         throw new \RuntimeException("服务/模型{$key}不存在，书写错误！", StatusCode::ERR_SERVER);
@@ -79,7 +79,7 @@ class BaseService
      * @param $key
      * @return mixed
      */
-    public function getBusinessContainerInstance($key)
+    public function getBusinessContainerInstance($key): mixed
     {
         $key       = ucfirst($key);
         $fileName  = BASE_PATH . "/app/Core/Common/Container/{$key}.php";
@@ -100,7 +100,7 @@ class BaseService
      * @param $key
      * @return mixed
      */
-    public function getModelInstance($key)
+    public function getModelInstance($key): mixed
     {
         $key       = ucfirst($key);
         $fileName  = BASE_PATH . "/app/Models/{$key}.php";
@@ -123,7 +123,7 @@ class BaseService
      * @param $key
      * @return mixed
      */
-    public function getServiceInstance($key)
+    public function getServiceInstance($key): mixed
     {
         $key       = ucfirst($key);
         $fileName  = BASE_PATH . "/app/Core/Services/{$key}.php";

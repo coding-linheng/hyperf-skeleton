@@ -29,7 +29,7 @@ class BaseRepository
      * @Inject
      * @var ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * Created by PhpStorm.
@@ -38,7 +38,7 @@ class BaseRepository
      * Date：2020/1/12
      * Time：上午8:18.
      */
-    protected $businessContainerKey = ['auth', 'adminPermission'];
+    protected array $businessContainerKey = ['auth', 'adminPermission'];
 
     /**
      * __get
@@ -59,7 +59,7 @@ class BaseRepository
             return $this->getBusinessContainerInstance($key);
         }
 
-        if (substr($key, -7) == 'Service') {
+        if (str_ends_with($key, 'Service')) {
             return $this->getServiceInstance($key);
         }
         throw new \RuntimeException("服务{$key}不存在，书写错误！", StatusCode::ERR_SERVER);
@@ -74,7 +74,7 @@ class BaseRepository
      * @param $key
      * @return mixed
      */
-    public function getBusinessContainerInstance($key)
+    public function getBusinessContainerInstance($key): mixed
     {
         $key       = ucfirst($key);
         $fileName  = BASE_PATH . "/app/Core/Common/Container/{$key}.php";
@@ -95,7 +95,7 @@ class BaseRepository
      * @param $key
      * @return mixed
      */
-    public function getServiceInstance($key)
+    public function getServiceInstance($key): mixed
     {
         $key       = ucfirst($key);
         $fileName  = BASE_PATH . "/app/Core/Services/{$key}.php";

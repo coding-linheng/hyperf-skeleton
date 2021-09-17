@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\V1\Index;
 
 use App\Controller\AbstractController;
-use App\Core\Repositories\Index\AlbumRepository;
+use App\Core\Repositories\V1\AlbumRepository;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 
