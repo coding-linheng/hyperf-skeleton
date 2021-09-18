@@ -18,6 +18,7 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Redis\Redis;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 abstract class AbstractController
@@ -112,34 +113,17 @@ abstract class AbstractController
         throw new \RuntimeException("仓库{$key}不存在，文件不存在！", StatusCode::ERR_SERVER);
     }
 
-    /**
-     * success
-     * 成功返回请求结果
-     * User：YM
-     * Date：2019/11/20
-     * Time：下午3:56.
-     * @param array $data
-     * @param null $msg
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function success($data = [], string $msg = null)
+    public function success(array $data = [], string $msg = 'success'): ResponseInterface
     {
         return $this->response->success($data, $msg);
     }
 
     /**
-     * error
-     * 业务相关错误结果返回
-     * User：YM
-     * Date：2019/11/20
-     * Time：下午3:56.
-     * @param int $code
-     * @param null $msg
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param null $data
      */
-    public function error($code = StatusCode::ERR_EXCEPTION, string $msg = '')
+    public function error(int $code = StatusCode::ERR_EXCEPTION, string $msg = 'error', $data = null): ResponseInterface
     {
-        return $this->response->error($code, $msg);
+        return $this->response->error($code, $msg, $data);
     }
 
     /**

@@ -32,7 +32,7 @@ class Response
      * success响应  方便以后扩展.
      * @param null $data
      */
-    public function success($data = null, string $msg = 'success'): PsrResponseInterface
+    public function success($data = null, ?string $msg = 'success'): PsrResponseInterface
     {
         $data = [
             'code' => 0,
@@ -47,10 +47,10 @@ class Response
      * error响应  方便以后扩展.
      * @param null $data
      */
-    public function error($data = null, string $msg = 'error'): PsrResponseInterface
+    public function error(int $code = 1, ?string $msg = 'error', $data = null): PsrResponseInterface
     {
         $data = [
-            'code' => 1,
+            'code' => $code,
             'msg'  => $msg,
             'data' => $data,
         ];

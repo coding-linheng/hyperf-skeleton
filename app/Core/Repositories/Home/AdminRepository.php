@@ -15,7 +15,7 @@ namespace App\Core\Repositories\Home;
 use App\Core\Repositories\BaseRepository;
 
 /**
- * AdminRepository
+ * AdminRepository.
  */
 class AdminRepository extends BaseRepository
 {

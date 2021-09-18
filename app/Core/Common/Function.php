@@ -34,9 +34,8 @@ if (!function_exists('di')) {
 if (!function_exists('redis')) {
     /**
      * 获取redis连接池实例.
-     * @param mixed $name
      */
-    function redis($name = 'default'): RedisProxy
+    function redis(string $name = 'default'): RedisProxy
     {
         return di()->get(RedisFactory::class)->get($name);
     }

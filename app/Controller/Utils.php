@@ -9,6 +9,9 @@ use App\Core\Exception\BusinessException;
 use League\Flysystem\Filesystem;
 use Psr\Http\Message\ResponseInterface;
 
+/*
+ * 助手类
+ */
 class Utils extends AbstractController
 {
     public function upload(Filesystem $filesystem): ResponseInterface

@@ -7,8 +7,9 @@ declare(strict_types=1);
 
 namespace App\Core\Services;
 
-use App\Model\Album;
+use App\Core\Repositories\V1\AlbumRepository;
 use App\Model\User;
+use Hyperf\Di\Annotation\Inject;
 
 /**
  * AlbumService.
@@ -17,23 +18,14 @@ use App\Model\User;
  */
 class AlbumService extends BaseService
 {
-    /**
-     * 获取分页列表.
-     * @param mixed $queryData
-     */
-    public function getList($queryData)
-    {
-        return Album::query()->where($queryData)->paginate();
-    }
+    #[Inject]
+    protected AlbumRepository $albumRepository;
 
     /**
-     * 自定义随机分页列表.
-     * @param mixed $queryData
+     * getList.
      */
-    public function getListPageRand($queryData)
+    public function getListPageRand(mixed $queryData): array
     {
-        $albumResInfo = Album::query()->where($queryData)->paginate();
-
-        return [];
+        return $this->albumRepository->getListPageRand($queryData);
     }
 }

@@ -16,6 +16,7 @@
         "ext-redis": "*",
         "96qbhy/hyperf-auth": "^2.4",
         "friendsofphp/php-cs-fixer": "^3.0",
+        "hyperf-libraries/sms": "^2.0",
         "hyperf/amqp": "~2.2.0",
         "hyperf/async-queue": "~2.2.0",
         "hyperf/cache": "~2.2.0",
@@ -61,8 +62,7 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Core\\": "app/Core/"
+            "App\\": "app/"
         },
         "files": [
             "app/Core/Common/Function.php"

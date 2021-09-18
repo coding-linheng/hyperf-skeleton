@@ -27,7 +27,6 @@ class BaseRepository
 {
     /**
      * @Inject
-     * @var ContainerInterface
      */
     protected ContainerInterface $container;
 
@@ -72,7 +71,6 @@ class BaseRepository
      * Date：2020/1/12
      * Time：上午8:15.
      * @param $key
-     * @return mixed
      */
     public function getBusinessContainerInstance($key): mixed
     {
@@ -93,7 +91,6 @@ class BaseRepository
      * Date：2019/11/21
      * Time：上午10:30.
      * @param $key
-     * @return mixed
      */
     public function getServiceInstance($key): mixed
     {

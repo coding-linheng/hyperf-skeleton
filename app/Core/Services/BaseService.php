@@ -27,7 +27,6 @@ class BaseService
 {
     /**
      * @Inject
-     * @var ContainerInterface
      */
     protected ContainerInterface $container;
 
@@ -77,7 +76,6 @@ class BaseService
      * Date：2020/1/12
      * Time：上午8:15.
      * @param $key
-     * @return mixed
      */
     public function getBusinessContainerInstance($key): mixed
     {
@@ -98,7 +96,6 @@ class BaseService
      * Date：2019/11/21
      * Time：上午10:30.
      * @param $key
-     * @return mixed
      */
     public function getModelInstance($key): mixed
     {
@@ -121,7 +118,6 @@ class BaseService
      * Date：2019/11/21
      * Time：上午10:30.
      * @param $key
-     * @return mixed
      */
     public function getServiceInstance($key): mixed
     {

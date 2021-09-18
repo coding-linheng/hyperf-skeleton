@@ -90,9 +90,4 @@ class IndexController extends AbstractController
         $user = user();
         var_dump($user);
     }
-
-    public function phpinfo()
-    {
-        echo phpinfo();
-    }
 }
