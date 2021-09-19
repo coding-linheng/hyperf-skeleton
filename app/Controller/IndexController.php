@@ -15,9 +15,14 @@ namespace App\Controller;
 use App\Middleware\JwtMiddleware;
 use App\Model\Albumlist;
 use App\Model\Member;
+use App\Model\Sms as SmsModel;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
+use Hyperf\Utils\ApplicationContext;
+use HyperfLibraries\Sms\Contract\SmsInterface;
+use Overtrue\EasySms\Exceptions\InvalidArgumentException;
+use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 use Qbhy\HyperfAuth\AuthManager;
 
 #[AutoController]
@@ -89,5 +94,31 @@ class IndexController extends AbstractController
     {
         $user = user();
         var_dump($user);
+    }
+
+    public function sms()
+    {
+        try {
+            $easySms = ApplicationContext::getContainer()->get(SmsInterface::class);
+            $code    = mt_rand(100000, 999999);
+            $easySms->send('18458089188', [
+                'template' => 'SMS_119911016',
+                'data'     => [
+                    'code' => $code,
+                ],
+            ]);
+            //验证码入库
+            SmsModel::create([
+                'code'        => $code,
+                'mobile'      => '18458089188',
+                'ip'          => get_client_ip(),
+                'event'       => 'verify',
+                'create_time' => time(),
+            ]);
+            return true;
+        } catch (InvalidArgumentException|NoGatewayAvailableException $e) {
+            var_dump($e->getResults());
+            return $this->success($e->getResults());
+        }
     }
 }

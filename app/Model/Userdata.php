@@ -39,7 +39,7 @@ namespace App\Model;
  * @property string $total 总收入
  * @property int $time 操作时间
  */
-class Userdatum extends Model
+class Userdata extends Model
 {
     /**
      * The table associated with the model.

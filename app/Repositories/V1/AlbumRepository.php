@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repositories\V1;
 
-use App\Repositories\BaseRepository;
 use App\Model\Album;
+use App\Repositories\BaseRepository;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 
 /*

@@ -30,9 +30,9 @@ class Response
 
     /**
      * success响应  方便以后扩展.
-     * @param null $data
+     * @param mixed $data
      */
-    public function success($data = null, ?string $msg = 'success'): PsrResponseInterface
+    public function success(mixed $data = null, ?string $msg = 'success'): PsrResponseInterface
     {
         $data = [
             'code' => 0,

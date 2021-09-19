@@ -11,7 +11,7 @@ error_reporting(E_ALL);
 ! defined('SWOOLE_HOOK_FLAGS') && define('SWOOLE_HOOK_FLAGS', SWOOLE_HOOK_ALL);
 
 require BASE_PATH . '/vendor/autoload.php';
-
+//Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_NATIVE_CURL]);  开启swoole curl扩展
 // Self-called anonymous function that creates its own scope and keep the global namespace clean.
 (function (): void {
     Hyperf\Di\ClassLoader::init();

@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Repositories\V1\AlbumRepository;
 use App\Model\User;
+use App\Repositories\V1\AlbumRepository;
 use Hyperf\Di\Annotation\Inject;
 
 /**

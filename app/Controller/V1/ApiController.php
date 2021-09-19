@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Controller\V1;
 
 use App\Controller\AbstractController;
+use App\Model\Member;
 use App\Request\User;
 use App\Services\UserService;
-use App\Model\Member;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 use Qbhy\HyperfAuth\AuthManager;

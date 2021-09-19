@@ -1,10 +1,11 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
+
 namespace App\Model;
 
 /**
- * @property int $id 
+ * @property int $id
  * @property string $mobile 手机号
  * @property string $code 验证码
  * @property string $event 事件
@@ -20,12 +21,14 @@ class Sms extends Model
      * @var string
      */
     protected $table = 'sms';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = ['id', 'mobile', 'code', 'event', 'count', 'ip', 'create_time'];
+
     /**
      * The attributes that should be cast to native types.
      *

@@ -11,6 +11,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
+use App\Controller\Sms;
 use App\Controller\Utils;
 use App\Controller\V1\UserCenter\UserController;
 use App\Controller\V1\Index\AlbumController;
@@ -23,7 +24,8 @@ $routerPath = env('API_BASE_URL', '/v1');
 #公用部分
 Router::Get($routerPath . '/test', [App\Controller\V1\ApiController::class, 'Login']);
 Router::post($routerPath . '/login', [App\Controller\V1\ApiController::class, 'Login']);
-Router::post($routerPath . '/logout', [App\Controller\V1\ApiController::class, 'Logout'], ['middleware' => [JwtMiddleware::class]]);
+Router::post($routerPath . '/logout', [App\Controller\V1\ApiController::class, 'Logout'],
+    ['middleware' => [JwtMiddleware::class]]);
 Router::addGroup($routerPath . '/', function () {
     #用户相关
     Router::addGroup('user/', function () {
@@ -39,12 +41,16 @@ Router::addGroup($routerPath . '/', function () {
 
 //无需登录也可以访问的前端页面接口
 Router::addGroup($routerPath . '/', function () {
-  #灵感
-  Router::addGroup('album/', function () {
-    Router::get('getList', [AlbumController::class, 'getList']);
-  });
+    #灵感
+    Router::addGroup('album/', function () {
+        Router::get('getList', [AlbumController::class, 'getList']);
+    });
+    #短信类
+    Router::addGroup('sms/', function () {
+        Router::post('send', [Sms::class, 'send']);
+    });
 
-} );
+});
 Router::get('/favicon.ico', static function () {
     return '';
 });

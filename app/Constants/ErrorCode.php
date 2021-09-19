@@ -21,6 +21,11 @@ use Hyperf\Constants\Annotation\Constants;
 class ErrorCode extends AbstractConstants
 {
     /**
+     * @Message("常规报错,具体信息自己填写")
+     */
+    public const ERROR = 1;
+
+    /**
      * @Message("Server Error！")
      */
     public const SERVER_ERROR = 500;

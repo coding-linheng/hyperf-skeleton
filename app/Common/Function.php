@@ -64,7 +64,7 @@ if (!function_exists('request')) {
 
 if (!function_exists('get_client_ip')) {
     /**
-     * 获取客户端ip
+     * 获取客户端ip.
      * @throws TypeError
      */
     function get_client_ip(): string
