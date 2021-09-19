@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use App\Common\Rcp;
+use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
@@ -35,12 +37,18 @@ class JwtMiddleware implements MiddlewareInterface
                 'id'       => $user['id'],
                 'username' => $user['username'],
             ];
+            $rcp=  make(Rcp::class,[$request,$user]);
+            //将uri 和用户丢入统计风控组件，计算是否本次应该放过同行
+            if($rcp->check()){
+              throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, 'Service Unavailable Or Refused Request !');
+            }
             $request      = Context::override(
                 ServerRequestInterface::class,
                 function (ServerRequestInterface $request) use ($user) {
                     return $request->withAttribute('user', $user);
                 }
             );
+
             $isValidToken = true;
         }
 
@@ -48,6 +56,6 @@ class JwtMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        throw new BusinessException(401, 'Token authentication does not pass');
+        throw new BusinessException(ErrorCode::AUTH_ERROR, 'Token authentication does not pass');
     }
 }
