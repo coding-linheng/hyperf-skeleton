@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Core\Middleware\JwtMiddleware;
+use App\Middleware\JwtMiddleware;
 use App\Model\Albumlist;
 use App\Model\Member;
 use Hyperf\Di\Annotation\Inject;
@@ -40,7 +40,7 @@ class IndexController extends AbstractController
         ];
     }
 
-    public function add(\App\Core\Request\Member $request)
+    public function add(\App\Request\Member $request)
     {
 //        $request->scene('edit')->validateResolved();
         $mobile = $request->post('mobile', 111);

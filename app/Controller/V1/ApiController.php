@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\V1;
 
 use App\Controller\AbstractController;
-use App\Core\Request\User;
-use App\Core\Services\UserService;
+use App\Request\User;
+use App\Services\UserService;
 use App\Model\Member;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;

@@ -14,7 +14,7 @@ declare(strict_types=1);
 use App\Controller\Utils;
 use App\Controller\V1\UserCenter\UserController;
 use App\Controller\V1\Index\AlbumController;
-use App\Core\Middleware\JwtMiddleware;
+use App\Middleware\JwtMiddleware;
 use Hyperf\HttpServer\Router\Router;
 
 #当前项目总路径

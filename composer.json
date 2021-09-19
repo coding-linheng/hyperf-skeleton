@@ -65,7 +65,7 @@
             "App\\": "app/"
         },
         "files": [
-            "app/Core/Common/Function.php"
+            "app/Common/Function.php"
         ]
     },
     "autoload-dev": {

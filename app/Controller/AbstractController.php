@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Core\Constants\StatusCode;
-use App\Core\Container\Response;
+use App\Constants\StatusCode;
+use App\Container\Response;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Redis\Redis;
