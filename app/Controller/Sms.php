@@ -8,6 +8,7 @@ use App\Model\Sms as SmsModel;
 use App\Request\Utils;
 use App\Services\SmsService;
 use Hyperf\Di\Annotation\Inject;
+use Psr\Http\Message\ResponseInterface;
 
 class Sms extends AbstractController
 {
@@ -17,7 +18,7 @@ class Sms extends AbstractController
     /*
      * 发送短信
      */
-    public function send(Utils $request)
+    public function send(Utils $request): ResponseInterface
     {
         $request->scene('sms')->validateResolved();
         $mobile      = $request->post('mobile');
