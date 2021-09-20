@@ -25,10 +25,20 @@ class ErrorCode extends AbstractConstants
      */
     public const ERROR = 1;
 
+  /**
+   * @Message("Token authentication does not pass！")
+   */
+  public const AUTH_ERROR = 401;
+
     /**
      * @Message("Server Error！")
      */
     public const SERVER_ERROR = 500;
+
+    /**
+     * @Message("Service Unavailable Or Refused Request ！")
+     */
+    public const SERVER_RCP_ERROR = 503;
 
     public const VALIDATE_FAIL = 10000; ##验证错误
 

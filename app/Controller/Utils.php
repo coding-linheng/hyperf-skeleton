@@ -30,6 +30,7 @@ class Utils extends AbstractController
                 return $this->response->success(env('PUBLIC_DOMAIN') . '/' . $path);
             }
             $filesystem->writeStream($path, $stream);
+            //获取私有地址 $filesystem->getAdapter()->privateDownloadUrl("");
             fclose($stream);
             return $this->response->success(env('PUBLIC_DOMAIN') . '/' . $path);
         } catch (\Exception $e) {
