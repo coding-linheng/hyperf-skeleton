@@ -37,9 +37,10 @@ class JwtMiddleware implements MiddlewareInterface
                 'id'       => $user['id'],
                 'username' => $user['username'],
             ];
-            $rcp =  make(Rcp::class, [$request, $user]);
+            //$rcp =  make(Rcp::class, [$request, $user]);
+            $rcpService=Rcp::getRcpInstance();
             //将uri 和用户丢入统计风控组件，计算是否本次应该放过同行
-            if (!$rcp->check()) {
+            if (!$rcpService->check($request, $user)) {
                 throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, 'Service Unavailable Or Refused Request !');
             }
             $request      = Context::override(
