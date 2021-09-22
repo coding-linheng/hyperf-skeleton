@@ -32,6 +32,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::post('getUserinfo', [UserController::class, 'getUserinfo']);
         Router::post('bindMobile', [UserController::class, 'bindMobile']);
         Router::post('profile', [UserController::class, 'profile']);
+        Router::post('certification', [UserController::class, 'certification']);
     });
 
     #工具类

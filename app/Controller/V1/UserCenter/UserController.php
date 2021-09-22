@@ -58,4 +58,25 @@ class UserController extends AbstractController
         $user->fill($params)->save();
         return $this->success();
     }
+
+    /*
+     * 申请
+     */
+    public function certification(User $request): ResponseInterface
+    {
+        $request->scene('certification')->validateResolved();
+        $params   = $request->all();
+        $userData = make(UserRepository::class)->getUserData(user()['id']);
+
+        $userData->name     = $params['name'];
+        $userData->tel      = $params['mobile'];
+        $userData->cardnum  = $params['id_card'];
+        $userData->zhi      = $params['alipay'];
+        $userData->qq       = $params['qq'];
+        $userData->email    = $params['email'];
+        $userData->cardimg  = $params['id_card_true'];
+        $userData->cardimg1 = $params['id_card_false'];
+        $userData->save();
+        return $this->success();
+    }
 }
