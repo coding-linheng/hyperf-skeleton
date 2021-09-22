@@ -14,6 +14,9 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Utils extends AbstractController
 {
+    /**
+     * 上传接口.
+     */
     public function upload(Filesystem $filesystem): ResponseInterface
     {
         try {

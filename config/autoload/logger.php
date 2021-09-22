@@ -21,7 +21,7 @@ return [
         'formatter' => [
             'class'       => Monolog\Formatter\LineFormatter::class,
             'constructor' => [
-                'format'                => "%datetime%||%channel%||%level_name%||%message%||%context%||%extra%\n",
+                'format'                => "[%datetime%]%channel%.%level_name%:%message%\n",
                 'dateFormat'            => 'Y-m-d H:i:s',
                 'allowInlineLineBreaks' => true,
             ],
@@ -38,7 +38,7 @@ return [
         'formatter' => [
             'class'       => Monolog\Formatter\LineFormatter::class,
             'constructor' => [
-                'format'                => "[%datetime%]--[%message%]\r\n%context%\r\n",
+                'format'                => "[%datetime%]%channel%:\r\n%context%\r\n",
                 'dateFormat'            => 'Y-m-d H:i:s',
                 'allowInlineLineBreaks' => true,
             ],

@@ -30,6 +30,8 @@ Router::addGroup($routerPath . '/', function () {
     #用户相关
     Router::addGroup('user/', function () {
         Router::post('getUserinfo', [UserController::class, 'getUserinfo']);
+        Router::post('bindMobile', [UserController::class, 'bindMobile']);
+        Router::post('profile', [UserController::class, 'profile']);
     });
 
     #工具类

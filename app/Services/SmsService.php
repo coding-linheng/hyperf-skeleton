@@ -39,8 +39,21 @@ class SmsService extends BaseService
         return true;
     }
 
+    /**
+     * 发送短信
+     * @param string $mobile 手机号
+     * @param string $event 事件
+     */
     public function send(string $mobile, string $event): bool
     {
         return sms::send($mobile, $event);
+    }
+
+    /**
+     * 检查验证码
+     */
+    public function check(string $mobile, string $code, string $event = 'verify'): bool
+    {
+        return sms::check($mobile, $code, $event);
     }
 }

@@ -13,6 +13,10 @@ use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 
 class Sms
 {
+    protected static int $count = 5;   //有效验证次数
+
+    protected static int $expire = 3600; //验证码有效时间
+
     /**
      * 发送短信
      */
@@ -39,5 +43,39 @@ class Sms
         } catch (InvalidArgumentException|NoGatewayAvailableException $e) {
             throw new BusinessException(ErrorCode::ERROR, $e->getMessage());
         }
+    }
+
+    /**
+     * 检查验证码
+     */
+    public static function check(string $mobile, string $code, string $event = 'verify'): bool
+    {
+        /** @var SmsModel $sms */
+        $sms = SmsModel::query()->where(['mobile' => $mobile, 'event' => $event])->orderBy('id', 'desc')->first();
+
+        if (empty($sms)) {
+            return false;
+        }
+
+        if ($sms['create_time'] < time() - self::$expire || $sms['count'] > self::$count) {
+            self::flush($mobile, $event);
+            return false;
+        }
+
+        if ($sms['code'] != $code) {
+            ++$sms->count;
+            $sms->save();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 清除验证码
+     */
+    public static function flush(string $mobile, string $event): bool
+    {
+        SmsModel::query()->where(['mobile' => $mobile, 'event' => $event])->delete();
+        return true;
     }
 }

@@ -25,10 +25,10 @@ class ErrorCode extends AbstractConstants
      */
     public const ERROR = 1;
 
-  /**
-   * @Message("Token authentication does not pass！")
-   */
-  public const AUTH_ERROR = 401;
+    /**
+     * @Message("Token authentication does not pass！")
+     */
+    public const AUTH_ERROR = 401;
 
     /**
      * @Message("Server Error！")
