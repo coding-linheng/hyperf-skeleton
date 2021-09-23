@@ -37,7 +37,7 @@ class User extends FormRequest
             'password'      => 'required|digits_between:6,20',
             'mobile'        => [
                 'required',
-                Rule::unique('userdata', 'tel')->ignore(user()['id'], 'uid'),
+                @Rule::unique('userdata', 'tel')->ignore(user()['id'], 'uid'),
                 'regex:((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)',
             ],
             'captcha'       => 'required|digits:6',
@@ -46,7 +46,7 @@ class User extends FormRequest
             'email'         => [
                 'required',
                 'email',
-                Rule::unique('userdata', 'email')->ignore(user()['id'], 'uid'),
+                @Rule::unique('userdata', 'email')->ignore(user()['id'], 'uid'),
             ],
             'address'       => 'alpha_num',
             'sex'           => 'digits:1',

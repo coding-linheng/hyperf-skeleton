@@ -7,7 +7,6 @@ namespace App\Common;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use Hyperf\Redis\RedisProxy;
-use phpseclib3\Math\BigInteger;
 use Psr\Http\Message\ServerRequestInterface;
 
 
@@ -67,7 +66,7 @@ class Rcp
 
     public function __construct()
     {
-        $this->redis = redis("rcp");
+        $this->redis = redis('rcp');
         //加载风控配置json
         $res = $this->initRcpConfig();
 
@@ -256,10 +255,10 @@ class Rcp
     }
 
     /**
-     * 将Redis中统计的数据需要持久化的入库，保持Redis与数据库同步
+     * 将Redis中统计的数据需要持久化的入库，保持Redis与数据库同步.
      */
-    private function refreshRedisToMysql(){
-
+    private function refreshRedisToMysql()
+    {
     }
 
 
