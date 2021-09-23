@@ -28,8 +28,10 @@ class RequestMiddleware implements MiddlewareInterface
     {
         $params = $request->getServerParams();
         $params = array_merge($params, ['token' => $request->getHeader('authorization')[0] ?? '']);
-        $this->logger->info('server_params', $params);
-        $this->logger->info('request_params', $request->getParsedBody());
+        $this->logger->info('request', [
+            'headers' => var_export($params, true),
+            'params'  => var_export($request->getParsedBody(), true),
+        ]);
         return $handler->handle($request);
     }
 }

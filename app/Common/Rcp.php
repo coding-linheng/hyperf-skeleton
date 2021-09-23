@@ -9,12 +9,19 @@ use App\Exception\BusinessException;
 use Hyperf\Redis\RedisProxy;
 use Psr\Http\Message\ServerRequestInterface;
 
-
 /**
  * 处理一些风控逻辑.
  */
 class Rcp
 {
+    public const RCP_USER = 'RCP_USER_Z'; //用户访问次数，后缀Z表示使用Zset
+
+    public const RCP_IP = 'RCP_IP_Z'; //IP次数，使用Zset
+
+    public const RCP_URI = 'RCP_IP_Z'; //IP次数，使用Zset
+
+    public const RCP_USER_URI = 'RCP_USER_URI_Z'; //用户-uri 次数，使用Zset
+
     protected RedisProxy $redis;
 
     protected ServerRequestInterface $request;  //当前http请求
@@ -23,17 +30,9 @@ class Rcp
 
     protected array $configs;  //配置数组
 
-    const RCP_USER="RCP_USER_Z"; //用户访问次数，后缀Z表示使用Zset
-    const RCP_IP="RCP_IP_Z"; //IP次数，使用Zset
-    const RCP_URI="RCP_IP_Z"; //IP次数，使用Zset
-    const RCP_USER_URI="RCP_USER_URI_Z"; //用户-uri 次数，使用Zset
-
-
-
-
     public function __construct()
     {
-        $this->redis = redis("rcp");
+        $this->redis = redis('rcp');
         //加载风控配置json
         $res = $this->initRcpConfig();
 
@@ -136,12 +135,9 @@ class Rcp
     }
 
     /**
-     * 将Redis中统计的数据需要持久化的入库，保持Redis与数据库同步
+     * 将Redis中统计的数据需要持久化的入库，保持Redis与数据库同步.
      */
-    private function refreshRedisToMysql(){
-
+    private function refreshRedisToMysql()
+    {
     }
-
-
-
 }
