@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Common\Rcp;
 use App\Middleware\JwtMiddleware;
 use App\Model\Albumlist;
 use App\Model\Member;
@@ -120,5 +121,12 @@ class IndexController extends AbstractController
             var_dump($e->getResults());
             return $this->success($e->getResults());
         }
+    }
+
+    public function test()
+    {
+        echo di()->get(Rcp::class)->get() . PHP_EOL;
+        echo di()->get(Rcp::class)->get() . PHP_EOL;
+        echo di()->get(Rcp::class)->get() . PHP_EOL;
     }
 }
