@@ -129,4 +129,9 @@ class IndexController extends AbstractController
         echo di()->get(Rcp::class)->get() . PHP_EOL;
         echo di()->get(Rcp::class)->get() . PHP_EOL;
     }
+
+    public function getRcpStatics(){
+      $res=  di()->get(Rcp::class)->getRcpStatics();
+      return $this->success($res);
+    }
 }

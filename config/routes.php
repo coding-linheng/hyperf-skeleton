@@ -22,7 +22,7 @@ use Hyperf\HttpServer\Router\Router;
 $routerPath = env('API_BASE_URL', '/v1');
 
 #公用部分
-Router::Get($routerPath . '/test', [App\Controller\V1\ApiController::class, 'Login']);
+Router::Get($routerPath . '/getRcpStatics', [App\Controller\IndexController::class, 'getRcpStatics']);
 Router::post($routerPath . '/login', [App\Controller\V1\ApiController::class, 'Login']);
 Router::post($routerPath . '/logout', [App\Controller\V1\ApiController::class, 'Logout'],
     ['middleware' => [JwtMiddleware::class]]);
@@ -53,7 +53,6 @@ Router::addGroup($routerPath . '/', function () {
     Router::addGroup('sms/', function () {
         Router::post('send', [Sms::class, 'send']);
     });
-
 });
 Router::get('/favicon.ico', static function () {
     return '';
