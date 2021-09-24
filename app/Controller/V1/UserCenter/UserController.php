@@ -8,16 +8,22 @@ use App\Common\Sms;
 use App\Constants\ErrorCode;
 use App\Controller\AbstractController;
 use App\Exception\BusinessException;
-use App\Repositories\V1\UserRepository;
 use App\Request\User;
 use App\Services\SmsService;
+use App\Services\UserService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * 用户中心/资料处理.
+ */
 class UserController extends AbstractController
 {
     #[Inject]
     protected SmsService $smsService;
+
+    #[Inject]
+    protected UserService $userService;
 
     /*
      * 获取用户信息.
@@ -40,7 +46,7 @@ class UserController extends AbstractController
         if (empty($this->smsService->check($mobile, $captcha))) {
             throw new BusinessException(ErrorCode::ERROR, '验证码错误或已过期');
         }
-        $user      = make(UserRepository::class)->getUserData(user()['id']);
+        $user      = $this->userService->getUserData(user()['id']);
         $user->tel = $mobile;
         $user->save();
         Sms::flush($mobile, $event);
@@ -54,7 +60,7 @@ class UserController extends AbstractController
     {
         $request->scene('profile')->validateResolved();
         $params = $request->all();
-        $user   = make(UserRepository::class)->getUser(user()['id']);
+        $user   = $this->userService->getUser(user()['id']);
         $user->fill($params)->save();
         return $this->success();
     }
@@ -66,7 +72,7 @@ class UserController extends AbstractController
     {
         $request->scene('certification')->validateResolved();
         $params   = $request->all();
-        $userData = make(UserRepository::class)->getUserData(user()['id']);
+        $userData = $this->userService->getUserData(user()['id']);
 
         $userData->name     = $params['name'];
         $userData->tel      = $params['mobile'];
@@ -78,5 +84,16 @@ class UserController extends AbstractController
         $userData->cardimg1 = $params['id_card_false'];
         $userData->save();
         return $this->success();
+    }
+
+    /*
+     * 获取用户收入统计
+     */
+    public function getUserIncome(): ResponseInterface
+    {
+        $userid     = user()['id'];
+        $userMerge  = $this->userService->getUserMerge($userid, ['u.dc', 'u.score', 'u.money', 'd.total']);
+        $userIncome = $this->userService->getUserIncome($userid);
+        return $this->success(['income' => $userIncome, 'user' => $userMerge]);
     }
 }

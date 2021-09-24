@@ -31,18 +31,16 @@ class JwtMiddleware implements MiddlewareInterface
         $isValidToken = false;
         // 根据具体业务判断逻辑走向，这里假设用户携带的token有效
         // jwt所能获得获得用户信息在此添加
-        if ($auth->check()) {
-            $user = $auth->user();
+        if ($auth->check() && $user = $auth->user()) {
             $user = [
                 'id'       => $user['id'],
                 'username' => $user['username'],
             ];
-            //$rcp =  make(Rcp::class, [$request, $user]);
-            $rcpService = di()->get(Rcp::class);
-            //将uri 和用户丢入统计风控组件，计算是否本次应该放过同行
-            if (!$rcpService->check($request, $user)) {
-                throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, 'Service Unavailable Or Refused Request !');
-            }
+//            $rcpService = di()->get(Rcp::class);
+//            //将uri 和用户丢入统计风控组件，计算是否本次应该放过同行
+//            if (!$rcpService->check($request, $user)) {
+//                throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, 'Service Unavailable Or Refused Request !');
+//            }
             $request = Context::override(
                 ServerRequestInterface::class,
                 function (ServerRequestInterface $request) use ($user) {

@@ -13,19 +13,15 @@ class BaseProducer
 {
     /**
      * 队列名称.
-     * @var string
      */
-    protected $queueName = 'default';
+    protected string $queueName = 'default';
 
     /**
      * @var DriverFactory
      */
-    protected $driverFactory;
+    protected mixed $driverFactory;
 
-    /**
-     * @var DriverInterface
-     */
-    protected $queueDriver;
+    protected DriverInterface $queueDriver;
 
     public function __construct(ContainerInterface $container)
     {

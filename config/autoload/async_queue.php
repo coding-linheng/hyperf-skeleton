@@ -38,7 +38,7 @@ return [
         'timeout'        => 2,
         'retry_seconds'  => 5,
         'handle_timeout' => 10,
-        'processes'      => 2,
+        'processes'      => 1,
     ],
     'task_scheduler' => [
         'driver'         => App\Task\AsyncQueue\MyRedisDriver::class,

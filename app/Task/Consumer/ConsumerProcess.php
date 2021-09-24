@@ -9,11 +9,11 @@ use Hyperf\Contract\StdoutLoggerInterface;
 
 class ConsumerProcess extends \Hyperf\AsyncQueue\Process\ConsumerProcess
 {
-    protected $handlers = [];
+    protected array $handlers = [];
 
     public function handle(): void
     {
-        if (! $this->driver instanceof DriverInterface) {
+        if (!$this->driver instanceof DriverInterface) {
             $logger = $this->container->get(StdoutLoggerInterface::class);
             $logger->critical(sprintf('[CRITICAL] process %s is not work as expected, please check the config in [%s]', \Hyperf\AsyncQueue\Process\ConsumerProcess::class, 'config/autoload/queue.php'));
             return;

@@ -33,6 +33,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::post('bindMobile', [UserController::class, 'bindMobile']);
         Router::post('profile', [UserController::class, 'profile']);
         Router::post('certification', [UserController::class, 'certification']);
+        Router::post('getUserIncome', [UserController::class, 'getUserIncome']);
     });
 
     #工具类

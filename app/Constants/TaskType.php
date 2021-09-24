@@ -7,15 +7,16 @@ namespace App\Constants;
 class TaskType
 {
     // 登录时候触发的任务
-    const ACCOUNT_LOGIN = 1;
+    public const ACCOUNT_LOGIN = 1;
+
     // 测试
-    const ACCOUNT_TEST = 99999;
+    public const ACCOUNT_TEST = 99999;
 
     // 记录请求日志
-    const RECORD_REQUEST_LOG = 1001;
+    public const RECORD_REQUEST_LOG = 1001;
 
     /**
-     * 获取计划任务类型
+     * 获取计划任务类型.
      *
      * @return array
      */
@@ -26,5 +27,4 @@ class TaskType
             self::RECORD_REQUEST_LOG      => '记录请求日志',
         ];
     }
-
 }
