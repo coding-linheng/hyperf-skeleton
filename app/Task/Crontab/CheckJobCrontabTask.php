@@ -22,12 +22,6 @@ class CheckJobCrontabTask
      */
     protected $logger;
 
-    /**
-     * @Inject()
-     * @var Crontab
-     */
-    protected $crontab;
-
     public function execute()
     {
         $startTime         = time();

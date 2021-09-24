@@ -137,7 +137,7 @@ class Rcp
                 throw new BusinessException(ErrorCode::SERVER_RCP_ERROR);
             }
             return true;
-        } catch (Exception|Throwable $e) {
+        } catch (\Exception|Throwable $e) {
             throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, $e->getMessage());
         }
     }
