@@ -16,6 +16,6 @@ class AccountPlanConsumer extends ConsumerProcess
 {
     protected $queue = 'account_plan';
 
-    protected $handlers = [
+    protected array $handlers = [
     ];
 }

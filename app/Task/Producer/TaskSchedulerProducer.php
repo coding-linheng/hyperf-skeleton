@@ -8,9 +8,8 @@ class TaskSchedulerProducer extends BaseProducer
 {
     /**
      * 队列名称.
-     * @var string
      */
-    protected $queueName = 'job_task_scheduler';
+    protected string $queueName = 'task_scheduler';
 
     public function addTask(int $taskType, array $data, int $delay = 0): bool
     {

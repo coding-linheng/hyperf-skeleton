@@ -9,7 +9,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 
 class ConsumerProcess extends \Hyperf\AsyncQueue\Process\ConsumerProcess
 {
-    protected $handlers = [];
+    protected array $handlers = [];
 
     public function handle(): void
     {

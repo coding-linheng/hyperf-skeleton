@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Common;
 
 use App\Constants\ErrorCode;
+use App\Constants\TaskType;
 use App\Exception\BusinessException;
-use App\Task\Producer\LoggerPlanProducer;
+use App\Task\Producer\TaskSchedulerProducer;
+use Exception;
 use Hyperf\Redis\RedisProxy;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 /**
  * 处理一些风控逻辑.
@@ -93,7 +96,7 @@ class Rcp
     /**
      * 检查是否触发现有风控规则和模型.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function check(ServerRequestInterface $request, array $user): bool
     {
@@ -131,8 +134,8 @@ class Rcp
                 throw new BusinessException(ErrorCode::SERVER_RCP_ERROR);
             }
             return true;
-        } catch (\Exception $e) {
-            throw new $e();
+        } catch (Exception|Throwable $e) {
+            throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, $e->getMessage());
         }
     }
 
@@ -193,8 +196,7 @@ class Rcp
      */
     private function checkRcp(): bool
     {
-        return $this->checkRcpByIp() && $this->checkRcpByUriIp() && $this->checkRcpByUser()
-                                     && $this->checkRcpByUserUri();
+        return $this->checkRcpByIp() && $this->checkRcpByUriIp() && $this->checkRcpByUser() && $this->checkRcpByUserUri();
     }
 
     /**
@@ -361,16 +363,16 @@ class Rcp
      */
     private function pushLogs()
     {
-        $loggerData         = $this->formatLogParams();
-        $loggerProducerTask = di()->get(LoggerPlanProducer::class);
+        $loggerData = $this->formatLogParams();
+        $task       = di()->get(TaskSchedulerProducer::class);
         //将请求日志推入异步队列记录入库
-        $loggerProducerTask->recordRequestLog($loggerData, 0);
+        $task->addTask(TaskType::RECORD_REQUEST_LOG, $loggerData);
     }
 
     /**
      *  格式化日志参数.
      */
-    private function formatLogParams()
+    private function formatLogParams(): array
     {
         return [
             'ip'             => $this->ip,

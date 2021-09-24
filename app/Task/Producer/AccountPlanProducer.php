@@ -8,9 +8,8 @@ class AccountPlanProducer extends BaseProducer
 {
     /**
      * 队列名称.
-     * @var string
      */
-    protected $queueName = 'account_plan';
+    protected string $queueName = 'account_plan';
 
     /**
      * 添加账号即注册.

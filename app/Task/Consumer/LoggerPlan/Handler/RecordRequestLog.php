@@ -6,9 +6,10 @@ namespace App\Task\Consumer\LoggerPlan\Handler;
 
 class RecordRequestLog
 {
-    public function __invoke(array $data)
+    public function __invoke(array $data): bool
     {
         try {
+            echo __CLASS__ . PHP_EOL;
             var_dump($data);
         } catch (\Throwable $exception) {
             var_dump($data);

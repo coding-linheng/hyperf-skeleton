@@ -11,19 +11,14 @@ class RecordRequestLog
 {
     /**
      * @Inject
-     * @var LoggerPlanProducer
      */
-    protected $loggerPlanProducer;
+    protected LoggerPlanProducer $loggerPlanProducer;
 
-    public function __invoke(array $data)
+    public function __invoke(array $data): bool
     {
-        foreach ($data as $key => $account) {
-            $data = [
-                'ip_group_id'  => $data['ip_group_id'],
-                'area'         => $data['area'],
-                'is_last'      => 0,
-            ];
-            $this->loggerPlanProducer->recordRequestLog($data);
-        }
+        echo __CLASS__ . PHP_EOL;
+        var_dump($data);
+        $this->loggerPlanProducer->recordRequestLog($data);
+        return true;
     }
 }

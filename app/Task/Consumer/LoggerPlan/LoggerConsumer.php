@@ -17,7 +17,7 @@ class LoggerConsumer extends ConsumerProcess
 {
     protected $queue = 'logger_plan';
 
-    protected $handlers = [
+    protected array $handlers = [
         'RECORD_REQUEST_LOG'        => RecordRequestLog::class,
     ];
 }
