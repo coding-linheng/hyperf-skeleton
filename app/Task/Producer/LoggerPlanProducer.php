@@ -7,17 +7,13 @@ namespace App\Task\Producer;
 class LoggerPlanProducer extends BaseProducer
 {
     /**
-     * 队列名称
+     * 队列名称.
      * @var string
      */
     protected $queueName = 'logger_plan';
 
     /**
-     * 添加账号即注册
-     *
-     * @param   array  $data
-     * @param   int  $delay
-     * @return bool
+     * 添加账号即注册.
      */
     public function recordRequestLog(array $data, int $delay = 0): bool
     {
@@ -28,6 +24,4 @@ class LoggerPlanProducer extends BaseProducer
 
         return $this->push($newData, $delay);
     }
-
-
 }

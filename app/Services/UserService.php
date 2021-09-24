@@ -9,6 +9,7 @@ use App\Exception\BusinessException;
 use App\Model\User;
 use App\Model\Userdata;
 use App\Repositories\V1\UserRepository;
+use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -21,7 +22,8 @@ class UserService extends BaseService
     protected UserRepository $userRepository;
 
     /**
-     * 用户登录.
+     * @param string $username 账号
+     * @param string $password 密码
      */
     public function login(string $username, string $password): User
     {
@@ -54,7 +56,7 @@ class UserService extends BaseService
         return $this->userRepository->getUser($userid);
     }
 
-    public function getUserMerge(int $userid, array $column = ['*']): User
+    public function getUserMerge(int $userid, array $column = ['*']): Model
     {
         return $this->userRepository->getUserMerge($userid, $column);
     }

@@ -7,17 +7,13 @@ namespace App\Task\Producer;
 class AccountPlanProducer extends BaseProducer
 {
     /**
-     * 队列名称
+     * 队列名称.
      * @var string
      */
     protected $queueName = 'account_plan';
 
     /**
-     * 添加账号即注册
-     *
-     * @param   array  $data
-     * @param   int  $delay
-     * @return bool
+     * 添加账号即注册.
      */
     public function accountAdd(array $data, int $delay = 0): bool
     {
@@ -29,13 +25,8 @@ class AccountPlanProducer extends BaseProducer
         return $this->push($newData, $delay);
     }
 
-
     /**
-     * 登陆
-     *
-     * @param   array  $data
-     * @param   int  $delay
-     * @return bool
+     * 登陆.
      */
     public function login(array $data, int $delay = 0): bool
     {
@@ -48,11 +39,7 @@ class AccountPlanProducer extends BaseProducer
     }
 
     /**
-     * 退出
-     *
-     * @param   array  $data
-     * @param   int  $delay
-     * @return bool
+     * 退出.
      */
     public function logout(array $data, int $delay = 0): bool
     {
@@ -64,13 +51,8 @@ class AccountPlanProducer extends BaseProducer
         return $this->push($newData, $delay);
     }
 
-
     /**
      * 修改密码
-     *
-     * @param   array  $data
-     * @param   int  $delay
-     * @return bool
      */
     public function resetPassword(array $data, int $delay = 0): bool
     {
@@ -81,6 +63,4 @@ class AccountPlanProducer extends BaseProducer
 
         return $this->push($newData, $delay);
     }
-
-
 }

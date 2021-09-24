@@ -30,6 +30,7 @@ class MyRedisDriver extends RedisDriver
             try {
                 if ($message instanceof MessageInterface) {
                     $this->event && $this->event->dispatch(new BeforeHandle($message));
+
                     if ($this->process instanceof ConsumerProcess && method_exists($this->process, 'job')) {
                         $params = $message->job()->handle();
                         $this->process->job($params);

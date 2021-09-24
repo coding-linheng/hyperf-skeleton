@@ -12,6 +12,7 @@ use App\Model\Daywaterdc;
 use App\Model\User;
 use App\Model\Userdata;
 use App\Repositories\BaseRepository;
+use Hyperf\Database\Model\Model;
 
 /**
  * 用户库.
@@ -46,9 +47,8 @@ class UserRepository extends BaseRepository
         return $user;
     }
 
-    public function getUserMerge(int $userid, $column = ['*']): User
+    public function getUserMerge(int $userid, $column = ['*']): Model
     {
-        /** @var User $user */
         return User::from('user as u')->join('userdata as d', 'u.id', '=', 'd.uid')
             ->where('u.id', $userid)
             ->select($column)->first();
