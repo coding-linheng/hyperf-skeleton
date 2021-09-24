@@ -21,7 +21,7 @@ class Rcp
 
     protected array $user;   //当前用户，可以为空
 
-    protected BigInteger $userCode;   //当前用户编码，唯一标记即可，默认使用id,可以为空
+    protected string $userCode;   //当前用户编码，唯一标记即可，默认使用id,可以为空
 
     protected array $configs;  //配置数组
 
@@ -99,16 +99,23 @@ class Rcp
         $this->user    = $user;
         $this->uri = $this->request->getUri()->getPath();
         $this->ip = get_client_ip();
-        $this->userCode=$user['id']??0;
+        $this->userCode=strval($user['id']??0);
+
+        if(empty($this->ip) || empty($this->uri)){
+            throw new BusinessException(ErrorCode::SERVER_RCP_ERROR,"系统评估您为非法访问！");
+        }
+
+        //记录日志
+        $this->pushLogs();
 
         //判断是否属于黑名单，如果属于直接报错
         if (!$this->checkRcpBlackList()) {
-          throw new BusinessException(ErrorCode::SERVER_RCP_ERROR,"您已限制访问");
+          throw new BusinessException(ErrorCode::SERVER_RCP_ERROR,"您已被系统限制访问！");
         }
 
         //防CC，防爬虫等公用策略
         if (!$this->checkRcp()) {
-            throw new BusinessException(ErrorCode::SERVER_RCP_ERROR,"您已暂时限制部分访问");
+            throw new BusinessException(ErrorCode::SERVER_RCP_ERROR,"您访问过于频繁！");
         }
         //定制风控策略
         if ($this->checkSpecialRcp()) {
@@ -159,7 +166,7 @@ class Rcp
      */
     private function checkRcp(): bool
     {
-        return $this->checkRcpByIp() && $this->checkRcpByUri() && $this->checkRcpByUser();
+        return $this->checkRcpByIp() && $this->checkRcpByUriIp() && $this->checkRcpByUser() && $this->checkRcpByUserUri();
     }
 
     /**
@@ -173,62 +180,17 @@ class Rcp
 
         //组合策略，按着性能损耗优先级排序执行对应的函数，根据综合评分是否风控
 
-        return $this->checkRcpByIp();
+        return true;
     }
 
 
     /**
-     * 检查访问该路径的风控是否触发.
+     * 检查访Ip问该路径的风控是否触发.
      */
-    private function checkRcpByUri(): bool
+    private function checkRcpByUriIp(): bool
     {
-        $this->RCP_IP_URI_DEFAULT_LIMIT=$this->configs["limit_count"]["uri_day_limit"]??$this->RCP_IP_URI_DEFAULT_LIMIT;
-
-        //检查当前ip，账号一分钟内访问该Url次数
-        if($this->redis->exists(self::RCP_IP_URI.date("YmdHi"))){
-          //当前次数+1
-          $mTimes= $this->redis->zIncrBy(self::RCP_IP_URI.date("YmdHi"),1,$this->uri."-".$this->ip);
-          if($mTimes>=intval($this->RCP_IP_URI_DEFAULT_LIMIT*20/(24*60))){
-             return false;
-          }
-        }else{
-          //新增key
-          $this->redis->zAdd(self::RCP_IP_URI.date("YmdHi"),1,$this->uri."-".$this->ip);
-          //设置过期时间
-          $this->redis->expire(self::RCP_IP_URI.date("YmdHi"),60);
-        }
-
-        //检查当前ip，账号一小时内访问该Url次数
-        if($this->redis->exists(self::RCP_IP_URI.date("YmdH"))){
-          //当前次数+1
-          $hTimes=$this->redis->zIncrBy(self::RCP_IP_URI.date("YmdH"),1,$this->uri."-".$this->ip);
-          if($hTimes>=intval($this->RCP_IP_URI_DEFAULT_LIMIT*5/(24))){
-            return false;
-          }
-        }else{
-          //新增key
-          $this->redis->zAdd(self::RCP_IP_URI.date("YmdH"),1,$this->uri."-".$this->ip);
-          //设置过期时间
-          $this->redis->expire(self::RCP_IP_URI.date("YmdH"),3600);
-        }
-
-        //检查当前ip，账号一天内访问该Url次数
-        if($this->redis->exists(self::RCP_IP_URI.date("Ymd"))){
-          //当前次数+1
-          $dayTimes = $this->redis->zIncrBy(self::RCP_IP_URI.date("Ymd"),1,$this->uri."-".$this->ip);
-        }else{
-          //新增key
-          $dayTimes =1;
-          $this->redis->zAdd(self::RCP_IP_URI.date("Ymd"),1,$this->uri."-".$this->ip);
-          //设置过期时间
-          $this->redis->expire(self::RCP_IP_URI.date("Ymd"),3600*24);
-        }
-        if($dayTimes>$this->RCP_IP_URI_DEFAULT_LIMIT){
-          $this->redis->zIncrBy(self::RCP_DAY_BLACK_IP,1,$this->ip);
-          $this->redis->zIncrBy(self::RCP_BLACK_IP,1,$this->ip);
-        }
-
-        return true;
+        $this->RCP_IP_URI_DEFAULT_LIMIT=$this->configs["limit_count"]["ip_uri_day_limit"]??$this->RCP_IP_URI_DEFAULT_LIMIT;
+        return $this->checkRcpByParams(self::RCP_IP_URI,$this->RCP_IP_URI_DEFAULT_LIMIT,$this->uri."-".$this->ip);
     }
 
     /**
@@ -236,11 +198,23 @@ class Rcp
      */
     private function checkRcpByUser(): bool
     {
-        //检查当前用户一分钟内访问次数
-        //检查当前用户一小时内访问次数
-        //检查当前用户一天内访问次数
-        //检查当前用户总访问次数
-        return true;
+        if(empty($this->userCode)){
+            return true;
+        }
+        $this->RCP_USER_DEFAULT_LIMIT=$this->configs["limit_count"]["user_day_limit"]??$this->RCP_USER_DEFAULT_LIMIT;
+        return $this->checkRcpByParams(self::RCP_USER,$this->RCP_USER_DEFAULT_LIMIT,$this->userCode);
+    }
+
+    /**
+     * 检查访问用户-Uri是否是否触发风控.
+     */
+    private function checkRcpByUserUri(): bool
+    {
+        if(empty($this->userCode)){
+            return true;
+        }
+        $this->RCP_USER_URI_DEFAULT_LIMIT=$this->configs["limit_count"]["user_uri_day_limit"]??$this->RCP_USER_URI_DEFAULT_LIMIT;
+        return $this->checkRcpByParams(self::RCP_USER_URI,$this->RCP_USER_URI_DEFAULT_LIMIT,$this->userCode.'-'.$this->uri);
     }
 
     /**
@@ -248,10 +222,91 @@ class Rcp
      */
     private function checkRcpByIp(): bool
     {
-        //检查当前ip一分钟内访问次数
-        //检查当前ip一小时内访问次数
-        //检查当前ip一天内访问次数
-        //检查当前ip总访问次数
+        $this->RCP_IP_DEFAULT_LIMIT=$this->configs["limit_count"]["ip_day_limit"]??$this->RCP_IP_DEFAULT_LIMIT;
+        return $this->checkRcpByParams(self::RCP_IP,$this->RCP_IP_DEFAULT_LIMIT,$this->ip);
+    }
+
+    /**
+     * 检查访问该路径的风控是否触发.
+     *
+     * @param $key
+     * @param $limit
+     * @param $member
+     *
+     * @return bool
+     */
+    private function checkRcpByParams($key,$limit,$member): bool
+    {
+        //一分钟内访问次数
+        if($this->redis->exists($key.date("YmdHi"))){
+            //当前次数+1
+            $mTimes= $this->redis->zIncrBy($key.date("YmdHi"),1,$member);
+            if($mTimes>=intval($limit*20/(24*60))){
+                return false;
+            }
+        }else{
+            //新增key
+            $this->redis->zAdd($key.date("YmdHi"),1,$member);
+            //设置过期时间
+            $this->redis->expire($key.date("YmdHi"),60);
+        }
+
+        //检查一小时内访问次数
+        if($this->redis->exists($key.date("YmdH"))){
+            //当前次数+1
+            $hTimes=$this->redis->zIncrBy($key.date("YmdH"),1,$member);
+            if($hTimes>=intval($limit*5/(24))){
+                return false;
+            }
+        }else{
+            //新增key
+            $this->redis->zAdd($key.date("YmdH"),1,$member);
+            //设置过期时间
+            $this->redis->expire($key.date("YmdH"),3600);
+        }
+
+        //检查一天内访问次数
+        if($this->redis->exists($key.date("Ymd"))){
+            //当前次数+1
+            $dayTimes = $this->redis->zIncrBy($key.date("Ymd"),1,$member);
+        }else{
+            //新增key
+            $dayTimes =1;
+            $this->redis->zAdd($key.date("Ymd"),1,$member);
+            //设置过期时间
+            $this->redis->expire($key.date("Ymd"),3600*24);
+        }
+
+        //判断类型，增加黑名单
+        $blackKey= $blackDayKey=$blackMember="";
+        switch ($key){
+            case self::RCP_USER:
+                $blackMember=$this->userCode;
+                $blackKey=self::RCP_DAY_BLACK_USER;
+                $blackDayKey=self::RCP_BLACK_USER;
+                break;
+            case self::RCP_IP_URI:
+            case self::RCP_IP:
+                $blackMember=$this->ip;
+                $blackKey=self::RCP_DAY_BLACK_IP;
+                $blackDayKey=self::RCP_BLACK_IP;
+                break;
+            case self::RCP_USER_URI:
+                $blackMember=$member;
+                $blackKey=self::RCP_DAY_BLACK_USER;
+                $blackDayKey=self::RCP_BLACK_USER;
+                break;
+            default:
+                break;
+        }
+        if(empty($blackKey) || empty($blackDayKey)){
+            return true;
+        }
+        if($dayTimes>$limit && !empty($blackMember)){
+            $this->redis->zIncrBy($blackDayKey,1,$blackMember);
+            $this->redis->zIncrBy($blackKey,1,$blackMember);
+            return false;
+        }
         return true;
     }
 
@@ -260,8 +315,17 @@ class Rcp
      */
     private function refreshRedisToMysql()
     {
+        //将缓存中的黑名单同步入数据库
+
+        //将缓存中的总/当天的访问次数同步入数据库，取俩者中的大者
+
     }
 
-
-
+    /**
+     * 将Redis中统计的数据需要持久化的入库，保持Redis与数据库同步.
+     */
+    private function pushLogs()
+    {
+        //将请求日志推入异步队列记录入库
+    }
 }
