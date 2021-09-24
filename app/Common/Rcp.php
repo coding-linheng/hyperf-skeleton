@@ -34,9 +34,9 @@ class Rcp
 
     public const RCP_BLACK_IP = 'RCP_BLACK_IP_Z'; //永久用户IP黑名单
 
-    public const RCP_DAY_BLACK_USER = 'RCP_DAY_BLACK_IP_Z'; //用户当天临时黑名单,连续3次进入该名单则被拉入永久封禁
+    public const RCP_DAY_BLACK_USER = 'RCP_DAY_BLACK_USER_Z'; //用户当天临时黑名单,连续3次进入该名单则被拉入永久封禁
 
-    public const RCP_BLACK_USER = 'RCP_BLACK_IP_Z'; //永久用户黑名单
+    public const RCP_BLACK_USER = 'RCP_BLACK_USER_Z'; //永久用户黑名单
 
     /* 日志入库  */
 
