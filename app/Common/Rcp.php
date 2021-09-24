@@ -4,18 +4,21 @@ declare(strict_types=1);
 
 namespace App\Common;
 
+use App\Common\RcpRedis;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Task\Producer\LoggerPlanProducer;
-use Hyperf\Redis\RedisProxy;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
+use Hyperf\Di\Annotation\Inject;
 
 /**
  * 处理一些风控逻辑.
  */
 class Rcp
 {
+    #[Inject]
+    protected RcpRedis $redis;
 
     public const RCP_USER = 'RCP_USER_Z'; //用户访问次数，后缀Z表示使用Zset
 
@@ -42,8 +45,6 @@ class Rcp
     //请求参数日志列表，经过整理后入库，后续看日志量决定是否存入日志分析库
     public const RCP_LOG_DETAIL_LIST = 'RCP_USER_URI_Z';
 
-    protected RedisProxy $redis;
-
     protected ServerRequestInterface $request;  //当前http请求
 
     protected array $user;   //当前用户，可以为空
@@ -68,7 +69,6 @@ class Rcp
 
     public function __construct()
     {
-        $this->redis = redis('rcp');
         //加载风控配置json
         $res = $this->initRcpConfig();
 
@@ -199,7 +199,9 @@ class Rcp
      */
     private function checkRcp(): bool
     {
-        return $this->checkRcpByIp() && $this->checkRcpByUriIp() && $this->checkRcpByUser() && $this->checkRcpByUserUri();
+
+     return $this->checkRcpByIp() && $this->checkRcpByUriIp() && $this->checkRcpByUser() && $this->checkRcpByUserUri();
+
     }
 
     /**
@@ -277,21 +279,25 @@ class Rcp
      */
     private function checkRcpByParams($key, $limit, $member): bool
     {
+        echo "1aaaaa".PHP_EOL;
         //一分钟内访问次数
         if ($this->redis->exists($key . date('YmdHi'))) {
+          echo "11aaaaa".PHP_EOL;
             //当前次数+1
             $mTimes = $this->redis->zIncrBy($key . date('YmdHi'), 1, $member);
-
+          echo "12aaaaa".PHP_EOL;
             if ($mTimes >= intval($limit * 20 / (24 * 60))) {
                 return false;
             }
         } else {
+          echo "13aaaaa".PHP_EOL;
             //新增key
             $this->redis->zAdd($key . date('YmdHi'), 1, $member);
             //设置过期时间
+          echo "14aaaaa".PHP_EOL;
             $this->redis->expire($key . date('YmdHi'), 60);
         }
-
+      echo "2aaaaa".PHP_EOL;
         //检查一小时内访问次数
         if ($this->redis->exists($key . date('YmdH'))) {
             //当前次数+1
@@ -306,7 +312,7 @@ class Rcp
             //设置过期时间
             $this->redis->expire($key . date('YmdH'), 3600);
         }
-
+      echo "3aaaaa".PHP_EOL;
         //检查一天内访问次数
         if ($this->redis->exists($key . date('Ymd'))) {
             //当前次数+1
