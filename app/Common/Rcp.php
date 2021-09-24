@@ -6,6 +6,7 @@ namespace App\Common;
 
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
+use App\Model\PaintCountry;
 use Hyperf\Redis\RedisProxy;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -92,6 +93,11 @@ class Rcp
 
     /**
      * 检查是否触发现有风控规则和模型.
+     *
+     * @param  ServerRequestInterface  $request
+     * @param  array                   $user
+     *
+     * @return bool
      */
     public function check(ServerRequestInterface $request, array $user): bool
     {
@@ -101,8 +107,14 @@ class Rcp
         $this->ip = get_client_ip();
         $this->userCode=strval($user['id']??0);
 
+        //判断是否有IP，和uri
         if(empty($this->ip) || empty($this->uri)){
             throw new BusinessException(ErrorCode::SERVER_RCP_ERROR,"系统评估您为非法访问！");
+        }
+
+        //判断是否为接口，静态页面如果不是特殊资源不参与判断
+        if($this->isStatic()){
+            return true;
         }
 
         //记录日志
@@ -118,8 +130,19 @@ class Rcp
             throw new BusinessException(ErrorCode::SERVER_RCP_ERROR,"您访问过于频繁！");
         }
         //定制风控策略
-        if ($this->checkSpecialRcp()) {
+        if (!$this->checkSpecialRcp()) {
             throw new BusinessException(ErrorCode::SERVER_RCP_ERROR);
+        }
+        return true;
+    }
+
+    /**
+     * 检查风控是否触发.公共策略部分检查.
+     */
+    private function isStatic(){
+        //将uri 拆开如果包含v1则表示不是静态
+        if(strpos($this->uri,"/v1")!==false){
+            return  false;
         }
         return true;
     }
