@@ -138,7 +138,7 @@ class Rcp
             }
             return true;
         } catch (\Exception $e) {
-            throw new $e;
+            throw new BusinessException($e->getCode(),$e->getMessage());
         }
     }
 
