@@ -7,6 +7,9 @@ namespace App\Services;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Model\User;
+use App\Model\Userdata;
+use App\Repositories\V1\UserRepository;
+use Hyperf\Di\Annotation\Inject;
 
 /**
  * UserService
@@ -14,6 +17,9 @@ use App\Model\User;
  */
 class UserService extends BaseService
 {
+    #[Inject]
+    protected UserRepository $userRepository;
+
     /**
      * 用户登录.
      */
@@ -36,5 +42,35 @@ class UserService extends BaseService
         $user->contentId = $user['id'];
 
         return $user;
+    }
+
+    public function getUserData(int $userid): Userdata
+    {
+        return $this->userRepository->getUserData($userid);
+    }
+
+    public function getUser(int $userid): User
+    {
+        return $this->userRepository->getUser($userid);
+    }
+
+    public function getUserMerge(int $userid, array $column = ['*']): User
+    {
+        return $this->userRepository->getUserMerge($userid, $column);
+    }
+
+    /**
+     * 获取用户收入数据.
+     */
+    public function getUserIncome(int $userid): array
+    {
+        return [
+            'day'        => $this->userRepository->todayIncome($userid) ?? 0,
+            'yesterday'  => $this->userRepository->yesterdayIncome($userid) ?? 0,
+            'this_week'  => $this->userRepository->thisWeekIncome($userid) ?? 0,
+            'last_week'  => $this->userRepository->lastWeekIncome($userid) ?? 0,
+            'this_month' => $this->userRepository->thisMonthIncome($userid) ?? 0,
+            'last_month' => $this->userRepository->lastMonthIncome($userid) ?? 0,
+        ];
     }
 }

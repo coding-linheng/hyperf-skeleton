@@ -32,14 +32,14 @@ class RequestMiddleware implements MiddlewareInterface
         $params = $request->getServerParams();
         $params = array_merge($params, ['token' => $request->getHeader('authorization')[0] ?? '']);
         $this->logger->info('request', [
-            'headers' => var_export($params, true),
-            'params'  => var_export($request->getParsedBody(), true),
+            'headers' => $params,
+            'params'  => $request->getParsedBody(),
         ]);
-        $rcpService = di()->get(Rcp::class);
-        //将uri 和用户丢入统计风控组件，计算是否本次应该放过同行
-        if (!$rcpService->check($request, [])) {
-            throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, 'Service Unavailable Or Refused Request !');
-        }
+//        $rcpService = di()->get(Rcp::class);
+//        //将uri 和用户丢入统计风控组件，计算是否本次应该放过同行
+//        if (!$rcpService->check($request, [])) {
+//            throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, 'Service Unavailable Or Refused Request !');
+//        }
         return $handler->handle($request);
     }
 }
