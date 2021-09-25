@@ -75,20 +75,20 @@ class Rcp
   protected int $RCP_USER_URI_DEFAULT_LIMIT = 500; // 用户每天访问某个具体URI默认限制次数
 
   public function __construct() {
-    //加载风控配置json
-    $res = $this->initRcpConfig();
-
-        if (!$res) {
-            throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, '初始化配置失败！');
-        }
+     //加载风控配置json
+     $res = $this->initRcpConfig();
+      if (!$res) {
+          throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, '初始化配置失败！');
+      }
     }
 
-    /**
-     * 克隆方法私有化，防止复制实例.
-     */
-    private function __clone()
-    {
-    }
+//
+//    /**
+//     * 克隆方法私有化，防止复制实例.
+//     */
+//    private function __clone()
+//    {
+//    }
 
     /**
      * 初始化配置，清除redis配置缓存，从数据库加载对应的策略放入redis里面.
