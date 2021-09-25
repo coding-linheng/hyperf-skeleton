@@ -36,13 +36,6 @@ class JwtMiddleware implements MiddlewareInterface
                 'id'       => $user['id'],
                 'username' => $user['username'],
             ];
-
-            if (!empty(env('RCP_OPEN', 0))) {
-                $rcpService = di()->get(Rcp::class);
-                //将uri 和用户丢入统计风控组件，计算是否本次应该放过同行
-                $rcpService->check($request, $user);
-            }
-
             $request = Context::override(
                 ServerRequestInterface::class,
                 function (ServerRequestInterface $request) use ($user) {
