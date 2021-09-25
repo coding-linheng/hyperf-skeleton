@@ -10,7 +10,6 @@ class RecordRequestLog
     {
         try {
             echo __CLASS__ . PHP_EOL;
-            var_dump($data);
         } catch (\Throwable $exception) {
             var_dump($data);
         } finally {

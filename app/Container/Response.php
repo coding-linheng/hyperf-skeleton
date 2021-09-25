@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Container;
 
+use App\Exception\BusinessException;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
@@ -45,16 +46,9 @@ class Response
 
     /**
      * error响应  方便以后扩展.
-     * @param null $data
      */
-    public function error(int $code = 1, ?string $msg = 'error', $data = null): PsrResponseInterface
+    public function error(int $code, ?string $msg = null)
     {
-        $data = [
-            'code' => $code,
-            'msg'  => $msg,
-            'data' => $data,
-        ];
-
-        return $this->json($data);
+        throw new BusinessException($code, $msg);
     }
 }

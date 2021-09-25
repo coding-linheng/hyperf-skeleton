@@ -6,6 +6,7 @@ namespace App\Controller\V1\UserCenter;
 
 use App\Common\Sms;
 use App\Constants\ErrorCode;
+use App\Constants\UserCenterStatus;
 use App\Controller\AbstractController;
 use App\Exception\BusinessException;
 use App\Request\User;
@@ -30,7 +31,11 @@ class UserController extends AbstractController
      */
     public function getUserinfo(): ResponseInterface
     {
-        return $this->response->success(user());
+        $field = [
+            'u.id', 'u.openid', 'u.unionid', 'u.nickname', 'u.imghead', 'u.email', 'u.sex', 'u.address', 'u.content',
+            'u.score', 'u.dc', 'u.money', 'u.qi', 'u.fans', 'u.guan', 'u.isview', 'd.qq', 'u.wx',
+        ];
+        return $this->response->success($this->userService->getUserMerge(user()['id'], $field));
     }
 
     /*
@@ -66,13 +71,17 @@ class UserController extends AbstractController
     }
 
     /*
-     * 申请
+     * 申请认证
      */
     public function certification(User $request): ResponseInterface
     {
         $request->scene('certification')->validateResolved();
         $params   = $request->all();
         $userData = $this->userService->getUserData(user()['id']);
+
+        if ($userData->status == UserCenterStatus::USER_CERT_IS_PASS) {
+            $this->error('已通过审核,不能修改');
+        }
 
         $userData->name     = $params['name'];
         $userData->tel      = $params['mobile'];
@@ -82,6 +91,7 @@ class UserController extends AbstractController
         $userData->email    = $params['email'];
         $userData->cardimg  = $params['id_card_true'];
         $userData->cardimg1 = $params['id_card_false'];
+        $userData->status   = UserCenterStatus::USER_CERT_IS_SUBMIT;
         $userData->save();
         return $this->success();
     }
@@ -94,6 +104,6 @@ class UserController extends AbstractController
         $userid     = user()['id'];
         $userMerge  = $this->userService->getUserMerge($userid, ['u.dc', 'u.score', 'u.money', 'd.total']);
         $userIncome = $this->userService->getUserIncome($userid);
-        return $this->success(['income' => $userIncome, 'user' => $userMerge]);
+        return $this->success(array_merge($userMerge->toArray(), $userIncome));
     }
 }

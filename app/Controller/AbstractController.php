@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Constants\ErrorCode;
 use App\Constants\StatusCode;
 use App\Container\Response;
 use Hyperf\Di\Annotation\Inject;
@@ -119,11 +120,12 @@ abstract class AbstractController
     }
 
     /**
-     * @param null $data
+     * @param null|string $msg 错误消息
+     * @param int $code 错误代码
      */
-    public function error(int $code = StatusCode::ERR_EXCEPTION, string $msg = 'error', $data = null): ResponseInterface
+    public function error(?string $msg = null, int $code = ErrorCode::ERROR)
     {
-        return $this->response->error($code, $msg, $data);
+        $this->response->error($code, $msg);
     }
 
     /**

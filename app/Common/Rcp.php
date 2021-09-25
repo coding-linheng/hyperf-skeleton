@@ -29,55 +29,54 @@ class Rcp
 
     public const RCP_USER = 'RCP_USER_Z'; //用户访问次数，后缀Z表示使用Zset
 
-    public const RCP_IP = 'RCP_IP_Z'; //IP次数，使用Zset
+  public const RCP_IP = 'RCP_IP_Z'; //IP次数，使用Zset
 
-    public const RCP_USER_AGENT = 'RCP_USER_AGENT_Z'; //USER_AGENT次数，使用Zset
+  public const RCP_USER_AGENT = 'RCP_USER_AGENT_Z'; //USER_AGENT次数，使用Zset
 
-    public const RCP_IP_URI = 'RCP_IP_URI_Z'; //URI次数，使用Zset
+  public const RCP_IP_URI = 'RCP_IP_URI_Z'; //URI次数，使用Zset
 
-    public const RCP_USER_URI = 'RCP_USER_URI_Z'; //用户-uri 次数，使用Zset
+  public const RCP_USER_URI = 'RCP_USER_URI_Z'; //用户-uri 次数，使用Zset
 
-    /* 黑名单  */
+  /* 黑名单  */
 
-    public const RCP_DAY_BLACK_IP = 'RCP_DAY_BLACK_IP_Z'; //用户当天临时IP黑名单,连续3次进入该名单则被拉入永久封禁
+  public const RCP_DAY_BLACK_IP = 'RCP_DAY_BLACK_IP_Z'; //用户当天临时IP黑名单,连续3次进入该名单则被拉入永久封禁
 
-    public const RCP_BLACK_IP = 'RCP_BLACK_IP_Z'; //永久用户IP黑名单
+  public const RCP_BLACK_IP = 'RCP_BLACK_IP_Z'; //永久用户IP黑名单
 
-    public const RCP_DAY_BLACK_USER = 'RCP_DAY_BLACK_USER_Z'; //用户当天临时黑名单,连续3次进入该名单则被拉入永久封禁
+  public const RCP_DAY_BLACK_USER = 'RCP_DAY_BLACK_USER_Z'; //用户当天临时黑名单,连续3次进入该名单则被拉入永久封禁
 
-    public const RCP_BLACK_USER = 'RCP_BLACK_USER_Z'; //永久用户黑名单
+  public const RCP_BLACK_USER = 'RCP_BLACK_USER_Z'; //永久用户黑名单
 
-    /* 日志入库  */
+  /* 日志入库  */
 
-    //请求参数日志列表，经过整理后入库，后续看日志量决定是否存入日志分析库
-    public const RCP_LOG_DETAIL_LIST = 'RCP_USER_URI_Z';
+  //请求参数日志列表，经过整理后入库，后续看日志量决定是否存入日志分析库
+  public const RCP_LOG_DETAIL_LIST = 'RCP_USER_URI_Z';
 
-    protected ServerRequestInterface $request;  //当前http请求
+  protected ServerRequestInterface $request;  //当前http请求
 
-    protected array $user;   //当前用户，可以为空
+  protected array $user;   //当前用户，可以为空
 
-    protected string $userCode;   //当前用户编码，唯一标记即可，默认使用id,可以为空
+  protected string $userCode;   //当前用户编码，唯一标记即可，默认使用id,可以为空
 
-    protected array $configs;  //配置数组
+  protected array $configs;  //配置数组
 
-    protected string $uri;
+  protected string $uri;
 
-    protected string $ip;
+  protected string $ip;
 
-    /********************* 基本风控 **************************************/
+  /********************* 基本风控 **************************************/
 
-    protected int $RCP_USER_DEFAULT_LIMIT = 10000; //用户每天访问默认限制次数
+  protected int $RCP_USER_DEFAULT_LIMIT = 10000; //用户每天访问默认限制次数
 
-    protected int $RCP_IP_DEFAULT_LIMIT = 10000; //每个IP每天访问默认限制次数
+  protected int $RCP_IP_DEFAULT_LIMIT = 10000; //每个IP每天访问默认限制次数
 
-    protected int $RCP_IP_URI_DEFAULT_LIMIT = 2000; //每个IP每天访问某个具体URI默认限制次数
+  protected int $RCP_IP_URI_DEFAULT_LIMIT = 2000; //每个IP每天访问某个具体URI默认限制次数
 
-    protected int $RCP_USER_URI_DEFAULT_LIMIT = 500; // 用户每天访问某个具体URI默认限制次数
+  protected int $RCP_USER_URI_DEFAULT_LIMIT = 500; // 用户每天访问某个具体URI默认限制次数
 
-    public function __construct()
-    {
-        //加载风控配置json
-        $res = $this->initRcpConfig();
+  public function __construct() {
+    //加载风控配置json
+    $res = $this->initRcpConfig();
 
         if (!$res) {
             throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, '初始化配置失败！');

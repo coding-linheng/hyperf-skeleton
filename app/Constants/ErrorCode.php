@@ -21,9 +21,14 @@ use Hyperf\Constants\Annotation\Constants;
 class ErrorCode extends AbstractConstants
 {
     /**
-     * @Message("常规报错,具体信息自己填写")
+     * @Message("业务错误")
      */
     public const ERROR = 1;
+
+    /**
+     * @Message("Success")
+     */
+    public const SUCCESS = 200;
 
     /**
      * @Message("Token authentication does not pass！")
@@ -40,7 +45,10 @@ class ErrorCode extends AbstractConstants
      */
     public const SERVER_RCP_ERROR = 503;
 
-    public const VALIDATE_FAIL = 10000; ##验证错误
+    /**
+     * @Message("Validate Error ！")
+     */
+    public const VALIDATE_FAIL = 10000;
 
     /**
      * @Message("登录失败:用户名或密码错误")
