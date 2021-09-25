@@ -190,26 +190,26 @@ class Rcp
         return $retArr;
     }
 
-
-  /**
-   * 获取最近7天风控统计数据.
-   */
-  public function getDayRcpStatics()
-  {   $returnArr=[];
-    //将缓存中的黑名单同步入数据库
-    for ($i=0;$i<7;$i++){
-      $day = date("Ymd",strtotime("-{$i} day"));
-      $tmpArr['day_rcp_ip']     = $this->redis->zRevRange(self::RCP_IP . $day, 0, 10, true);
-      $tmpArr['day_rcp_ip_uri'] = $this->redis->zRevRange(self::RCP_IP_URI . $day, 0, 10, true);
-      //用户
-      $tmpArr['day_rcp_user_uri'] = $this->redis->zRevRange(self::RCP_USER_URI . $day, 0, 10, true);
-      $tmpArr['day_rcp_user']     = $this->redis->zRevRange(self::RCP_USER. $day, 0, 10, true);
-      $returnArr[$day]=$tmpArr;
+    /**
+     * 获取最近7天风控统计数据.
+     */
+    public function getDayRcpStatics()
+    {
+        $returnArr = [];
+        //将缓存中的黑名单同步入数据库
+        for ($i = 0; $i < 7; ++$i) {
+            $day                      = date('Ymd', strtotime("-{$i} day"));
+            $tmpArr['day_rcp_ip']     = $this->redis->zRevRange(self::RCP_IP . $day, 0, 10, true);
+            $tmpArr['day_rcp_ip_uri'] = $this->redis->zRevRange(self::RCP_IP_URI . $day, 0, 10, true);
+            //用户
+            $tmpArr['day_rcp_user_uri'] = $this->redis->zRevRange(self::RCP_USER_URI . $day, 0, 10, true);
+            $tmpArr['day_rcp_user']     = $this->redis->zRevRange(self::RCP_USER . $day, 0, 10, true);
+            $returnArr[$day]            = $tmpArr;
+        }
+        return $returnArr;
     }
-    return $returnArr;
-  }
 
-  /**
+    /**
      * 检查风控是否触发.公共策略部分检查.
      */
     private function isStatic()
@@ -477,8 +477,8 @@ class Rcp
      * todo() 这个部分最后做，目前不考虑，全部在Redis里面
      * 将Redis中统计的数据需要持久化的入库，保持Redis与数据库同步.
      */
-    private function refreshRcpData(): bool {
-
+    private function refreshRcpData(): bool
+    {
         //将缓存中的黑名单同步入数据库
 
         //查询当前黑名单数据，判断数据库中是否存在，存在则更新

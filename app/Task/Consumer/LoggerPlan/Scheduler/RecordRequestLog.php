@@ -16,8 +16,6 @@ class RecordRequestLog
 
     public function __invoke(array $data): bool
     {
-        echo __CLASS__ . PHP_EOL;
-        var_dump($data);
         $this->loggerPlanProducer->recordRequestLog($data);
         return true;
     }
