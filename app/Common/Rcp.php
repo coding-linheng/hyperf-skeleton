@@ -16,9 +16,8 @@ use Throwable;
  */
 class Rcp
 {
-    public const RCP_LIMIT_RATE_COUNT = 1000; //访问限流
-
-    public const RCP_LIMIT_RATE_IP_COUNT = 10; //Ip 限流
+    #[Inject]
+    protected RcpRedis $redis;
 
     public const RCP_LIMIT_RATE_LOCK = 'RCP_LIMIT_RATE_LOCK'; //用户访问次数，后缀Z表示使用Zset
 
@@ -47,9 +46,6 @@ class Rcp
     //请求参数日志列表，经过整理后入库，后续看日志量决定是否存入日志分析库
     public const RCP_LOG_DETAIL_LIST = 'RCP_USER_URI_Z';
 
-    #[Inject]
-    protected RcpRedis $redis;
-
     protected ServerRequestInterface $request;  //当前http请求
 
     protected array $user;   //当前用户，可以为空
@@ -72,6 +68,11 @@ class Rcp
 
     protected int $RCP_USER_URI_DEFAULT_LIMIT = 500; // 用户每天访问某个具体URI默认限制次数
 
+    /* 限流 */
+    protected int $RCP_LIMIT_RATE_COUNT = 1000; //访问限流
+
+    protected int $RCP_LIMIT_RATE_IP_COUNT = 10; //Ip 限流
+
     public function __construct()
     {
         //加载风控配置json
@@ -82,20 +83,27 @@ class Rcp
         }
     }
 
-//
-//    /**
-//     * 克隆方法私有化，防止复制实例.
-//     */
-//    private function __clone()
-//    {
-//    }
+    //
+    //    /**
+    //     * 克隆方法私有化，防止复制实例.
+    //     */
+    //    private function __clone()
+    //    {
+    //    }
 
     /**
      * 初始化配置，清除redis配置缓存，从数据库加载对应的策略放入redis里面.
      */
     public function initRcpConfig(): bool
     {
-        return true;
+        $rpcConfig = config('rcp.default', '');
+
+        if (!empty($rpcConfig) && is_array($rpcConfig)) {
+            $this->configs = $rpcConfig;
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -160,12 +168,12 @@ class Rcp
     public function getRcpStatics(): array
     {
         //ip
-        $retArr['black_ip']         = $this->redis->zRevRange(self::RCP_BLACK_IP, 0, 10, true);
-        $retArr['day_black_ip']     = $this->redis->zRevRange(self::RCP_DAY_BLACK_IP, 0, 10, true);
-        $retArr['rcp_ip_uri']       = $this->redis->zRevRange(self::RCP_IP_URI, 0, 10, true);
-        $retArr['rcp_ip']           = $this->redis->zRevRange(self::RCP_IP, 0, 10, true);
-        $retArr['day_rcp_ip']       = $this->redis->zRevRange(self::RCP_IP . date('Ymd'), 0, 10, true);
-        $retArr['day_rcp_ip_uri']   = $this->redis->zRevRange(self::RCP_IP_URI . date('Ymd'), 0, 10, true);
+        $retArr['black_ip']       = $this->redis->zRevRange(self::RCP_BLACK_IP, 0, 10, true);
+        $retArr['day_black_ip']   = $this->redis->zRevRange(self::RCP_DAY_BLACK_IP, 0, 10, true);
+        $retArr['rcp_ip_uri']     = $this->redis->zRevRange(self::RCP_IP_URI, 0, 10, true);
+        $retArr['rcp_ip']         = $this->redis->zRevRange(self::RCP_IP, 0, 10, true);
+        $retArr['day_rcp_ip']     = $this->redis->zRevRange(self::RCP_IP . date('Ymd'), 0, 10, true);
+        $retArr['day_rcp_ip_uri'] = $this->redis->zRevRange(self::RCP_IP_URI . date('Ymd'), 0, 10, true);
         //用户
         $retArr['black_user']       = $this->redis->zRevRange(self::RCP_BLACK_USER, 0, 10, true);
         $retArr['day_black_user']   = $this->redis->zRevRange(self::RCP_DAY_BLACK_USER, 0, 10, true);
@@ -210,32 +218,37 @@ class Rcp
     private function limitRate()
     {
         //RCP_LIMIT_RATE
+        $this->RCP_LIMIT_RATE_COUNT=$this->configs['common_limit_count']['limit_rate_count']??$this->RCP_LIMIT_RATE_COUNT;
+
         $limitCount = $this->redis->incr(self::RCP_LIMIT_RATE_LOCK);
 
         if ($limitCount == 1) {
             $this->redis->expire(self::RCP_LIMIT_RATE_LOCK, 2);
         }
 
-        if ($limitCount > self::RCP_LIMIT_RATE_COUNT * 2) {
+        if ($limitCount > $this->RCP_LIMIT_RATE_COUNT * 2) {
             return true;
         }
 
-        if ($limitCount > self::RCP_LIMIT_RATE_COUNT) {
+        if ($limitCount > $this->RCP_LIMIT_RATE_COUNT) {
             $this->redis->expire(self::RCP_LIMIT_RATE_LOCK, 2);
         }
 
         //限制单个IP请求
+
+        $this->RCP_LIMIT_RATE_IP_COUNT=$this->configs['common_limit_count']['limit_rate_ip_count']??$this->RCP_LIMIT_RATE_IP_COUNT;
+
         $limitCountByIp = $this->redis->incr(self::RCP_LIMIT_RATE_LOCK . $this->ip);
 
         if ($limitCountByIp == 1) {
             $this->redis->expire(self::RCP_LIMIT_RATE_LOCK . $this->ip, 2);
         }
 
-        if ($limitCountByIp > self::RCP_LIMIT_RATE_IP_COUNT * 2) {
+        if ($limitCountByIp > $this->RCP_LIMIT_RATE_IP_COUNT * 2) {
             return true;
         }
 
-        if ($limitCountByIp > self::RCP_LIMIT_RATE_IP_COUNT) {
+        if ($limitCountByIp > $this->RCP_LIMIT_RATE_IP_COUNT) {
             $this->redis->expire(self::RCP_LIMIT_RATE_LOCK . $this->ip, 2);
         }
         return false;
@@ -309,8 +322,7 @@ class Rcp
      */
     private function checkRcpByUriIp(): bool
     {
-        $this->RCP_IP_URI_DEFAULT_LIMIT = $this->configs['limit_count']['ip_uri_day_limit'] ??
-            $this->RCP_IP_URI_DEFAULT_LIMIT;
+        $this->RCP_IP_URI_DEFAULT_LIMIT = $this->configs['common_limit_count']['ip_uri_day_limit'] ?? $this->RCP_IP_URI_DEFAULT_LIMIT;
         return $this->checkRcpByParams(self::RCP_IP_URI, $this->RCP_IP_URI_DEFAULT_LIMIT, $this->uri . '-' . $this->ip);
     }
 
@@ -322,8 +334,8 @@ class Rcp
         if (empty($this->userCode)) {
             return true;
         }
-        $this->RCP_USER_DEFAULT_LIMIT = $this->configs['limit_count']['user_day_limit'] ??
-            $this->RCP_USER_DEFAULT_LIMIT;
+        $this->RCP_USER_DEFAULT_LIMIT = $this->configs['common_limit_count']['user_day_limit'] ??
+      $this->RCP_USER_DEFAULT_LIMIT;
         return $this->checkRcpByParams(self::RCP_USER, $this->RCP_USER_DEFAULT_LIMIT, $this->userCode);
     }
 
@@ -335,8 +347,8 @@ class Rcp
         if (empty($this->userCode)) {
             return true;
         }
-        $this->RCP_USER_URI_DEFAULT_LIMIT = $this->configs['limit_count']['user_uri_day_limit'] ??
-            $this->RCP_USER_URI_DEFAULT_LIMIT;
+        $this->RCP_USER_URI_DEFAULT_LIMIT = $this->configs['common_limit_count']['user_uri_day_limit'] ??
+      $this->RCP_USER_URI_DEFAULT_LIMIT;
         return $this->checkRcpByParams(
             self::RCP_USER_URI,
             $this->RCP_USER_URI_DEFAULT_LIMIT,
@@ -349,7 +361,7 @@ class Rcp
      */
     private function checkRcpByIp(): bool
     {
-        $this->RCP_IP_DEFAULT_LIMIT = $this->configs['limit_count']['ip_day_limit'] ?? $this->RCP_IP_DEFAULT_LIMIT;
+        $this->RCP_IP_DEFAULT_LIMIT = $this->configs['common_limit_count']['ip_day_limit'] ?? $this->RCP_IP_DEFAULT_LIMIT;
         return $this->checkRcpByParams(self::RCP_IP, $this->RCP_IP_DEFAULT_LIMIT, $this->ip);
     }
 
@@ -405,25 +417,25 @@ class Rcp
         //判断类型，增加黑名单
         $blackKey = $blackDayKey = $blackMember = '';
         switch ($key) {
-            case self::RCP_USER:
-                $blackMember = $this->userCode;
-                $blackKey    = self::RCP_DAY_BLACK_USER;
-                $blackDayKey = self::RCP_BLACK_USER;
-                break;
-            case self::RCP_IP_URI:
-            case self::RCP_IP:
-                $blackMember = $this->ip;
-                $blackKey    = self::RCP_DAY_BLACK_IP;
-                $blackDayKey = self::RCP_BLACK_IP;
-                break;
-            case self::RCP_USER_URI:
-                $blackMember = $member;
-                $blackKey    = self::RCP_DAY_BLACK_USER;
-                $blackDayKey = self::RCP_BLACK_USER;
-                break;
-            default:
-                break;
-        }
+      case self::RCP_USER:
+        $blackMember = $this->userCode;
+        $blackKey    = self::RCP_DAY_BLACK_USER;
+        $blackDayKey = self::RCP_BLACK_USER;
+        break;
+      case self::RCP_IP_URI:
+      case self::RCP_IP:
+        $blackMember = $this->ip;
+        $blackKey    = self::RCP_DAY_BLACK_IP;
+        $blackDayKey = self::RCP_BLACK_IP;
+        break;
+      case self::RCP_USER_URI:
+        $blackMember = $member;
+        $blackKey    = self::RCP_DAY_BLACK_USER;
+        $blackDayKey = self::RCP_BLACK_USER;
+        break;
+      default:
+        break;
+    }
 
         if (empty($blackKey) || empty($blackDayKey)) {
             return true;
@@ -444,7 +456,7 @@ class Rcp
     {
         //将缓存中的黑名单同步入数据库
 
-        //将缓存中的总/当天的访问次数同步入数据库，取俩者中的大者
+    //将缓存中的总/当天的访问次数同步入数据库，取俩者中的大者
     }
 
     /**
@@ -454,7 +466,7 @@ class Rcp
     {
         //将缓存中的黑名单同步入数据库
 
-        //将缓存中的总/当天的访问次数同步入数据库，取俩者中的大者
+    //将缓存中的总/当天的访问次数同步入数据库，取俩者中的大者
     }
 
     /**
