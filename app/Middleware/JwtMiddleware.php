@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use App\Common\Rcp;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use Hyperf\Utils\Context;
