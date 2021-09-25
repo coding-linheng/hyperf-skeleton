@@ -16,9 +16,6 @@ use Throwable;
  */
 class Rcp
 {
-    #[Inject]
-    protected RcpRedis $redis;
-
     public const RCP_LIMIT_RATE_LOCK = 'RCP_LIMIT_RATE_LOCK'; //用户访问次数，后缀Z表示使用Zset
 
     public const RCP_USER = 'RCP_USER_Z'; //用户访问次数，后缀Z表示使用Zset
@@ -45,6 +42,9 @@ class Rcp
 
     //请求参数日志列表，经过整理后入库，后续看日志量决定是否存入日志分析库
     public const RCP_LOG_DETAIL_LIST = 'RCP_USER_URI_Z';
+
+    #[Inject]
+    protected RcpRedis $redis;
 
     protected ServerRequestInterface $request;  //当前http请求
 
@@ -218,7 +218,7 @@ class Rcp
     private function limitRate()
     {
         //RCP_LIMIT_RATE
-        $this->RCP_LIMIT_RATE_COUNT=$this->configs['common_limit_count']['limit_rate_count']??$this->RCP_LIMIT_RATE_COUNT;
+        $this->RCP_LIMIT_RATE_COUNT = $this->configs['common_limit_count']['limit_rate_count'] ?? $this->RCP_LIMIT_RATE_COUNT;
 
         $limitCount = $this->redis->incr(self::RCP_LIMIT_RATE_LOCK);
 
@@ -236,7 +236,7 @@ class Rcp
 
         //限制单个IP请求
 
-        $this->RCP_LIMIT_RATE_IP_COUNT=$this->configs['common_limit_count']['limit_rate_ip_count']??$this->RCP_LIMIT_RATE_IP_COUNT;
+        $this->RCP_LIMIT_RATE_IP_COUNT = $this->configs['common_limit_count']['limit_rate_ip_count'] ?? $this->RCP_LIMIT_RATE_IP_COUNT;
 
         $limitCountByIp = $this->redis->incr(self::RCP_LIMIT_RATE_LOCK . $this->ip);
 
