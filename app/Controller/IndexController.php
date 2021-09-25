@@ -132,7 +132,7 @@ class IndexController extends AbstractController
 
     public function getRcpStatics()
     {
-        $res =  di()->get(Rcp::class)->getRcpStatics();
+        $res =  di()->get(Rcp::class)->getDayRcpStatics();
         return $this->success($res);
     }
 }
