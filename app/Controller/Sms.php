@@ -27,7 +27,7 @@ class Sms extends AbstractController
         $ipSendTotal = SmsModel::where(['ip' => get_client_ip()])->where('create_time', '>=', $time)->count();
 
         if ($ipSendTotal >= 5) {
-            $this->error(__('发送频繁'));
+            $this->error('发送频繁');
         }
         //检查手机号
         $this->smsService->checkMobile($mobile, $event);

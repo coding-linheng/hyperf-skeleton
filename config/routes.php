@@ -29,11 +29,11 @@ Router::post($routerPath . '/logout', [App\Controller\V1\ApiController::class, '
 Router::addGroup($routerPath . '/', function () {
     #用户相关
     Router::addGroup('user/', function () {
-        Router::post('getUserinfo', [UserController::class, 'getUserinfo']);
-        Router::post('bindMobile', [UserController::class, 'bindMobile']);
-        Router::post('profile', [UserController::class, 'profile']);
-        Router::post('certification', [UserController::class, 'certification']);
-        Router::post('getUserIncome', [UserController::class, 'getUserIncome']);
+        Router::get('getUserinfo', [UserController::class, 'getUserinfo']);
+        Router::put('bindMobile', [UserController::class, 'bindMobile']);
+        Router::put('profile', [UserController::class, 'profile']);
+        Router::put('certification', [UserController::class, 'certification']);
+        Router::get('getUserIncome', [UserController::class, 'getUserIncome']);
     });
 
     #工具类
