@@ -130,6 +130,11 @@ class Rcp
                 return true;
             }
 
+            //表示没有开启风控
+            if (!isset($this->configs['open']) || $this->configs['open'] != 1) {
+                return true;
+            }
+
             //原子性，一个IP请求同一个接口一秒钟内不能超过1个
             if ($this->doubleRequest()) {
                 throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, '您访问频率太快！');
