@@ -128,7 +128,7 @@ class Rcp
 
             //原子性，一个IP请求同一个接口一秒钟内不能超过1个
             if($this->doubleRequest()){
-                throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, "您访问过于频繁！");
+                throw new BusinessException(ErrorCode::SERVER_RCP_ERROR, "您访问频率太快！");
             }
 
             //消峰限流，最大并发值
