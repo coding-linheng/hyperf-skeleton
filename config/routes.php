@@ -51,6 +51,7 @@ Router::addGroup($routerPath . '/', function () {
     #灵感
     Router::addGroup('album/', function () {
         Router::get('getList', [AlbumController::class, 'getList']);
+        Router::get('searchList', [AlbumController::class, 'searchList']);
     });
     #短信类
     Router::addGroup('sms/', function () {

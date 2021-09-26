@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Repositories\V1;
 
 use App\Model\Album;
+use App\Model\Albumlist;
 use App\Repositories\BaseRepository;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\DbConnection\Db;
-
+use Hyperf\Paginator\Paginator;
 /*
  * 专辑库
  */
@@ -33,5 +34,15 @@ class AlbumRepository extends BaseRepository
         //      foreach($users as $user){
         //        echo $user->name;
         //      }
+    }
+
+    /**
+     * 模糊搜索灵感数据，包含标题和标签.
+     */
+    public function searchAlbumList($query){
+      // Albumlist::search()
+      var_dump($query);
+      return Albumlist::search($query)->paginate(100);
+
     }
 }

@@ -16,14 +16,14 @@ use Psr\Http\Message\ResponseInterface;
 class AlbumController extends AbstractController
 {
     #[Inject]
-    protected AlbumService $albumRepo;
+    protected AlbumService $albumService;
 
     /**
      * 获取专辑列表.
      */
     public function getList(): ResponseInterface
     {
-        $data = $this->albumRepo->getListPageRand([]);
+        $data = $this->albumService->getListPageRand([]);
         return $this->response->success($data);
     }
 
@@ -32,7 +32,9 @@ class AlbumController extends AbstractController
      */
     public function searchList(): ResponseInterface
     {
-        return $this->response->success();
+        $queryString = $this->request->input('query', "");
+        $list=$this->albumService->searchAlbumList($queryString);
+        return $this->response->success($list);
     }
 
     /**
