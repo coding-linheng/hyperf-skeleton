@@ -45,5 +45,8 @@ class Waterdc extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'uid' => 'integer', 'type' => 'integer', 'status' => 'integer', 'wid' => 'integer', 'bid' => 'integer', 'is_vip' => 'integer', 'time' => 'integer'];
+    protected $casts = [
+        'id'  => 'integer', 'uid' => 'integer', 'type' => 'integer', 'status' => 'integer',
+        'wid' => 'integer', 'bid' => 'integer', 'is_vip' => 'integer', 'time' => 'datetime:Y-m-d H:i:s',
+    ];
 }

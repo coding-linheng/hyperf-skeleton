@@ -7,9 +7,7 @@ namespace App\Services;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Model\User;
-use App\Model\Userdata;
 use App\Repositories\V1\UserRepository;
-use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -44,21 +42,6 @@ class UserService extends BaseService
         $user->contentId = $user['id'];
 
         return $user;
-    }
-
-    public function getUserData(int $userid): Userdata
-    {
-        return $this->userRepository->getUserData($userid);
-    }
-
-    public function getUser(int $userid): User
-    {
-        return $this->userRepository->getUser($userid);
-    }
-
-    public function getUserMerge(int $userid, array $column = ['*']): Model
-    {
-        return $this->userRepository->getUserMerge($userid, $column);
     }
 
     /**

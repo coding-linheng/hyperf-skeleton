@@ -55,6 +55,7 @@ use Qbhy\HyperfAuth\Authenticatable;
  * @property int $get_score 每次签到给10个积分
  * @property int $scoretime 积分到期时间
  * @property string $invitecode 邀请者
+ * @property string $mobile 邀请者
  */
 class User extends Model implements Authenticatable
 {

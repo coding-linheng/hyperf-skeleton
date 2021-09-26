@@ -9,8 +9,11 @@ namespace App\Repositories\V1;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Model\Daywaterdc;
+use App\Model\Tixian;
 use App\Model\User;
 use App\Model\Userdata;
+use App\Model\Waterdc;
+use App\Model\Waterscore;
 use App\Repositories\BaseRepository;
 use Hyperf\Database\Model\Model;
 
@@ -106,5 +109,41 @@ class UserRepository extends BaseRepository
     {
         $time = strtotime(date('Y-m-d', strtotime('first day of last month')));
         return Daywaterdc::query()->where('uid', $userid)->where('time', $time)->value('dc');
+    }
+
+    /*
+     * 获取资金记录
+     */
+    public function getMoneyLog(int $userid, int $page, int $pageSize, array $column = ['*']): array
+    {
+        $orm   = Waterdc::from('waterdc as w')->join('user as u', 'u.id', 'w.bid', 'left')->where('uid', $userid);
+        $count = $orm->count();
+        $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)
+            ->limit($pageSize)->get();
+        return ['count' => $count, 'list' => $list];
+    }
+
+    /*
+     * 获取共享分记录
+     */
+    public function getScoreLog(int $userid, int $page, int $pageSize, array $column = ['*']): array
+    {
+        $where = [['uid', $userid], ['w.score', '<>', '0']];
+        $orm   = Waterscore::from('waterscore as w')->join('user as u', 'u.id', 'w.bid', 'left')->where($where);
+        $count = $orm->count();
+        $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)
+            ->limit($pageSize)->get();
+        return ['count' => $count, 'list' => $list];
+    }
+
+    /*
+     * 获取提现记录
+     */
+    public function getCashLog(int $userid, int $page, int $pageSize, array $column = ['*']): array
+    {
+        $orm   = Tixian::query()->where('uid', $userid);
+        $count = $orm->count();
+        $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
+        return ['count' => $count, 'list' => $list];
     }
 }

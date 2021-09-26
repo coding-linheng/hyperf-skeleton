@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Common\Sms;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
-use App\Model\Userdata;
+use App\Model\User;
 
 /**
  * 短信相关逻辑.
@@ -19,7 +19,7 @@ class SmsService extends BaseService
      */
     public function checkMobile(string $mobile, string $event): bool
     {
-        $status  = Userdata::query()->where('tel', $mobile)->exists();
+        $status  = User::query()->where('mobile', $mobile)->exists();
         $message = '';
         switch ($event) {
             case 'verify':

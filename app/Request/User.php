@@ -15,8 +15,8 @@ class User extends FormRequest
     public $scenes = [
         'login'         => ['username', 'password'], //登录
         'bind_mobile'   => ['mobile', 'captcha'], //绑定手机
-        'profile'       => ['nickname', 'sex', 'wx', 'address', 'content'], //个人资料
-        'certification' => ['name', 'mobile', 'id_card', 'alipay', 'qq', 'email', 'id_card_true', 'id_card_false'],
+        'profile'       => ['nickname', 'sex', 'wx', 'address', 'qq', 'content'], //个人资料
+        'certification' => ['name', 'tel', 'id_card', 'alipay', 'qq', 'email', 'id_card_true', 'id_card_false'],
     ];
 
     /**
@@ -37,6 +37,11 @@ class User extends FormRequest
             'password'      => 'required|digits_between:6,20',
             'mobile'        => [
                 'required',
+                @Rule::unique('user', 'mobile')->ignore(user()['id'], 'uid'),
+                'regex:((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)',
+            ],
+            'tel'           => [
+                'required',
                 @Rule::unique('userdata', 'tel')->ignore(user()['id'], 'uid'),
                 'regex:((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)',
             ],
@@ -49,7 +54,7 @@ class User extends FormRequest
                 @Rule::unique('userdata', 'email')->ignore(user()['id'], 'uid'),
             ],
             'address'       => 'alpha_num',
-            'sex'           => 'digits:1',
+            'sex'           => Rule::in([1, 2]),
             'content'       => 'alpha_num',
             'nickname'      => 'required|alpha_num',
             'name'          => ['required', 'regex:/^[\x{4e00}-\x{9fa5}A-Za-z0-9_]+$/u', 'between:2,8'],

@@ -34,6 +34,9 @@ Router::addGroup($routerPath . '/', function () {
         Router::put('profile', [UserController::class, 'profile']);
         Router::put('certification', [UserController::class, 'certification']);
         Router::get('getUserIncome', [UserController::class, 'getUserIncome']);
+        Router::get('getMoneyLog', [UserController::class, 'getMoneyLog']);
+        Router::get('getCashLog', [UserController::class, 'getCashLog']);
+        Router::get('getScoreLog', [UserController::class, 'getScoreLog']);
     });
 
     #工具类

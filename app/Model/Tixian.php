@@ -44,5 +44,8 @@ class Tixian extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'uid' => 'integer', 'status' => 'integer', 'dotime' => 'integer', 'time' => 'integer'];
+    protected $casts = [
+        'id'   => 'integer', 'uid' => 'integer', 'status' => 'integer', 'dotime' => 'integer',
+        'time' => 'datetime:Y-m-d H:i:s',
+    ];
 }
