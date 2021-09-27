@@ -40,5 +40,5 @@ class Notice extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'pid' => 'integer', 'time' => 'integer'];
+    protected $casts = ['id' => 'integer', 'pid' => 'integer', 'time' => 'datetime:Y-m-d H:i:s'];
 }

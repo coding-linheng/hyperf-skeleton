@@ -6,8 +6,11 @@ namespace App\Services;
 
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
+use App\Model\Noticelook;
 use App\Model\User;
+use App\Model\Userdata;
 use App\Repositories\V1\UserRepository;
+use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -18,6 +21,11 @@ class UserService extends BaseService
 {
     #[Inject]
     protected UserRepository $userRepository;
+
+    public function __call($name, $arguments)
+    {
+        return $this->userRepository->{$name}(...$arguments);
+    }
 
     /**
      * @param string $username 账号
@@ -57,5 +65,63 @@ class UserService extends BaseService
             'this_month' => $this->userRepository->thisMonthIncome($userid) ?? 0,
             'last_month' => $this->userRepository->lastMonthIncome($userid) ?? 0,
         ];
+    }
+
+    public function getUserData(int $userid): Userdata
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getUser(int $userid): User
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getUserMerge(int $userid, $column = ['*']): Model
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getMoneyLog(int $userid, array $query, array $column = ['*']): array
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getScoreLog(int $userid, array $query, array $column = ['*']): array
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function getCashLog(int $userid, int $page, int $pageSize, array $column = ['*']): array
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    /*
+     * 获取私信通知
+     */
+    public function getPrivateMessage(int $userid, array $query, array $column = ['*']): array
+    {
+        $data = $this->userRepository->getPrivateMessage($userid, $query, $column);
+
+        if (empty($data['list'])) {
+            return $data;
+        }
+        $ids = array_column($data['list'], 'id');
+        $nid = Noticelook::query()->where('uid', $userid)->whereIn('nid', $ids)->pluck('nid')->toArray();
+
+        if (empty($nid)) {
+            return $data;
+        }
+
+        foreach ($data['list'] as &$v) {
+            $v['read'] = 0;
+
+            if (in_array($v['id'], $nid)) {
+                $v['read'] = 1;
+            }
+        }
+        unset($v);
+        return $data;
     }
 }

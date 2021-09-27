@@ -12,6 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 /*
  * 助手类
  */
+
 class Utils extends AbstractController
 {
     /**
@@ -21,6 +22,20 @@ class Utils extends AbstractController
     {
         try {
             $file = $this->request->file('upload');
+            $size = sprintf('%.2f', $file->getSize() / 1024 / 1024);
+            $ext  = $file->getExtension();
+
+            if (!in_array($file->getExtension(), ['jpg', 'rar', 'zip'])) {
+                throw new \Exception('非法格式');
+            }
+            $maxSize = match ($ext) {
+                'jpg' => 5,
+                'rar', 'zip' => 1024
+            };
+
+            if ($size > $maxSize) {
+                throw new \Exception('文件过大');
+            }
 
             if (empty($file) || !$file->isValid()) {
                 throw new \Exception('上传失败');

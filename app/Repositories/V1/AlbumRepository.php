@@ -9,7 +9,7 @@ use App\Model\Albumlist;
 use App\Repositories\BaseRepository;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\DbConnection\Db;
-use Hyperf\Paginator\Paginator;
+
 /*
  * 专辑库
  */
@@ -43,8 +43,8 @@ class AlbumRepository extends BaseRepository
      *
      * @return mixed
      */
-    public function searchAlbumList($query){
-
+    public function searchAlbumList($query)
+    {
         //return Albumlist::search()->where("title",$query)->paginate(200);
         return Albumlist::search($query)->paginate(200);
     }
