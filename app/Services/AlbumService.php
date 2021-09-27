@@ -29,10 +29,12 @@ class AlbumService extends BaseService
         return $this->albumRepository->getListPageRand($queryData);
     }
 
-  /**
-   * 模糊搜索灵感数据，包含标题和标签.
-   */
-    public function searchAlbumList($queryData){
-      return $this->albumRepository->searchAlbumList($queryData);
+    /**
+     * 模糊搜索灵感数据，包含标题和标签.
+     * @param mixed $queryData
+     */
+    public function searchAlbumList($queryData)
+    {
+        return $this->albumRepository->searchAlbumList($queryData);
     }
 }

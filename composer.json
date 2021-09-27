@@ -45,8 +45,7 @@
         "hyperf/translation": "^2.2",
         "hyperf/validation": "2.2.x-dev",
         "openzipkin/zipkin": "~3.0",
-        "overtrue/flysystem-qiniu": "^1.0",
-        "riverslei/payment": "*"
+        "overtrue/flysystem-qiniu": "^1.0"
     },
     "require-dev": {
         "hyperf/devtool": "~2.2.0",

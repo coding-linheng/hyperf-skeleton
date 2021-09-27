@@ -9,7 +9,7 @@ use App\Model\Albumlist;
 use App\Repositories\BaseRepository;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\DbConnection\Db;
-use Hyperf\Paginator\Paginator;
+
 /*
  * 专辑库
  */
@@ -38,11 +38,12 @@ class AlbumRepository extends BaseRepository
 
     /**
      * 模糊搜索灵感数据，包含标题和标签.
+     * @param mixed $query
      */
-    public function searchAlbumList($query){
-      // Albumlist::search()
-      var_dump($query);
-      return Albumlist::search($query)->paginate(100);
-
+    public function searchAlbumList($query)
+    {
+        // Albumlist::search()
+        var_dump($query);
+        return Albumlist::search($query)->paginate(100);
     }
 }

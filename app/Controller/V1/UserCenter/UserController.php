@@ -113,10 +113,9 @@ class UserController extends AbstractController
      */
     public function getMoneyLog(): ResponseInterface
     {
-        $page     = $this->request->post('page', 1) ?: 1;
-        $pageSize = $this->request->post('page_size', 10);
-        $field    = ['w.*', 'u.nickname'];
-        $data     = (make(UserRepository::class))->getMoneyLog(user()['id'], $page, $pageSize, $field);
+        $query = $this->request->all();
+        $field = ['w.*', 'u.nickname'];
+        $data  = (make(UserRepository::class))->getMoneyLog(user()['id'], $query, $field);
         return $this->success($data);
     }
 
@@ -125,10 +124,9 @@ class UserController extends AbstractController
      */
     public function getScoreLog(): ResponseInterface
     {
-        $page     = $this->request->post('page', 1) ?: 1;
-        $pageSize = $this->request->post('page_size', 10);
-        $field    = ['w.*', 'u.nickname'];
-        $data     = (make(UserRepository::class))->getScoreLog(user()['id'], $page, $pageSize, $field);
+        $query = $this->request->all();
+        $field = ['w.*', 'u.nickname'];
+        $data  = (make(UserRepository::class))->getScoreLog(user()['id'], $query, $field);
         return $this->success($data);
     }
 

@@ -114,25 +114,44 @@ class UserRepository extends BaseRepository
     /*
      * 获取资金记录
      */
-    public function getMoneyLog(int $userid, int $page, int $pageSize, array $column = ['*']): array
+    public function getMoneyLog(int $userid, array $query, array $column = ['*']): array
     {
-        $orm   = Waterdc::from('waterdc as w')->join('user as u', 'u.id', 'w.bid', 'left')->where('uid', $userid);
+        $page     = ($query['page'] ?? 1) ?: 1;
+        $pageSize = $query['page_size'] ?? 10;
+        $where    = [['uid', '=', $userid]];
+
+        if (isset($query['start_time'])) {
+            $where[] = ['w.time', '>=', strtotime($query['start_time'])];
+        }
+
+        if (isset($query['end_time'])) {
+            $where[] = ['w.time', '<', strtotime('+1 day', strtotime($query['end_time']))];
+        }
+        $orm   = Waterdc::from('waterdc as w')->join('user as u', 'u.id', 'w.bid', 'left')->where($where);
         $count = $orm->count();
-        $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)
-            ->limit($pageSize)->get();
+        $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
         return ['count' => $count, 'list' => $list];
     }
 
     /*
      * 获取共享分记录
      */
-    public function getScoreLog(int $userid, int $page, int $pageSize, array $column = ['*']): array
+    public function getScoreLog(int $userid, array $query, array $column = ['*']): array
     {
-        $where = [['uid', $userid], ['w.score', '<>', '0']];
+        $page     = ($query['page'] ?? 1) ?: 1;
+        $pageSize = $query['page_size'] ?? 10;
+        $where    = [['uid', '=', $userid], ['w.score', '<>', '0']];
+
+        if (isset($query['start_time'])) {
+            $where[] = ['w.time', '>=', strtotime($query['start_time'])];
+        }
+
+        if (isset($query['end_time'])) {
+            $where[] = ['w.time', '<', strtotime('+1 day', strtotime($query['end_time']))];
+        }
         $orm   = Waterscore::from('waterscore as w')->join('user as u', 'u.id', 'w.bid', 'left')->where($where);
         $count = $orm->count();
-        $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)
-            ->limit($pageSize)->get();
+        $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
         return ['count' => $count, 'list' => $list];
     }
 

@@ -32,8 +32,8 @@ class AlbumController extends AbstractController
      */
     public function searchList(): ResponseInterface
     {
-        $queryString = $this->request->input('query', "");
-        $list=$this->albumService->searchAlbumList($queryString);
+        $queryString = $this->request->input('query', '');
+        $list        = $this->albumService->searchAlbumList($queryString);
         return $this->response->success($list);
     }
 

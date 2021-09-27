@@ -44,5 +44,8 @@ class Waterscore extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'uid' => 'integer', 'type' => 'integer', 'status' => 'integer', 'wid' => 'integer', 'bid' => 'integer', 'time' => 'integer'];
+    protected $casts = [
+        'id'  => 'integer', 'uid' => 'integer', 'type' => 'integer', 'status' => 'integer',
+        'wid' => 'integer', 'bid' => 'integer', 'time' => 'datetime:Y-m-d H:i:s',
+    ];
 }
