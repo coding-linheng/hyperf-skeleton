@@ -46,6 +46,7 @@ class AlbumRepository extends BaseRepository
     public function searchAlbumList($query)
     {
         //return Albumlist::search()->where("title",$query)->paginate(200);
+        // Albumlist::search(" ".$query." ")->paginate(200);
         return Albumlist::search($query)->paginate(200);
     }
 }
