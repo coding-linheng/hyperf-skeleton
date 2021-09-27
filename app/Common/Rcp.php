@@ -226,7 +226,7 @@ class Rcp
      */
     private function doubleRequest()
     {
-        $key = md5($this->ip . $this->uri . $this->request->getMethod() . $this->request->getQueryParams());
+        $key = md5($this->ip . $this->uri . $this->request->getMethod() . serialize($this->request->getQueryParams()));
         //如果存在则设置
         if ($this->redis->setnx($key, 1)) {
             //设置成功则表示不存在可以通过，设置过期时间

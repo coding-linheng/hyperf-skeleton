@@ -38,11 +38,14 @@ class AlbumRepository extends BaseRepository
 
     /**
      * 模糊搜索灵感数据，包含标题和标签.
+     *
+     * @param $query
+     *
+     * @return mixed
      */
     public function searchAlbumList($query){
-      // Albumlist::search()
-      var_dump($query);
-      return Albumlist::search($query)->paginate(100);
 
+        //return Albumlist::search()->where("title",$query)->paginate(200);
+        return Albumlist::search($query)->paginate(200);
     }
 }
