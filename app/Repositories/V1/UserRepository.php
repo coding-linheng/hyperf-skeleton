@@ -9,6 +9,7 @@ namespace App\Repositories\V1;
 use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Model\Daywaterdc;
+use App\Model\Notice;
 use App\Model\Tixian;
 use App\Model\User;
 use App\Model\Userdata;
@@ -164,5 +165,20 @@ class UserRepository extends BaseRepository
         $count = $orm->count();
         $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
         return ['count' => $count, 'list' => $list];
+    }
+
+    /*
+     * 获取私信
+     */
+    public function getPrivateMessage(int $userid, array $query, array $column = ['*']): array
+    {
+        $page     = ($query['page'] ?? 1) ?: 1;
+        $pageSize = $query['page_size'] ?? 10;
+        $where    = [['pid', '=', $userid]];
+
+        $orm   = Notice::query()->where($where);
+        $count = $orm->count();
+        $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
+        return ['count' => $count, 'list' => $list->toArray()];
     }
 }

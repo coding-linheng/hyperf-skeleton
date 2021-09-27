@@ -9,7 +9,6 @@ use App\Constants\ErrorCode;
 use App\Constants\UserCenterStatus;
 use App\Controller\AbstractController;
 use App\Exception\BusinessException;
-use App\Repositories\V1\UserRepository;
 use App\Request\User;
 use App\Services\SmsService;
 use App\Services\UserService;
@@ -36,7 +35,7 @@ class UserController extends AbstractController
             'u.id', 'u.nickname', 'u.imghead', 'u.email', 'u.sex', 'u.address', 'u.content', 'u.score', 'u.dc',
             'u.money', 'u.qi', 'u.fans', 'u.guan', 'u.isview', 'd.qq', 'u.wx', 'u.mobile', 'd.tel',
         ];
-        return $this->success(make(UserRepository::class)->getUserMerge(user()['id'], $field));
+        return $this->success($this->userService->getUserMerge(user()['id'], $field));
     }
 
     /*
@@ -52,7 +51,7 @@ class UserController extends AbstractController
         if (empty($this->smsService->check($mobile, $captcha))) {
             throw new BusinessException(ErrorCode::ERROR, '验证码错误或已过期');
         }
-        $user         = make(UserRepository::class)->getUser(user()['id']);
+        $user         = $this->userService->getUser(user()['id']);
         $user->mobile = $mobile;
         $user->save();
         Sms::flush($mobile, $event);
@@ -66,7 +65,7 @@ class UserController extends AbstractController
     {
         $request->scene('profile')->validateResolved();
         $params = $request->all();
-        $user   = make(UserRepository::class)->getUser(user()['id']);
+        $user   = $this->userService->getUser(user()['id']);
         $user->fill($params)->save();
         return $this->success();
     }
@@ -78,7 +77,7 @@ class UserController extends AbstractController
     {
         $request->scene('certification')->validateResolved();
         $params   = $request->all();
-        $userData = make(UserRepository::class)->getUserData(user()['id']);
+        $userData = $this->userService->getUserData(user()['id']);
 
         if ($userData->status == UserCenterStatus::USER_CERT_IS_PASS) {
             $this->error('已通过审核,不能修改');
@@ -103,7 +102,7 @@ class UserController extends AbstractController
     public function getUserIncome(): ResponseInterface
     {
         $userid     = user()['id'];
-        $userMerge  = make(UserRepository::class)->getUserMerge($userid, ['u.dc', 'u.score', 'u.money', 'd.total']);
+        $userMerge  = $this->userService->getUserMerge($userid, ['u.dc', 'u.score', 'u.money', 'd.total']);
         $userIncome = $this->userService->getUserIncome($userid);
         return $this->success(array_merge($userMerge->toArray(), $userIncome));
     }
@@ -115,7 +114,7 @@ class UserController extends AbstractController
     {
         $query = $this->request->all();
         $field = ['w.*', 'u.nickname'];
-        $data  = (make(UserRepository::class))->getMoneyLog(user()['id'], $query, $field);
+        $data  = $this->userService->getMoneyLog(user()['id'], $query, $field);
         return $this->success($data);
     }
 
@@ -126,7 +125,7 @@ class UserController extends AbstractController
     {
         $query = $this->request->all();
         $field = ['w.*', 'u.nickname'];
-        $data  = (make(UserRepository::class))->getScoreLog(user()['id'], $query, $field);
+        $data  = $this->userService->getScoreLog(user()['id'], $query, $field);
         return $this->success($data);
     }
 
@@ -138,7 +137,17 @@ class UserController extends AbstractController
         $page     = $this->request->post('page', 1) ?: 1;
         $pageSize = $this->request->post('page_size', 10);
         $field    = ['id', 'name', 'zhi', 'money', 'status', 'time'];
-        $data     = (make(UserRepository::class))->getCashLog(user()['id'], $page, $pageSize, $field);
+        $data     = $this->userService->getCashLog(user()['id'], $page, $pageSize, $field);
+        return $this->success($data);
+    }
+
+    /*
+     * 获取私信
+     */
+    public function getPrivateMessage(): ResponseInterface
+    {
+        $query = $this->request->all();
+        $data  = $this->userService->getPrivateMessage(user()['id'], $query);
         return $this->success($data);
     }
 }
