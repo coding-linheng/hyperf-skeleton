@@ -45,8 +45,23 @@ class AlbumRepository extends BaseRepository
      */
     public function searchAlbumList($query)
     {
-        //return Albumlist::search()->where("title",$query)->paginate(200);
-        // Albumlist::search(" ".$query." ")->paginate(200);
-        return Albumlist::search($query)->paginate(200);
+
+      //return Albumlist::search()->where("title",$query)->paginate(200);
+      //return Albumlist::search($query)->paginate(200);
+
+      $list =  Albumlist::search(" ".$query." ")->paginate(100)->toArray();
+      //处理数据
+      if(!empty($list) && isset($list['data']) && !empty($list['data'])){
+         foreach ($list['data'] as $key=>&$val){
+            $tmp['id']=$val['id'];
+            $tmp['path']=$val['path'];
+            $tmp['title']=$val['title'];
+            $tmp['looknum']=$val['looknum'];
+            $tmp['downnum']=$val['downnum'];
+            $list['data'][$key]=$tmp;
+            $tmp=[];
+         }
+      }
+      return $list;
     }
 }
