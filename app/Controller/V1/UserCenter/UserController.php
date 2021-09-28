@@ -9,6 +9,7 @@ use App\Constants\ErrorCode;
 use App\Constants\UserCenterStatus;
 use App\Controller\AbstractController;
 use App\Exception\BusinessException;
+use App\Model\Noticelook;
 use App\Request\User;
 use App\Services\SmsService;
 use App\Services\UserService;
@@ -82,17 +83,8 @@ class UserController extends AbstractController
         if ($userData->status == UserCenterStatus::USER_CERT_IS_PASS) {
             $this->error('已通过审核,不能修改');
         }
-
-        $userData->name     = $params['name'];
-        $userData->tel      = $params['tel'];
-        $userData->cardnum  = $params['id_card'];
-        $userData->zhi      = $params['alipay'];
-        $userData->qq       = $params['qq'];
-        $userData->email    = $params['email'];
-        $userData->cardimg  = $params['id_card_true'];
-        $userData->cardimg1 = $params['id_card_false'];
-        $userData->status   = UserCenterStatus::USER_CERT_IS_SUBMIT;
-        $userData->save();
+        $params['status'] = UserCenterStatus::USER_CERT_IS_SUBMIT;
+        $userData->fill($params)->save();
         return $this->success();
     }
 
@@ -158,6 +150,18 @@ class UserController extends AbstractController
     {
         $query = $this->request->all();
         $data  = $this->userService->getSystemMessage(user()['id'], $query);
+        return $this->success($data);
+    }
+
+    /*
+     * 获取公告详情
+     */
+    public function getMessageDetail(User $request): ResponseInterface
+    {
+        $request->scene('notice')->validateResolved();
+        $id   = (int) $request->input('notice_id');
+        $data = $this->userService->getMessageDetail($id);
+        Noticelook::updateOrCreate(['uid' => user()['id'], 'nid' => $id]);
         return $this->success($data);
     }
 }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 use App\Controller\Sms;
 use App\Controller\Utils;
+use App\Controller\V1\HelpCenter;
 use App\Controller\V1\UserCenter\UserController;
 use App\Controller\V1\Index\AlbumController;
 use App\Middleware\JwtMiddleware;
@@ -39,6 +40,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getScoreLog', [UserController::class, 'getScoreLog']);
         Router::get('getPrivateMessage', [UserController::class, 'getPrivateMessage']);
         Router::get('getSystemMessage', [UserController::class, 'getSystemMessage']);
+        Router::get('getMessageDetail', [UserController::class, 'getMessageDetail']);
     });
 
     #工具类
@@ -58,6 +60,11 @@ Router::addGroup($routerPath . '/', function () {
     #短信类
     Router::addGroup('sms/', function () {
         Router::post('send', [Sms::class, 'send']);
+    });
+    #帮助中心
+    Router::addGroup('help/', function () {
+        Router::get('getHelpList', [HelpCenter::class, 'getHelpList']);
+        Router::get('getHelpDetail', [HelpCenter::class, 'getHelpDetail']);
     });
 });
 Router::get('/favicon.ico', static function () {

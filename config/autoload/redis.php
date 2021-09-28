@@ -26,9 +26,9 @@ return [
     ],
     // 数据缓存
     'cache'   => [
-        'host' => env('CACHE_REDIS_HOST', 'localhost'),
-        'auth' => env('CACHE_REDIS_AUTH', null),
-        'port' => (int)env('CACHE_REDIS_PORT', 6379),
+        'host' => env('REDIS_HOST', 'localhost'),
+        'auth' => env('REDIS_AUTH', null),
+        'port' => (int)env('REDIS_PORT', 6379),
         'db'   => (int)env('CACHE_REDIS_DB', 2),
         'pool' => [
             'min_connections' => 1,

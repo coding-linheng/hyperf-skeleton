@@ -90,6 +90,14 @@ if (!function_exists('es_callback')) {
                     ],
                 ],
             ];
+            $params['body']['query']['bool']['should'] = [
+                [
+                    'query_string' => [
+                        'query'         => $query,
+                        'default_field' => 'title',
+                    ],
+                ],
+            ];
             return $client->search($params);
         };
     }

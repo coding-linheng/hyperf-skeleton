@@ -196,4 +196,9 @@ class UserRepository extends BaseRepository
         $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
         return ['count' => $count, 'list' => $list->toArray()];
     }
+
+    public function getMessageDetail(int $noticeId): array
+    {
+        return Notice::query()->where('id', $noticeId)->first()->toArray();
+    }
 }
