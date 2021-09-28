@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Task\AsyncQueue;
+namespace App\Driver\AsyncQueue;
 
 use Hyperf\AsyncQueue\Driver\RedisDriver;
 use Hyperf\AsyncQueue\Event\AfterHandle;

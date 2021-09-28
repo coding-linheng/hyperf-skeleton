@@ -31,10 +31,14 @@ class AlbumService extends BaseService
 
     /**
      * 模糊搜索灵感数据，包含标题和标签.
-     * @param mixed $queryData
+     *
+     * @param  mixed  $queryData
+     * @param         $order
+     *
+     * @return mixed
      */
-    public function searchAlbumList($queryData)
+    public function searchAlbumList($queryData,$order)
     {
-        return $this->albumRepository->searchAlbumList($queryData);
+        return $this->albumRepository->searchAlbumList($queryData,$order);
     }
 }
