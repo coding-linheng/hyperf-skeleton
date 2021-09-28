@@ -31,17 +31,18 @@ class AlbumController extends AbstractController
      * 搜索关键字专辑列表.
      * query 查询关键字选填，不填为全部
      * order 排序字段：最新采集 dtime，最新更新 g_time，上周最高采集 last_caiji
-     * labels 标签筛选 可选
+     * labels 标签筛选 可选.
      */
     public function searchList(): ResponseInterface
     {
         $queryString = $this->request->input('query', '');
-        $labels = $this->request->input('labels', '');
-        if(!empty($labels)){
-            $queryString.= $queryString." ".$labels;
+        $labels      = $this->request->input('labels', '');
+
+        if (!empty($labels)) {
+            $queryString .= $queryString . ' ' . $labels;
         }
-        $order= $this->request->input('order', 'dtime');
-        $list        = $this->albumService->searchAlbumList($queryString,$order);
+        $order       = $this->request->input('order', 'dtime');
+        $list        = $this->albumService->searchAlbumList($queryString, $order);
         return $this->response->success($list);
     }
 

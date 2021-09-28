@@ -72,20 +72,11 @@ class IndexController extends AbstractController
 
     public function demo()
     {
+        $query     = $this->request->input('query', '海报');
         $albumlist = new Albumlist();
         $start     = time();
         //自定义闭包搜索  可以改变搜索方式  demo如下
-        $callback = function ($client, $builder, $params) {
-            $params['body']['query']['bool']['must'] = [
-                [
-                    'query_string' => [
-                        'query'         => '海报',
-                        'default_field' => 'title',
-                    ],
-                ],
-            ];
-            return $client->search($params);
-        };
+        $callback = es_callback($query);
         $count    = $albumlist::search('', $callback)->raw();
         return $this->response->success(['list' => $count, 'start' => $start, 'end' => time()]);
     }
@@ -132,7 +123,7 @@ class IndexController extends AbstractController
 
     public function getRcpStatics()
     {
-        $res =  di()->get(Rcp::class)->getDayRcpStatics();
+        $res = di()->get(Rcp::class)->getDayRcpStatics();
         return $this->success($res);
     }
 }

@@ -181,4 +181,19 @@ class UserRepository extends BaseRepository
         $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
         return ['count' => $count, 'list' => $list->toArray()];
     }
+
+    /*
+     * 获取系统公告
+     */
+    public function getSystemMessage(array $query, array $column = ['*']): array
+    {
+        $page     = ($query['page'] ?? 1) ?: 1;
+        $pageSize = $query['page_size'] ?? 10;
+        $where    = [['pid', '=', 0]];
+
+        $orm   = Notice::query()->where($where);
+        $count = $orm->count();
+        $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
+        return ['count' => $count, 'list' => $list->toArray()];
+    }
 }

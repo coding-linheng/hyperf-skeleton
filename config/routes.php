@@ -38,6 +38,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getCashLog', [UserController::class, 'getCashLog']);
         Router::get('getScoreLog', [UserController::class, 'getScoreLog']);
         Router::get('getPrivateMessage', [UserController::class, 'getPrivateMessage']);
+        Router::get('getSystemMessage', [UserController::class, 'getSystemMessage']);
     });
 
     #工具类

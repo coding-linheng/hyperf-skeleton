@@ -27,10 +27,6 @@ class UserService extends BaseService
         return $this->userRepository->{$name}(...$arguments);
     }
 
-    /**
-     * @param string $username 账号
-     * @param string $password 密码
-     */
     public function login(string $username, string $password): User
     {
         /** @var User $user */
@@ -48,13 +44,29 @@ class UserService extends BaseService
             throw new BusinessException(ErrorCode::LOGIN_FAIL, '密码错误');
         }
         $user->contentId = $user['id'];
-
         return $user;
     }
 
-    /**
-     * 获取用户收入数据.
-     */
+    public function getPrivateMessage(int $userid, array $query, array $column = ['*']): array
+    {
+        $data = $this->userRepository->getPrivateMessage($userid, $query, $column);
+
+        if (empty($data['list'])) {
+            return $data;
+        }
+        return $this->checkRead($userid, $data);
+    }
+
+    public function getSystemMessage(int $userid, array $query, array $column = ['*']): array
+    {
+        $data = $this->userRepository->getSystemMessage($query, $column);
+
+        if (empty($data['list'])) {
+            return $data;
+        }
+        return $this->checkRead($userid, $data);
+    }
+
     public function getUserIncome(int $userid): array
     {
         return [
@@ -97,22 +109,13 @@ class UserService extends BaseService
         return $this->__call(__FUNCTION__, func_get_args());
     }
 
-    /*
-     * 获取私信通知
+    /**
+     * 检查消息是否已读.
      */
-    public function getPrivateMessage(int $userid, array $query, array $column = ['*']): array
+    private function checkRead(int $userid, array $data): array
     {
-        $data = $this->userRepository->getPrivateMessage($userid, $query, $column);
-
-        if (empty($data['list'])) {
-            return $data;
-        }
         $ids = array_column($data['list'], 'id');
         $nid = Noticelook::query()->where('uid', $userid)->whereIn('nid', $ids)->pluck('nid')->toArray();
-
-        if (empty($nid)) {
-            return $data;
-        }
 
         foreach ($data['list'] as &$v) {
             $v['read'] = 0;
