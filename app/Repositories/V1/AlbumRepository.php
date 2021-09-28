@@ -45,15 +45,13 @@ class AlbumRepository extends BaseRepository
      *
      * @return mixed
      */
-    public function searchAlbumList($query,$order)
+    public function searchAlbumList($query, $order)
     {
-      //return Albumlist::search()->where("title",$query)->paginate(200);
-      //return Albumlist::search($query)->paginate(200);
+        //return Albumlist::search()->where("title",$query)->paginate(200);
+        //return Albumlist::search($query)->paginate(200);
 
-
-      $list =  Albumlist::search($query)->orderBy($order,"desc")->paginateRaw(100)->toArray();
-
-      //处理数据
+        return Albumlist::search($query)->orderBy($order, 'desc')->paginateRaw(100)->toArray();
+        //处理数据
 //      if(!empty($list) && isset($list['data']) && !empty($list['data'])){
 //         foreach ($list['data'] as $key=>&$val){
 //            $tmp['id']=$val['id'];
@@ -66,8 +64,5 @@ class AlbumRepository extends BaseRepository
 //            $tmp=[];
 //         }
 //      }
-      return $list;
     }
-
-
 }

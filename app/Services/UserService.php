@@ -67,6 +67,11 @@ class UserService extends BaseService
         return $this->checkRead($userid, $data);
     }
 
+    public function getMessageDetail(int $noticeId): array
+    {
+        return $this->userRepository->getMessageDetail($noticeId);
+    }
+
     public function getUserIncome(int $userid): array
     {
         return [
