@@ -150,4 +150,14 @@ class UserController extends AbstractController
         $data  = $this->userService->getPrivateMessage(user()['id'], $query);
         return $this->success($data);
     }
+
+    /*
+     * 获取系统公告
+     */
+    public function getSystemMessage(): ResponseInterface
+    {
+        $query = $this->request->all();
+        $data  = $this->userService->getSystemMessage(user()['id'], $query);
+        return $this->success($data);
+    }
 }

@@ -4,18 +4,17 @@ declare(strict_types=1);
 /**
  * This file is part of Hyperf.
  *
- * @link     https://www.hyperf.io
+ * @see     https://www.hyperf.io
  * @document https://hyperf.wiki
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
 namespace App\Driver\Es;
 
-use App\Driver\Es\EsSearchEngine;
 use Hyperf\Contract\ConfigInterface;
 use Hyperf\Contract\ContainerInterface;
 use Hyperf\Elasticsearch\ClientBuilderFactory;
-use Hyperf\Scout\Engine\ElasticsearchEngine;
 use Hyperf\Scout\Engine\Engine;
 use Hyperf\Scout\Provider\ProviderInterface;
 
@@ -33,10 +32,10 @@ class EsSearchProvider implements ProviderInterface
 
     public function make(string $name): Engine
     {
-        $config = $this->container->get(ConfigInterface::class);
+        $config  = $this->container->get(ConfigInterface::class);
         $builder = $this->container->get(ClientBuilderFactory::class)->create();
-        $client = $builder->setHosts($config->get("scout.engine.{$name}.hosts"))->build();
-        $index = $config->get("scout.engine.{$name}.index");
+        $client  = $builder->setHosts($config->get("scout.engine.{$name}.hosts"))->build();
+        $index   = $config->get("scout.engine.{$name}.index");
         return new EsSearchEngine($client, $index);
     }
 }

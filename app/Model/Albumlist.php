@@ -84,17 +84,6 @@ class Albumlist extends Model
      */
     protected $casts = ['id' => 'integer', 'aid' => 'integer', 'scid' => 'integer', 'size' => 'integer', 'shoucang' => 'integer', 'shoucolor' => 'integer', 'colorfenlei' => 'integer', 'caiji' => 'integer', 'share' => 'integer', 'sell' => 'integer', 'cid' => 'integer', 'fenlei' => 'integer', 'jtui' => 'integer', 'jtuitime' => 'integer', 'tui' => 'integer', 'tuitime' => 'integer', 'time' => 'integer', 'dtime' => 'integer', 'colortime' => 'integer', 'yesterday' => 'integer', 'coloryesterday' => 'integer', 'lastweek' => 'integer', 'colorlastweek' => 'integer', 'del' => 'integer', 'yid' => 'integer', 'looknum' => 'integer', 'downnum' => 'integer', 'height' => 'integer', 'r' => 'integer', 'g' => 'integer', 'b' => 'integer', 'count' => 'integer', 'sum' => 'integer', 'percent' => 'integer', 'is_color' => 'integer', 'color_id' => 'integer', 'g_time' => 'integer'];
 
-    /**
-     * 获取用户的姓名.
-     *
-     * @param  string  $value
-     * @return string
-     */
-    public function getPathAttribute($value)
-    {
-      return env("PUBLIC_DOMAIN")."/".$value;
-    }
-
     // protected $indexConfigurator = MyIndexConfigurator::class;
 
     protected $searchRules = [
@@ -114,4 +103,15 @@ class Albumlist extends Model
             ],
         ],
     ];
+
+    /**
+     * 获取用户的姓名.
+     *
+     * @param string $value
+     * @return string
+     */
+    public function getPathAttribute($value)
+    {
+        return env('PUBLIC_DOMAIN') . '/' . $value;
+    }
 }

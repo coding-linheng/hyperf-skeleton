@@ -72,3 +72,25 @@ if (!function_exists('get_client_ip')) {
         return request()->getHeaderLine('x-real-ip') ?: request()->server('remote_addr');
     }
 }
+
+if (!function_exists('es_callback')) {
+    /**
+     * es搜索闭包.
+     * @param mixed $query
+     * @throws TypeError
+     */
+    function es_callback($query): Closure
+    {
+        return function ($client, $builder, $params) use ($query) {
+            $params['body']['query']['bool']['must'] = [
+                [
+                    'query_string' => [
+                        'query'         => $query,
+                        'default_field' => 'title',
+                    ],
+                ],
+            ];
+            return $client->search($params);
+        };
+    }
+}

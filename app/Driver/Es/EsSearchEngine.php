@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 /**
- *
- * 自定义搜索引擎
+ * 自定义搜索引擎.
  */
+
 namespace App\Driver\Es;
 
 use Elasticsearch\Client;
@@ -45,6 +45,7 @@ class EsSearchEngine extends Engine
     public function __construct(Client $client, ?string $index = null)
     {
         $this->elastic = $client;
+
         if ($index) {
             $this->index = $this->initIndex($client, $index);
         }
@@ -61,19 +62,19 @@ class EsSearchEngine extends Engine
         $models->each(function ($model) use (&$params) {
             if ($this->index) {
                 $update = [
-                    '_id' => $model->getKey(),
+                    '_id'    => $model->getKey(),
                     '_index' => $this->index,
-                    '_type' => $model->searchableAs(),
+                    '_type'  => $model->searchableAs(),
                 ];
             } else {
                 $update = [
-                    '_id' => $model->getKey(),
+                    '_id'    => $model->getKey(),
                     '_index' => $model->searchableAs(),
                 ];
             }
             $params['body'][] = ['update' => $update];
             $params['body'][] = [
-                'doc' => $model->toSearchableArray(),
+                'doc'           => $model->toSearchableArray(),
                 'doc_as_upsert' => true,
             ];
         });
@@ -91,13 +92,13 @@ class EsSearchEngine extends Engine
         $models->each(function ($model) use (&$params) {
             if ($this->index) {
                 $delete = [
-                    '_id' => $model->getKey(),
+                    '_id'    => $model->getKey(),
                     '_index' => $this->index,
-                    '_type' => $model->searchableAs(),
+                    '_type'  => $model->searchableAs(),
                 ];
             } else {
                 $delete = [
-                    '_id' => $model->getKey(),
+                    '_id'    => $model->getKey(),
                     '_index' => $model->searchableAs(),
                 ];
             }
@@ -115,7 +116,7 @@ class EsSearchEngine extends Engine
     {
         return $this->performSearch($builder, array_filter([
             'numericFilters' => $this->filters($builder),
-            'size' => $builder->limit,
+            'size'           => $builder->limit,
         ]));
     }
 
@@ -128,11 +129,10 @@ class EsSearchEngine extends Engine
      */
     public function paginate(Builder $builder, $perPage, $page)
     {
-
         $result = $this->performSearch($builder, [
             'numericFilters' => $this->filters($builder),
-            'from' => (($page * $perPage) - $perPage),
-            'size' => $perPage,
+            'from'           => (($page * $perPage) - $perPage),
+            'size'           => $perPage,
         ]);
         $result['nbPages'] = $this->getTotalCount($result) / $perPage;
         return $result;
@@ -176,6 +176,7 @@ class EsSearchEngine extends Engine
     public function getTotalCount($results): int
     {
         $total = $results['hits']['total'];
+
         if (is_array($total)) {
             return $results['hits']['total']['value'];
         }
@@ -196,7 +197,7 @@ class EsSearchEngine extends Engine
 
     protected function initIndex(Client $client, string $index): ?string
     {
-        if (! static::$version) {
+        if (!static::$version) {
             try {
                 static::$version = $client->info()['version']['number'];
             } catch (\Throwable $exception) {
@@ -214,15 +215,15 @@ class EsSearchEngine extends Engine
 
     /**
      * Perform the given search on the engine.
-     * todo() 此处需要修改增加对应的函数来处理筛选调优
+     * todo() 此处需要修改增加对应的函数来处理筛选调优.
      * @return mixed
      */
     protected function performSearch(Builder $builder, array $options = [])
     {
         $params = [
             'index' => $this->index,
-            'type' => $builder->index ?: $builder->model->searchableAs(),
-            'body' => [
+            'type'  => $builder->index ?: $builder->model->searchableAs(),
+            'body'  => [
                 'query' => [
                     'bool' => [
                         'must' => [['query_string' => ['query' => "{$builder->query}"]]],
@@ -230,25 +231,31 @@ class EsSearchEngine extends Engine
                 ],
             ],
         ];
-        if (! $this->index) {
+
+        if (!$this->index) {
             unset($params['type']);
             $params['index'] = $builder->index ?: $builder->model->searchableAs();
         }
+
         if ($sort = $this->sort($builder)) {
             $params['body']['sort'] = $sort;
         }
+
         if (isset($options['from'])) {
             $params['body']['from'] = $options['from'];
         }
+
         if (isset($options['size'])) {
             $params['body']['size'] = $options['size'];
         }
+
         if (isset($options['numericFilters']) && count($options['numericFilters'])) {
             $params['body']['query']['bool']['must'] = array_merge(
                 $params['body']['query']['bool']['must'],
                 $options['numericFilters']
             );
         }
+
         if ($builder->callback) {
             return call_user_func(
                 $builder->callback,
@@ -257,7 +264,7 @@ class EsSearchEngine extends Engine
                 $params
             );
         }
-        echo "EsSearch:".json_encode($params);
+        echo 'EsSearch:' . json_encode($params);
         return $this->elastic->search($params);
     }
 
