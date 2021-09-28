@@ -51,7 +51,8 @@ class AlbumRepository extends BaseRepository
       //return Albumlist::search($query)->paginate(200);
 
 
-      $list =  Albumlist::search($query)->orderBy($order,"desc")->paginate(100)->toArray();
+      $list =  Albumlist::search($query)->orderBy($order,"desc")->paginateRaw(100)->toArray();
+      return $list;
       //处理数据
       if(!empty($list) && isset($list['data']) && !empty($list['data'])){
          foreach ($list['data'] as $key=>&$val){
