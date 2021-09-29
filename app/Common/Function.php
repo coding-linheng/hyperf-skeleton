@@ -111,14 +111,16 @@ if (!function_exists('formatEsPageRawData')) {
      */
     function formatEsPageRawData($rawData): array
     {
-       $tmp=[];
-       if(isset($rawData['data']['hits']['hits']) && count($rawData['data']['hits']['hits'])>0){
-           $hitsDataArr= $rawData['data']['hits']['hits'];
-           foreach ($hitsDataArr as $value){
-               $tmp[]=$value['_source']??[];
-           }
-           $rawData['data']=$tmp;
-       }
-       return $rawData;
+        $tmp = [];
+
+        if (isset($rawData['data']['hits']['hits']) && count($rawData['data']['hits']['hits']) > 0) {
+            $hitsDataArr = $rawData['data']['hits']['hits'];
+
+            foreach ($hitsDataArr as $value) {
+                $tmp[] = $value['_source'] ?? [];
+            }
+            $rawData['data'] = $tmp;
+        }
+        return $rawData;
     }
 }
