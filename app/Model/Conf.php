@@ -40,5 +40,5 @@ class Conf extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'status' => 'integer', 'time' => 'integer'];
+    protected $casts = ['id' => 'integer', 'status' => 'integer', 'time' => 'datetime:Y-m-d H:i:s'];
 }

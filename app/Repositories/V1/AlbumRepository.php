@@ -45,28 +45,26 @@ class AlbumRepository extends BaseRepository
      *
      * @return mixed
      */
-    public function searchAlbumList($query,$order)
+    public function searchAlbumList($query, $order)
     {
-      //return Albumlist::search()->where("title",$query)->paginate(200);
-      //return Albumlist::search($query)->paginate(200);
+        //return Albumlist::search()->where("title",$query)->paginate(200);
+        //return Albumlist::search($query)->paginate(200);
 
-      $list =  Albumlist::search($query)->orderBy($order,"desc")->paginateRaw(100)->toArray();
-      $list=formatEsPageRawData($list);
-      //处理数据
-      if(!empty($list) && isset($list['data']) && !empty($list['data'])){
-         foreach ($list['data'] as $key=>&$val){
-            $tmp['id']=$val['id'];
-            $tmp['path']=$val['path'];
-            $tmp['title']=$val['title'];
-            $tmp['looknum']=$val['looknum'];
-            $tmp['downnum']=$val['downnum'];
-            $tmp['dtime']=$val['dtime'];
-            $list['data'][$key]=$tmp;
-            $tmp=[];
-         }
-      }
-      return $list;
+        $list =  Albumlist::search($query)->orderBy($order, 'desc')->paginateRaw(100)->toArray();
+        $list = formatEsPageRawData($list);
+        //处理数据
+        if (!empty($list) && isset($list['data']) && !empty($list['data'])) {
+            foreach ($list['data'] as $key => &$val) {
+                $tmp['id']          = $val['id'];
+                $tmp['path']        = $val['path'];
+                $tmp['title']       = $val['title'];
+                $tmp['looknum']     = $val['looknum'];
+                $tmp['downnum']     = $val['downnum'];
+                $tmp['dtime']       = $val['dtime'];
+                $list['data'][$key] = $tmp;
+                $tmp                = [];
+            }
+        }
+        return $list;
     }
-
-
 }
