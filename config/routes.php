@@ -65,6 +65,9 @@ Router::addGroup($routerPath . '/', function () {
     Router::addGroup('help/', function () {
         Router::get('getHelpList', [HelpCenter::class, 'getHelpList']);
         Router::get('getHelpDetail', [HelpCenter::class, 'getHelpDetail']);
+        Router::get('getQuestionList', [HelpCenter::class, 'getQuestionList']);
+        Router::get('getMoreQuestion', [HelpCenter::class, 'getMoreQuestion']);
+        Router::post('FeedbackQuestion', [HelpCenter::class, 'FeedbackQuestion']);
     });
 });
 Router::get('/favicon.ico', static function () {
