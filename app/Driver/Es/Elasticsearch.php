@@ -24,11 +24,11 @@ class Elasticsearch
     {
         $this->container = ApplicationContext::getContainer();
 
-        $client_builder  = $this->container->get(ClientBuilderFactory::class);
+        $client_builder = $this->container->get(ClientBuilderFactory::class);
 
         $builder = $client_builder->create();
 
-        $host    = explode(',', config('es_host'));
+        $host = explode(',', config('es_host'));
 
         $this->es_client = $builder->setHosts($host)->build();
     }
@@ -70,18 +70,18 @@ class Elasticsearch
     {
         extract($params);
 
-        $mapping['index']      = $index;
+        $mapping['index'] = $index;
 
-        $mapping['type']       = $type;
+        $mapping['type'] = $type;
 
         $field_type['keyword'] = [
             'type' => 'keyword',
         ];
 
         $field_type['text'] = [
-            'type'            => 'text',
+            'type' => 'text',
 
-            'analyzer'        => 'ik_max_word',
+            'analyzer' => 'ik_max_word',
 
             'search_analyzer' => 'ik_max_word',
         ];
@@ -131,11 +131,11 @@ class Elasticsearch
         $index_data = [
             'index' => $index,
 
-            'type'  => $type,
+            'type' => $type,
 
-            'id'    => $id,
+            'id' => $id,
 
-            'body'  => $data,
+            'body' => $data,
         ];
 
         return $this->es_client->index($index_data);
@@ -153,11 +153,11 @@ class Elasticsearch
         $update_data = [
             'index' => $index,
 
-            'type'  => $type,
+            'type' => $type,
 
-            'id'    => $id,
+            'id' => $id,
 
-            'body'  => [
+            'body' => [
                 'doc' => $data,
             ],
         ];
@@ -177,9 +177,9 @@ class Elasticsearch
         $delete_data = [
             'index' => $index,
 
-            'type'  => $type,
+            'type' => $type,
 
-            'id'    => $id,
+            'id' => $id,
         ];
 
         return $this->es_client->delete($delete_data);
@@ -210,13 +210,13 @@ class Elasticsearch
             $field_alias = [];
         }
 
-        $offset      = $data['offset'] ?? 0;
+        $offset = $data['offset'] ?? 0;
 
-        $limit       = $data['limit'] ?? 50;
+        $limit = $data['limit'] ?? 50;
 
         $order_field = $data['order_field'] ?? 'id';
 
-        $order_type  = $data['order_type'] ?? 'desc';
+        $order_type = $data['order_type'] ?? 'desc';
 
         if (!in_array($order_type, ['asc', 'desc'])) {
             $order_type = 'desc';
@@ -243,9 +243,9 @@ class Elasticsearch
         $params = [
             'index' => $index,
 
-            'type'  => $type,
+            'type' => $type,
 
-            'body'  => $body,
+            'body' => $body,
         ];
 
         return $this->es_client->search($params);
@@ -278,9 +278,9 @@ class Elasticsearch
 
         $offset = $data['offset'] ?? 0;
 
-        $limit  = $data['limit'] ?? 50;
+        $limit = $data['limit'] ?? 50;
 
-        $bool   = [];
+        $bool = [];
 
         if (isset($must_field)) {
             $must_condition = $this->_getCondition($data, $must_field, $field_alias);
@@ -294,7 +294,7 @@ class Elasticsearch
             $should_condition = $this->_getCondition($data, $should_field, $field_alias);
 
             if (!empty($should_condition)) {
-                $bool['should']               = $should_condition;
+                $bool['should'] = $should_condition;
 
                 $bool['minimum_should_match'] = 1;
             }
@@ -313,9 +313,9 @@ class Elasticsearch
         $params = [
             'index' => $index,
 
-            'type'  => $type,
+            'type' => $type,
 
-            'body'  => $body,
+            'body' => $body,
         ];
 
         return $this->es_client->search($params);
@@ -325,7 +325,7 @@ class Elasticsearch
     {
         extract($params);
 
-        $query  = $this->_getQueryInfo($condition_data, $condition, $field_alias);
+        $query = $this->_getQueryInfo($condition_data, $condition, $field_alias);
 
         $script = ['params' => $data, 'lang' => 'painless'];
 
@@ -337,14 +337,14 @@ class Elasticsearch
 
         $script['source'] = implode(';', $source);
 
-        $body             = ['script' => $script, 'query' => $query];
+        $body = ['script' => $script, 'query' => $query];
 
-        $update_data      = [
+        $update_data = [
             'index' => $index,
 
-            'type'  => $type,
+            'type' => $type,
 
-            'body'  => $body,
+            'body' => $body,
         ];
 
         return $this->es_client->updateByQuery($update_data);
@@ -354,16 +354,16 @@ class Elasticsearch
     {
         extract($params);
 
-        $query       = $this->_getQueryInfo($condition_data, $condition, $field_alias);
+        $query = $this->_getQueryInfo($condition_data, $condition, $field_alias);
 
-        $body        = ['query' => $query];
+        $body = ['query' => $query];
 
         $delete_data = [
             'index' => $index,
 
-            'type'  => $type,
+            'type' => $type,
 
-            'body'  => $body,
+            'body' => $body,
         ];
 
         return $this->es_client->deleteByQuery($delete_data);
@@ -404,7 +404,7 @@ class Elasticsearch
             $should_condition = $this->_getCondition($data, $should_field, $field_alias);
 
             if (!empty($should_condition)) {
-                $bool['should']               = $should_condition;
+                $bool['should'] = $should_condition;
 
                 $bool['minimum_should_match'] = 1;
             }

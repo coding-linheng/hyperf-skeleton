@@ -34,22 +34,22 @@ class User extends FormRequest
     public function rules(): array
     {
         return [
-            'username'  => 'required|alpha_num',
-            'password'  => 'required|digits_between:6,20',
-            'mobile'    => [
+            'username' => 'required|alpha_num',
+            'password' => 'required|digits_between:6,20',
+            'mobile'   => [
                 'required',
                 @Rule::unique('user', 'mobile')->ignore(user()['id'], 'uid'),
                 'regex:((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)',
             ],
-            'tel'       => [
+            'tel' => [
                 'required',
                 @Rule::unique('userdata', 'tel')->ignore(user()['id'], 'uid'),
                 'regex:((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)',
             ],
-            'captcha'   => 'required|digits:6',
-            'qq'        => 'digits_between:6,12',
-            'wx'        => 'string',
-            'email'     => [
+            'captcha' => 'required|digits:6',
+            'qq'      => 'digits_between:6,12',
+            'wx'      => 'string',
+            'email'   => [
                 'required',
                 'email',
                 @Rule::unique('userdata', 'email')->ignore(user()['id'], 'uid'),

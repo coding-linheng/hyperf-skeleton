@@ -45,5 +45,5 @@ class Waterdo extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'uid' => 'integer', 'doid' => 'integer', 'type' => 'integer', 'original' => 'integer', 'cid' => 'integer', 'aid' => 'integer', 'status' => 'integer', 'zid' => 'integer', 'time' => 'integer'];
+    protected $casts = ['id' => 'integer', 'uid' => 'integer', 'doid' => 'integer', 'type' => 'integer', 'original' => 'integer', 'cid' => 'integer', 'aid' => 'integer', 'status' => 'integer', 'zid' => 'integer', 'time' => 'datetime:Y-m-d H:i:s'];
 }

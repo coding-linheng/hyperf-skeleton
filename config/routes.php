@@ -41,6 +41,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getPrivateMessage', [UserController::class, 'getPrivateMessage']);
         Router::get('getSystemMessage', [UserController::class, 'getSystemMessage']);
         Router::get('getMessageDetail', [UserController::class, 'getMessageDetail']);
+        Router::get('getMoving', [UserController::class, 'getMoving']);
     });
 
     #工具类

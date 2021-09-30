@@ -22,8 +22,8 @@ class CheckJobCrontabTask
 
     public function execute()
     {
-        $startTime         = time();
-        $isDoneCheckArr[]  = [];
+        $startTime        = time();
+        $isDoneCheckArr[] = [];
         echo 'start crontab CheckJobCrontabTask' . date('Y-m-d H:i:s');
         go(function () use ($isDoneCheckArr) {
 //            $accountArr       = array_column($isDoneCheckArr, null, 'wechat_id');

@@ -19,7 +19,7 @@ class TaskSchedulerConsumer extends ConsumerProcess
     protected $queue = 'task_scheduler';
 
     protected array $handlers = [
-        TaskType::ACCOUNT_LOGIN                    => Login::class,
-        TaskType::RECORD_REQUEST_LOG               => RecordRequestLog::class,
+        TaskType::ACCOUNT_LOGIN      => Login::class,
+        TaskType::RECORD_REQUEST_LOG => RecordRequestLog::class,
     ];
 }

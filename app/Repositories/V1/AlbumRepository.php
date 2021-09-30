@@ -6,13 +6,18 @@ namespace App\Repositories\V1;
 
 use App\Model\Album;
 use App\Model\Albumlist;
+use App\Model\Img;
+use App\Model\Wenku;
 use App\Repositories\BaseRepository;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Db;
 
 /*
  * 专辑库
  */
+
 class AlbumRepository extends BaseRepository
 {
     /**
@@ -50,7 +55,7 @@ class AlbumRepository extends BaseRepository
         //return Albumlist::search()->where("title",$query)->paginate(200);
         //return Albumlist::search($query)->paginate(200);
 
-        $list =  Albumlist::search($query)->orderBy($order, 'desc')->paginateRaw(100)->toArray();
+        $list = Albumlist::search($query)->orderBy($order, 'desc')->paginateRaw(100)->toArray();
         $list = formatEsPageRawData($list);
         //处理数据
         if (!empty($list) && isset($list['data']) && !empty($list['data'])) {
@@ -66,5 +71,38 @@ class AlbumRepository extends BaseRepository
             }
         }
         return $list;
+    }
+
+    /**
+     * 获取专辑信息.
+     */
+    public function getAlbumDetail(array $where, array $column = ['*']): Model|Builder|null
+    {
+        return Album::from('album as a')->join('albumlist as l', 'a.id', '=', 'l.aid', 'left')
+            ->where($where)->select($column)->first();
+    }
+
+    /**
+     * 获取专辑列表信息.
+     */
+    public function getAlbumListDetail(array $where, array $column = ['*']): Model|Builder|null
+    {
+        return Albumlist::query()->where($where)->select($column)->first();
+    }
+
+    /**
+     * 获取文库信息.
+     */
+    public function getLibraryDetail(array $where, array $column = ['*']): Model|Builder|null
+    {
+        return Wenku::query()->where($where)->select($column)->first();
+    }
+
+    /**
+     * 获取素材信息.
+     */
+    public function getMaterialDetail(array $where, array $column = ['*']): Model|Builder|null
+    {
+        return Img::query()->where($where)->select($column)->first();
     }
 }

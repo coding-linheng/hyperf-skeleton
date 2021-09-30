@@ -23,8 +23,8 @@ class TaskType
     public static function getJobTypes()
     {
         return [
-            self::ACCOUNT_LOGIN           => '登录',
-            self::RECORD_REQUEST_LOG      => '记录请求日志',
+            self::ACCOUNT_LOGIN      => '登录',
+            self::RECORD_REQUEST_LOG => '记录请求日志',
         ];
     }
 }

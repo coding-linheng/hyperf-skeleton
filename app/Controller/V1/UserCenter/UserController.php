@@ -89,6 +89,17 @@ class UserController extends AbstractController
     }
 
     /*
+     * 获取动态
+     */
+    public function getMoving(): ResponseInterface
+    {
+        $query = $this->request->all();
+        $field = ['w.id', 'w.cid', 'w.time', 'w.type', 'w.uid', 'u.nickname', 'u.imghead'];
+        $data  = $this->userService->getMoving(user()['id'], $query, $field);
+        return $this->success($data);
+    }
+
+    /*
      * 获取用户收入统计
      */
     public function getUserIncome(): ResponseInterface

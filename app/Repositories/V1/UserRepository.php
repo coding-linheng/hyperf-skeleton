@@ -14,6 +14,7 @@ use App\Model\Tixian;
 use App\Model\User;
 use App\Model\Userdata;
 use App\Model\Waterdc;
+use App\Model\Waterdo;
 use App\Model\Waterscore;
 use App\Repositories\BaseRepository;
 use Hyperf\Database\Model\Model;
@@ -128,7 +129,7 @@ class UserRepository extends BaseRepository
         if (isset($query['end_time'])) {
             $where[] = ['w.time', '<', strtotime('+1 day', strtotime($query['end_time']))];
         }
-        $orm   = Waterdc::from('waterdc as w')->join('user as u', 'u.id', 'w.bid', 'left')->where($where);
+        $orm   = Waterdc::from('waterdc as w')->join('user as u', 'u.id', 'w.bid')->where($where);
         $count = $orm->count();
         $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
         return ['count' => $count, 'list' => $list];
@@ -150,7 +151,7 @@ class UserRepository extends BaseRepository
         if (isset($query['end_time'])) {
             $where[] = ['w.time', '<', strtotime('+1 day', strtotime($query['end_time']))];
         }
-        $orm   = Waterscore::from('waterscore as w')->join('user as u', 'u.id', 'w.bid', 'left')->where($where);
+        $orm   = Waterscore::from('waterscore as w')->join('user as u', 'u.id', 'w.bid')->where($where);
         $count = $orm->count();
         $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
         return ['count' => $count, 'list' => $list];
@@ -197,8 +198,28 @@ class UserRepository extends BaseRepository
         return ['count' => $count, 'list' => $list->toArray()];
     }
 
+    /**
+     * 获取消息内容.
+     */
     public function getMessageDetail(int $noticeId): array
     {
         return Notice::query()->where('id', $noticeId)->first()->toArray();
+    }
+
+    /**
+     * 获取动态
+     * @param array|string[] $column
+     */
+    public function getMoving(int $userid, array $query, array $column = ['*']): array
+    {
+        $page     = ($query['page'] ?? 1) ?: 1;
+        $pageSize = $query['page_size'] ?? 10;
+        $where    = [['uid', '=', $userid]];
+
+        $orm   = Waterdo::from('waterdo as w')->join('user as u', 'u.id', 'w.doid')->where($where);
+        $count = $orm->count();
+        $list  = $orm->select($column)->orderBy('id', 'desc')
+            ->offset(($page - 1) * $pageSize)->limit($pageSize)->get()->toArray();
+        return ['count' => $count, 'list' => $list];
     }
 }

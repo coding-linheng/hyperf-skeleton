@@ -9,6 +9,7 @@ use App\Exception\BusinessException;
 use App\Model\Noticelook;
 use App\Model\User;
 use App\Model\Userdata;
+use App\Repositories\V1\AlbumRepository;
 use App\Repositories\V1\UserRepository;
 use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
@@ -21,6 +22,9 @@ class UserService extends BaseService
 {
     #[Inject]
     protected UserRepository $userRepository;
+
+    #[Inject]
+    protected AlbumRepository $albumRepository;
 
     public function __call($name, $arguments)
     {
@@ -47,6 +51,37 @@ class UserService extends BaseService
         return $user;
     }
 
+    /**
+     * 获取动态
+     * @param array|string[] $column
+     */
+    public function getMoving(int $userid, array $query, array $column = ['*']): array
+    {
+        $data = $this->userRepository->getMoving($userid, $query, $column);
+
+        if (empty($data['list'])) {
+            return $data;
+        }
+
+        foreach ($data['list'] as &$v) {
+            $detail    = match ($v['type']) {
+                1, 2 => $this->albumRepository->getAlbumDetail(['a.id' => $v['cid']], ['a.name', 'l.path']),
+                4, 6, 10 => $this->albumRepository->getAlbumListDetail(['id' => $v['cid']], ['name', 'path']),
+                5, 9 => $this->albumRepository->getLibraryDetail(['id' => $v['cid']], ['name', 'pdfimg as path']),
+                7, 8 => $this->albumRepository->getMaterialDetail(['id' => $v['cid']], ['title as name', 'path']),
+                default => null,
+            };
+            $v['name'] = $detail ? $detail->toArray()['name'] : '';
+            $v['path'] = $detail ? $detail->toArray()['path'] : '';
+        }
+        unset($v);
+        return $data;
+    }
+
+    /**
+     * 获取私信
+     * @param array|string[] $column
+     */
     public function getPrivateMessage(int $userid, array $query, array $column = ['*']): array
     {
         $data = $this->userRepository->getPrivateMessage($userid, $query, $column);
@@ -57,6 +92,10 @@ class UserService extends BaseService
         return $this->checkRead($userid, $data);
     }
 
+    /**
+     * 获取系统公告.
+     * @param array|string[] $column
+     */
     public function getSystemMessage(int $userid, array $query, array $column = ['*']): array
     {
         $data = $this->userRepository->getSystemMessage($query, $column);
@@ -67,11 +106,17 @@ class UserService extends BaseService
         return $this->checkRead($userid, $data);
     }
 
+    /**
+     * 获取消息内容.
+     */
     public function getMessageDetail(int $noticeId): array
     {
         return $this->userRepository->getMessageDetail($noticeId);
     }
 
+    /**
+     * 用户收益.
+     */
     public function getUserIncome(int $userid): array
     {
         return [
