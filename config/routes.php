@@ -42,6 +42,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getSystemMessage', [UserController::class, 'getSystemMessage']);
         Router::get('getMessageDetail', [UserController::class, 'getMessageDetail']);
         Router::get('getMoving', [UserController::class, 'getMoving']);
+        Router::put('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
     });
 
     #工具类

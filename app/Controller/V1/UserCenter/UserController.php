@@ -88,6 +88,19 @@ class UserController extends AbstractController
         return $this->success();
     }
 
+    /**
+     * 上传头像.
+     */
+    public function uploadHeadImg(User $request): ResponseInterface
+    {
+        $request->scene('upload_head')->validateResolved();
+        $user = $this->userService->getUser(user()['id']);
+
+        $user->imghead = $request->input('head_image');
+        $user->save();
+        return $this->success();
+    }
+
     /*
      * 获取动态
      */
