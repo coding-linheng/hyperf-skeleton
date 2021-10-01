@@ -12,3 +12,4 @@ vendor/
 *.cache
 /composer.lock
 /.env
+/NUL
