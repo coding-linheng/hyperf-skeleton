@@ -222,4 +222,12 @@ class UserRepository extends BaseRepository
             ->offset(($page - 1) * $pageSize)->limit($pageSize)->get()->toArray();
         return ['count' => $count, 'list' => $list];
     }
+
+    /**
+     * 减少金额.
+     */
+    public function decrMoney(int $userid, string $money): int
+    {
+        return User::query()->where('id', $userid)->decrement('money', $money);
+    }
 }

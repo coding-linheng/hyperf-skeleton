@@ -188,4 +188,14 @@ class UserController extends AbstractController
         Noticelook::updateOrCreate(['uid' => user()['id'], 'nid' => $id]);
         return $this->success($data);
     }
+
+    /*
+     * 提现
+     */
+    public function cash(): ResponseInterface
+    {
+        $money = $this->request->post('money');
+        $this->userService->cash(user()['id'], $money);
+        return $this->success();
+    }
 }

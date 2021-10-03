@@ -43,6 +43,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getMessageDetail', [UserController::class, 'getMessageDetail']);
         Router::get('getMoving', [UserController::class, 'getMoving']);
         Router::put('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
+        Router::post('cash', [UserController::class, 'cash']);
     });
 
     #工具类

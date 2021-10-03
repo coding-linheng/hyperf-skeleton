@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Constants\ErrorCode;
+use App\Constants\UserCenterStatus;
 use App\Exception\BusinessException;
 use App\Model\Noticelook;
+use App\Model\Tixian;
 use App\Model\User;
 use App\Model\Userdata;
 use App\Repositories\V1\AlbumRepository;
 use App\Repositories\V1\UserRepository;
+use Exception;
 use Hyperf\Database\Model\Model;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -157,6 +161,60 @@ class UserService extends BaseService
     public function getCashLog(int $userid, int $page, int $pageSize, array $column = ['*']): array
     {
         return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function decrMoney(int $userid, string $money): int
+    {
+        return $this->__call(__FUNCTION__, func_get_args());
+    }
+
+    public function cash(int $userid, string $money): bool
+    {
+        if (!is_numeric($money)) {
+            throw new BusinessException(ErrorCode::ERROR, '请输入正确的金额');
+        }
+
+        if ($money < 100) {
+            throw new BusinessException(ErrorCode::ERROR, '满100才能提现');
+        }
+        Db::beginTransaction();
+        try {
+            $userdata = $this->userRepository->getUserData($userid);
+
+            if (empty($userdata['zhi'])) {
+                throw new Exception('支付宝信息未填写');
+            }
+
+            if ($userdata['status'] != UserCenterStatus::USER_CERT_IS_PASS) {
+                throw new Exception('用户认证未通过');
+            }
+
+            if (Tixian::query()->where(['uid' => $userid, 'status' => UserCenterStatus::USER_CASH_NO_VERIFY])->exists()) {
+                throw new Exception('您有正在审核的提现申请,请勿重复提交');
+            }
+            $user = $this->userRepository->getUser($userid);
+
+            if ($user->money < $money) {
+                throw new Exception('可提现金额不足');
+            }
+            //减少金额
+            $this->decrMoney($userid, $money);
+            //增加提现记录
+            $cashLog = [
+                'uid'    => $userid,
+                'money'  => $money,
+                'status' => UserCenterStatus::USER_CASH_NO_VERIFY,
+                'name'   => $userdata->name,
+                'zhi'    => $userdata->zhi,
+                'time'   => time(),
+            ];
+            Tixian::create($cashLog);
+            Db::commit();
+            return true;
+        } catch (Exception $e) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, $e->getMessage());
+        }
     }
 
     /**
