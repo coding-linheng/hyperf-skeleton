@@ -55,7 +55,7 @@ class AlbumRepository extends BaseRepository
         //return Albumlist::search()->where("title",$query)->paginate(200);
         //return Albumlist::search($query)->paginate(200);
 
-        $queryArr=["title"=>["or","{$query}"],"name"=>["or","{$query}"]];
+        $queryArr=["title"=>["or","{$query}"],"label"=>["or","{$query}"]];
         $orm    = Albumlist::search('', es_callback($queryArr));
         if (!empty($order)){
             $orm=$orm->orderBy($order, 'desc');
@@ -65,12 +65,12 @@ class AlbumRepository extends BaseRepository
         //处理数据
         if (!empty($list) && isset($list['data']) && !empty($list['data'])) {
             foreach ($list['data'] as $key => &$val) {
-                $tmp['id']          = $val['id'];
-                $tmp['path']        = $val['path'];
-                $tmp['title']       = $val['title'];
-                $tmp['looknum']     = $val['looknum'];
-                $tmp['downnum']     = $val['downnum'];
-                $tmp['dtime']       = $val['dtime'];
+                $tmp['id']          = $val['id']??0;
+                $tmp['path']        = env('PUBLIC_DOMAIN') . '/' .$val['path'];
+                $tmp['title']       = $val['title']??'';
+                $tmp['looknum']     = $val['looknum']??0;
+                $tmp['downnum']     = $val['downnum']??0;
+                $tmp['dtime']       = $val['dtime']??0;
                 $list['data'][$key] = $tmp;
                 $tmp                = [];
             }
