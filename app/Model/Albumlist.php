@@ -116,7 +116,7 @@ class Albumlist extends Model
     }
 }
 
-//导入数据
+//导入数据,记得屏蔽掉getPathAttribute 属性修改器
 //php bin/hyperf.php scout:import "App\Model\Albumlist"
 
 //搜索具体栏位
