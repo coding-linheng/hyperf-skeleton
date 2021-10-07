@@ -115,3 +115,159 @@ class Albumlist extends Model
         return env('PUBLIC_DOMAIN') . '/' . $value;
     }
 }
+
+//搜索具体栏位
+//{"query":{"bool":{"must":[],"must_not":[],"should":[{"query_string":{"default_field":"title","query":"春节吃到嗨"}},{"query_string":{"default_field":"label","query":""}}]}},"from":0,"size":250,"sort":[],"aggs":{}}
+//{"query":{"bool":{"must":[],"must_not":[],"should":[{"query_string":{"default_field":"name","query":"春分节气"}},{"query_string":{"default_field":"title","query":"春分节气"}}]}},"from":0,"size":10,"sort":[],"aggs":{}}
+
+//创建索引带分词
+// put http://119.23.59.3:9200/dc
+//{
+//    "mappings": {
+//    "dc10000albumlist": {
+//        "properties": {
+//            "aid": {
+//                "type": "long"
+//				},
+//				"b": {
+//                "type": "long"
+//				},
+//				"caiji": {
+//                "type": "long"
+//				},
+//				"cid": {
+//                "type": "long"
+//				},
+//				"color": {
+//                "type": "string"
+//				},
+//				"color_id": {
+//                "type": "long"
+//				},
+//				"colorfenlei": {
+//                "type": "long"
+//				},
+//				"colorlastweek": {
+//                "type": "long"
+//				},
+//				"colortime": {
+//                "type": "long"
+//				},
+//				"coloryesterday": {
+//                "type": "long"
+//				},
+//				"count": {
+//                "type": "long"
+//				},
+//				"del": {
+//                "type": "long"
+//				},
+//				"downnum": {
+//                "type": "long"
+//				},
+//				"dtime": {
+//                "type": "long"
+//				},
+//				"fenlei": {
+//                "type": "long"
+//				},
+//				"g": {
+//                "type": "long"
+//				},
+//				"g_time": {
+//                "type": "long"
+//				},
+//				"height": {
+//                "type": "long"
+//				},
+//				"id": {
+//                "type": "long"
+//				},
+//				"is_color": {
+//                "type": "long"
+//				},
+//				"jtui": {
+//                "type": "long"
+//				},
+//				"jtuitime": {
+//                "type": "long"
+//				},
+//				"laiyuan": {
+//                "type": "string"
+//				},
+//				"lastweek": {
+//                "type": "long"
+//				},
+//				"looknum": {
+//                "type": "long"
+//				},
+//				"name": {
+//                "type": "string",
+//					"analyzer": "ik_max_word",
+//					"search_analyzer": "ik_smart"
+//				},
+//				"path": {
+//                "type": "string"
+//				},
+//				"percent": {
+//                "type": "long"
+//				},
+//				"r": {
+//                "type": "long"
+//				},
+//				"scid": {
+//                "type": "long"
+//				},
+//				"sell": {
+//                "type": "long"
+//				},
+//				"share": {
+//                "type": "long"
+//				},
+//				"shoucang": {
+//                "type": "long"
+//				},
+//				"shoucolor": {
+//                "type": "long"
+//				},
+//				"size": {
+//                "type": "long"
+//				},
+//				"suffix": {
+//                "type": "string"
+//				},
+//				"sum": {
+//                "type": "long"
+//				},
+//				"time": {
+//                "type": "long"
+//				},
+//				"title": {
+//                "type": "string",
+//					"analyzer": "ik_max_word",
+//					"search_analyzer": "ik_smart"
+//				},
+//				"tui": {
+//                "type": "long"
+//				},
+//				"tuitime": {
+//                "type": "long"
+//				},
+//				"yesterday": {
+//                "type": "long"
+//				},
+//				"yid": {
+//                "type": "long"
+//				},
+//				"label": {
+//                "type": "string",
+//					"analyzer": "ik_max_word",
+//					"search_analyzer": "ik_smart"
+//				},
+//				"status": {
+//                "type": "long"
+//				}
+//			}
+//		}
+//	}
+//}

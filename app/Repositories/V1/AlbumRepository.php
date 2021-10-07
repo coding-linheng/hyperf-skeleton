@@ -55,7 +55,11 @@ class AlbumRepository extends BaseRepository
         //return Albumlist::search()->where("title",$query)->paginate(200);
         //return Albumlist::search($query)->paginate(200);
 
-        $list = Albumlist::search($query)->orderBy($order, 'desc')->paginateRaw(100)->toArray();
+        $orm = Albumlist::search($query);
+        if (!empty($order)){
+            $orm=$orm->orderBy($order, 'desc');
+        }
+        $list=$orm->paginateRaw(100)->toArray();
         $list = formatEsPageRawData($list);
         //处理数据
         if (!empty($list) && isset($list['data']) && !empty($list['data'])) {

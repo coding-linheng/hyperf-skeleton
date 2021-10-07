@@ -41,7 +41,7 @@ class AlbumController extends AbstractController
         if (!empty($labels)) {
             $queryString .= $queryString . ' ' . $labels;
         }
-        $order = $this->request->input('order', 'dtime');
+        $order = $this->request->input('order', '');
         $list  = $this->albumService->searchAlbumList($queryString, $order);
         return $this->response->success($list);
     }
