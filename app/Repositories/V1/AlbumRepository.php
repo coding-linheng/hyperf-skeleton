@@ -55,7 +55,9 @@ class AlbumRepository extends BaseRepository
         //return Albumlist::search()->where("title",$query)->paginate(200);
         //return Albumlist::search($query)->paginate(200);
 
-        $orm = Albumlist::search($query);
+        $queryArr=["title"=>["or","{$query}"],"name"=>["or","{$query}"]];
+        $callback = es_callback($queryArr);
+        $orm    = Albumlist::search('', $callback);
         if (!empty($order)){
             $orm=$orm->orderBy($order, 'desc');
         }

@@ -229,7 +229,9 @@ class EsSearchEngine extends Engine
             'body'  => [
                 'query' => [
                     'bool' => [
-                        'must' => [['query_string' => ['query' => "{$builder->query}"]]],
+                        'must'=>[],
+                        'must_not'=>[],
+                        'should' => [],
                     ],
                 ],
             ],
@@ -265,6 +267,12 @@ class EsSearchEngine extends Engine
                 $this->elastic,
                 $builder->query,
                 $params
+            );
+        }else{
+            //如果没有带回调函数则默认should全文搜索匹配
+            $params['body']['query']['bool']['should'] = array_merge(
+                $params['body']['query']['bool']['should'],
+                [['query_string' => ['query' => "{$builder->query}"]]]
             );
         }
         echo 'EsSearch:' . json_encode($params);

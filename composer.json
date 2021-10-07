@@ -45,7 +45,8 @@
         "hyperf/translation": "^2.2",
         "hyperf/validation": "2.2.x-dev",
         "openzipkin/zipkin": "~3.0",
-        "overtrue/flysystem-qiniu": "^1.0"
+        "overtrue/flysystem-qiniu": "^1.0",
+        "ext-json": "*"
     },
     "require-dev": {
         "hyperf/devtool": "~2.2.0",
