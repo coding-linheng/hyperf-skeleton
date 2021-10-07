@@ -22,14 +22,14 @@ return [
     'engine' => [
         'my_elasticsearch' => [
             'driver' => App\Driver\Es\EsSearchProvider::class,
-            'index' => 'string',
+            'index' => 'dc',
             'hosts' => [
                 env('ELASTICSEARCH_HOST', 'http://119.23.59.3:9200'),
             ],
         ],
         'elasticsearch' => [
             'driver' => Hyperf\Scout\Provider\ElasticsearchProvider::class,
-            'index' => 'string',
+            'index' => 'dc',
             'hosts' => [
                 env('ELASTICSEARCH_HOST', 'http://119.23.59.3:9200'),
             ],

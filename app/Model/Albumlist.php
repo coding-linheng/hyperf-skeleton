@@ -116,6 +116,9 @@ class Albumlist extends Model
     }
 }
 
+//导入数据
+//php bin/hyperf.php scout:import "App\Model\Albumlist"
+
 //搜索具体栏位
 //{"query":{"bool":{"must":[],"must_not":[],"should":[{"query_string":{"default_field":"title","query":"春节吃到嗨"}},{"query_string":{"default_field":"label","query":""}}]}},"from":0,"size":250,"sort":[],"aggs":{}}
 //{"query":{"bool":{"must":[],"must_not":[],"should":[{"query_string":{"default_field":"name","query":"春分节气"}},{"query_string":{"default_field":"title","query":"春分节气"}}]}},"from":0,"size":10,"sort":[],"aggs":{}}
