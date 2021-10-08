@@ -44,6 +44,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getMoving', [UserController::class, 'getMoving']);
         Router::put('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
         Router::post('cash', [UserController::class, 'cash']);
+        Router::get('worksManage', [UserController::class, 'worksManage']);
     });
 
     #工具类

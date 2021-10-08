@@ -26,4 +26,19 @@ class UserCenterStatus
 
     //提现未通过
     public const USER_CASH_NO_PASS = 2;
+
+    //待处理
+    public const WORK_MANAGE_PENDING = 0;
+
+    //审核中
+    public const WORK_MANAGE_REVIEW = 1;
+
+    //未通过
+    public const WORK_MANAGE_NO_PASS = 2;
+
+    //已通过
+    public const WORK_MANAGE_IS_PASS = 3;
+
+    //需调整
+    public const WORK_MANAGE_REVISION = 4;
 }

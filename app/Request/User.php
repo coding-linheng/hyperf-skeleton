@@ -19,6 +19,7 @@ class User extends FormRequest
         'certification' => ['name', 'tel', 'cardnum', 'zhi', 'qq', 'email', 'cardimg', 'cardimg1'],
         'notice'        => ['notice_id'],
         'upload_head'   => ['head_image'],
+        'work'          => ['type', 'status'],
     ];
 
     /**
@@ -66,6 +67,8 @@ class User extends FormRequest
             'cardimg1'   => 'required|active_url',
             'notice_id'  => 'exists:notice,id',
             'head_image' => 'required|active_url',
+            'status'     => ['required', Rule::in([0, 1, 2, 3, 4])],
+            'type'       => ['required', Rule::in([1, 2])],
         ];
     }
 
@@ -81,6 +84,8 @@ class User extends FormRequest
             'cardimg'    => '身份证正面',
             'cardimg1'   => '身份证反面',
             'head_image' => '头像',
+            'status'     => '状态',
+            'type'       => '类型',
         ];
     }
 }

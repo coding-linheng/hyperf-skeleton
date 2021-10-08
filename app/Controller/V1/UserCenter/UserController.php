@@ -193,4 +193,15 @@ class UserController extends AbstractController
         $this->userService->cash(user()['id'], $money);
         return $this->success();
     }
+
+    /*
+     * 作品管理
+     */
+    public function worksManage(User $request): ResponseInterface
+    {
+        $request->scene('work')->validateResolved();
+        $query = $request->all();
+        $data  = $this->userService->worksManage(user()['id'], $query);
+        return $this->success($data);
+    }
 }

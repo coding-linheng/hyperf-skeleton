@@ -168,6 +168,9 @@ class UserService extends BaseService
         return $this->__call(__FUNCTION__, func_get_args());
     }
 
+    /**
+     * 提现.
+     */
     public function cash(int $userid, string $money): bool
     {
         if (!is_numeric($money)) {
@@ -215,6 +218,29 @@ class UserService extends BaseService
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, $e->getMessage());
         }
+    }
+
+    /**
+     * 作品管理.
+     */
+    public function worksManage(int $userid, array $query): array
+    {
+        //type:1-素材 2-文库
+        switch ($query['type']) {
+            case 1:
+                $countArr = $this->albumRepository->getMaterialStatistics(['uid' => $userid, 'del' => 0]);
+                $where    = ['uid' => $userid, 'status' => $query['status'], 'del' => 0];
+                $list     = $this->albumRepository->getMaterialList($where, $query);
+                break;
+            case 2:
+                $countArr = $this->albumRepository->getLibraryStatistics(['uid' => $userid, 'del' => 0]);
+                $where    = ['uid' => $userid, 'status' => $query['status'], 'del' => 0];
+                $list     = $this->albumRepository->getLibraryList($where, $query);
+                break;
+            default:
+                throw new BusinessException(ErrorCode::VALIDATE_FAIL);
+        }
+        return array_merge($list, ['count_arr' => $countArr]);
     }
 
     /**
