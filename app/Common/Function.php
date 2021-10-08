@@ -77,48 +77,49 @@ if (!function_exists('es_query_format')) {
     /**
      * es搜索闭包.
      * @param mixed $query
-     * {"query":{"bool":{"must":[],"must_not":[],"should":[{"query_string":{"default_field":"title","query":"春节吃到嗨"}},{"query_string":{"default_field":"label","query":""}}]}},"from":0,"size":250,"sort":[],"aggs":{}}
+     *                     {"query":{"bool":{"must":[],"must_not":[],"should":[{"query_string":{"default_field":"title","query":"春节吃到嗨"}},{"query_string":{"default_field":"label","query":""}}]}},"from":0,"size":250,"sort":[],"aggs":{}}
      */
     function es_query_format($query)
     {
-        if (!is_array($query)){
-             return $query;
+        if (!is_array($query)) {
+            return $query;
         }
         $params = [
-                'must'=>[],
-                'must_not'=>[],
-                'should' => [],
-            ];
-        foreach ($query as $k=>$v){
-            if(!is_array($v) || count($v)<2){
+            'must'     => [],
+            'must_not' => [],
+            'should'   => [],
+        ];
+
+        foreach ($query as $k => $v) {
+            if (!is_array($v) || count($v) < 2) {
                 continue;
             }
-            $key='';
-            switch ($v[0]){
+            $key = '';
+            switch ($v[0]) {
                 case '||':
                 case 'or':
                 case '|':
-                    $key='should';
+                    $key = 'should';
                     break;
                 case 'and':
                 case '&&':
                 case '&':
-                    $key='must';
+                    $key = 'must';
                     break;
                 case 'not':
                 case '!':
-                    $key='must_not';
+                    $key = 'must_not';
                     break;
                 default:
                     continue 2;
             }
-            $queryString=$v[1];
+            $queryString  = $v[1];
             $params[$key] = array_merge(
                 $params[$key],
-                [['query_string' => ["default_field"=>"{$k}",'query' => "{$queryString}"]]]
+                [['query_string' => ['default_field' => "{$k}", 'query' => "{$queryString}"]]]
             );
         }
-       return json_encode($params);
+        return json_encode($params);
     }
 }
 
@@ -129,41 +130,43 @@ if (!function_exists('es_callback')) {
      * @param mixed $isFormat
      * @throws TypeError
      */
-    function es_callback($query,$isFormat=true): Closure
+    function es_callback($query, $isFormat = true): Closure
     {
-        return function ($client, $builder, $params) use ($query,$isFormat) {
+        return function ($client, $builder, $params) use ($query, $isFormat) {
             //判断query是否是一个json字符串，如果是则json化后并入bool数组内，如果不是则当成字符串操作
-            if($isFormat){
-                $query=es_query_format($query);
+            if ($isFormat) {
+                $query = es_query_format($query);
             }
-            $queryArr= isJson($query,true);
+            $queryArr = isJson($query, true);
             //如果存在must则优先合并，再覆盖
-            if(isset($params['body']['query']['bool']['must']) && !empty($params['body']['query']['bool']['must'])){
-                $queryArr['must']= array_merge(
+            if (isset($params['body']['query']['bool']['must']) && !empty($params['body']['query']['bool']['must'])) {
+                $queryArr['must'] = array_merge(
                     $queryArr['must'],
                     $params['body']['query']['bool']['must']
                 );
             }
-            if(isset($params['body']['query']['bool']['should']) && !empty($params['body']['query']['bool']['should'])){
-                $queryArr['should']= array_merge(
+
+            if (isset($params['body']['query']['bool']['should']) && !empty($params['body']['query']['bool']['should'])) {
+                $queryArr['should'] = array_merge(
                     $queryArr['should'],
                     $params['body']['query']['bool']['should']
                 );
             }
-            if(isset($params['body']['query']['bool']['must_not']) && !empty($params['body']['query']['bool']['must_not'])){
-                $queryArr['must_not']= array_merge(
+
+            if (isset($params['body']['query']['bool']['must_not']) && !empty($params['body']['query']['bool']['must_not'])) {
+                $queryArr['must_not'] = array_merge(
                     $queryArr['must_not'],
                     $params['body']['query']['bool']['must_not']
                 );
             }
 
             //合并覆盖参数
-            if(!empty($queryArr)){
+            if (!empty($queryArr)) {
                 $params['body']['query']['bool'] = array_merge(
                     $params['body']['query']['bool'],
                     $queryArr
                 );
-            }else{
+            } else {
                 $params['body']['query']['bool']['should'] = [
                     [
                         'query_string' => [
@@ -203,7 +206,7 @@ if (!function_exists('formatEsPageRawData')) {
 
 if (!function_exists('isJson')) {
     /**
-     * 判断字符串是否为 Json 格式
+     * 判断字符串是否为 Json 格式.
      *
      * @param string $data Json 字符串
      * @param bool $assoc 是否返回关联数组。默认返回对象
@@ -212,12 +215,11 @@ if (!function_exists('isJson')) {
      */
     function isJson($data = '', $assoc = false)
     {
+        $data = json_decode($data, $assoc);
 
-        $data =json_decode($data, $assoc);
-        if(($data && is_object($data)) || (is_array($data) && !empty($data))){
+        if (($data && is_object($data)) || (is_array($data) && !empty($data))) {
             return $data;
         }
         return false;
     }
-
 }

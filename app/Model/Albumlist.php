@@ -104,7 +104,7 @@ class Albumlist extends Model
         ],
     ];
 
-    /**
+    /*
      * 属性修改器，增加对应的域名路径
      *
      * @param string $value
@@ -115,7 +115,6 @@ class Albumlist extends Model
 //        return env('PUBLIC_DOMAIN') . '/' . $value;
 //    }
 }
-
 
 //分页查询时需要配置最大数量，默认为10000
 // PUT http://119.23.59.3:9200/dc/_settings

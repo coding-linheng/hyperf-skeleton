@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Controller\V1\UserCenter;
 
 use App\Common\Sms;
-use App\Constants\ErrorCode;
 use App\Constants\UserCenterStatus;
 use App\Controller\AbstractController;
-use App\Exception\BusinessException;
 use App\Model\Noticelook;
 use App\Request\User;
 use App\Services\SmsService;
@@ -180,7 +178,7 @@ class UserController extends AbstractController
     public function getMessageDetail(User $request): ResponseInterface
     {
         $request->scene('notice')->validateResolved();
-        $id   = (int)$request->input('notice_id');
+        $id   = (int) $request->input('notice_id');
         $data = $this->userService->getMessageDetail($id);
         Noticelook::updateOrCreate(['uid' => user()['id'], 'nid' => $id]);
         return $this->success($data);

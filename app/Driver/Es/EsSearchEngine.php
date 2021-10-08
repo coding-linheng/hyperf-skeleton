@@ -218,7 +218,7 @@ class EsSearchEngine extends Engine
      * todo() 此处需要修改增加对应的函数来处理筛选调优.
      * 搜索具体栏位
      * {"query":{"bool":{"must":[],"must_not":[],"should":[{"query_string":{"default_field":"title","query":"春节吃到嗨"}},{"query_string":{"default_field":"label","query":""}}]}},"from":0,"size":250,"sort":[],"aggs":{}}
-     * {"query":{"bool":{"must":[],"must_not":[],"should":[{"query_string":{"default_field":"name","query":"春分节气"}},{"query_string":{"default_field":"title","query":"春分节气"}}]}},"from":0,"size":10,"sort":[],"aggs":{}}
+     * {"query":{"bool":{"must":[],"must_not":[],"should":[{"query_string":{"default_field":"name","query":"春分节气"}},{"query_string":{"default_field":"title","query":"春分节气"}}]}},"from":0,"size":10,"sort":[],"aggs":{}}.
      * @return mixed
      */
     protected function performSearch(Builder $builder, array $options = [])
@@ -229,9 +229,9 @@ class EsSearchEngine extends Engine
             'body'  => [
                 'query' => [
                     'bool' => [
-                        'must'=>[],
-                        'must_not'=>[],
-                        'should' => [],
+                        'must'     => [],
+                        'must_not' => [],
+                        'should'   => [],
                     ],
                 ],
             ],
@@ -268,13 +268,13 @@ class EsSearchEngine extends Engine
                 $builder->query,
                 $params
             );
-        }else{
-            //如果没有带回调函数则默认should全文搜索匹配
-            $params['body']['query']['bool']['should'] = array_merge(
-                $params['body']['query']['bool']['should'],
-                [['query_string' => ['query' => "{$builder->query}"]]]
-            );
         }
+        //如果没有带回调函数则默认should全文搜索匹配
+        $params['body']['query']['bool']['should'] = array_merge(
+            $params['body']['query']['bool']['should'],
+            [['query_string' => ['query' => "{$builder->query}"]]]
+        );
+
         echo 'EsSearch:' . json_encode($params);
         return $this->elastic->search($params);
     }

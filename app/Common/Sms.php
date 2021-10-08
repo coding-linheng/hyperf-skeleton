@@ -54,18 +54,18 @@ class Sms
         $sms = SmsModel::query()->where(['mobile' => $mobile, 'event' => $event])->orderBy('id', 'desc')->first();
 
         if (empty($sms)) {
-            throw new BusinessException(ErrorCode::ERROR,'验证码错误');
+            throw new BusinessException(ErrorCode::ERROR, '验证码错误');
         }
 
         if ($sms['create_time'] < time() - self::$expire || $sms['count'] > self::$count) {
             self::flush($mobile, $event);
-            throw new BusinessException(ErrorCode::ERROR,'验证码已过期');
+            throw new BusinessException(ErrorCode::ERROR, '验证码已过期');
         }
 
         if ($sms['code'] != $code) {
             ++$sms->count;
             $sms->save();
-            throw new BusinessException(ErrorCode::ERROR,'验证码错误');
+            throw new BusinessException(ErrorCode::ERROR, '验证码错误');
         }
         return true;
     }
