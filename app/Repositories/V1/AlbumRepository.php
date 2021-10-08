@@ -81,6 +81,19 @@ class AlbumRepository extends BaseRepository
     }
 
     /**
+     * 获取专辑-专辑列表关联数据.
+     */
+    public function getAlbumDetailList(array $where, array $query, array $column = ['*']): array
+    {
+        $page     = ($query['page'] ?? 1) ?: 1;
+        $pageSize = $query['page_size'] ?? 50;
+        $orm      = Album::from('album as a')->join('albumlist as l', 'a.id', '=', 'l.aid', 'left')->where($where);
+        $count    = $orm->count();
+        $list     = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
+        return ['count' => $count, 'list' => $list->toArray()];
+    }
+
+    /**
      * 获取专辑信息.
      */
     public function getAlbumDetail(array $where, array $column = ['*']): Model|Builder|null
