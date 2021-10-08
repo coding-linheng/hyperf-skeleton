@@ -62,11 +62,15 @@ class AlbumRepository extends BaseRepository
         if (!empty($order)) {
             $orm = $orm->orderBy($order, 'desc');
         }
-        $list = $orm->paginateRaw(100)->toArray();
+        $list = $orm->paginateRaw(200)->toArray();
         $list = formatEsPageRawData($list);
         //处理数据
         if (!empty($list) && isset($list['data']) && !empty($list['data'])) {
             foreach ($list['data'] as $key => &$val) {
+                if(!isset($val['id']) || empty($val['title'])){
+                  unset($list['data'][$key]);
+                  continue;
+                }
                 $tmp['id']          = $val['id'] ?? 0;
                 $tmp['path']        = env('PUBLIC_DOMAIN') . '/' . $val['path'];
                 $tmp['title']       = $val['title']   ?? '';

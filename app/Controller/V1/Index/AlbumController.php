@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\V1\Index;
 
+use App\Constants\ErrorCode;
 use App\Controller\AbstractController;
+use App\Exception\BusinessException;
 use App\Services\AlbumService;
 use Hyperf\Di\Annotation\Inject;
+use mysql_xdevapi\Exception;
 use Psr\Http\Message\ResponseInterface;
 
 /*
@@ -30,7 +33,7 @@ class AlbumController extends AbstractController
     /**
      * 搜索关键字专辑列表.
      * query 查询关键字选填，不填为全部
-     * order 排序字段：最新采集 dtime，最新更新 g_time，上周最高采集 last_caiji
+     * order 排序字段：最新采集 dtime，最新更新 g_time，上周最高采集 caiji
      * labels 标签筛选 可选.
      */
     public function searchList(): ResponseInterface
@@ -42,6 +45,9 @@ class AlbumController extends AbstractController
             $queryString .= $queryString . ' ' . $labels;
         }
         $order = $this->request->input('order', '');
+        if(!empty($order) && !in_array($order,['dtime','g_time','caiji'])){
+           $this->response->error(ErrorCode::VALIDATE_FAIL,"暂不支持的排序筛选");
+        }
         $list  = $this->albumService->searchAlbumList($queryString, $order);
         return $this->response->success($list);
     }
