@@ -39,7 +39,7 @@ class User extends FormRequest
             'password'   => 'required|digits_between:6,20',
             'mobile'     => [
                 'required',
-                @Rule::unique('user', 'mobile')->ignore(user()['id'], 'uid'),
+                @Rule::unique('user', 'mobile')->ignore(user()['id'], 'id'),
                 'regex:((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)',
             ],
             'tel'        => [

@@ -47,15 +47,12 @@ class UserController extends AbstractController
         $request->scene('bind_mobile')->validateResolved();
         $mobile  = $request->post('mobile');
         $captcha = $request->post('captcha');
-        $event   = 'verify';
+        $this->smsService->check($mobile, $captcha);
 
-        if (empty($this->smsService->check($mobile, $captcha))) {
-            throw new BusinessException(ErrorCode::ERROR, '验证码错误或已过期');
-        }
         $user         = $this->userService->getUser(user()['id']);
         $user->mobile = $mobile;
         $user->save();
-        Sms::flush($mobile, $event);
+        Sms::flush($mobile);
         return $this->success();
     }
 
@@ -183,7 +180,7 @@ class UserController extends AbstractController
     public function getMessageDetail(User $request): ResponseInterface
     {
         $request->scene('notice')->validateResolved();
-        $id   = (int) $request->input('notice_id');
+        $id   = (int)$request->input('notice_id');
         $data = $this->userService->getMessageDetail($id);
         Noticelook::updateOrCreate(['uid' => user()['id'], 'nid' => $id]);
         return $this->success($data);

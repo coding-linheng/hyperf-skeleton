@@ -25,6 +25,12 @@ class Sms
         try {
             $easySms = di()->get(SmsInterface::class);
             $code    = mt_rand(100000, 999999);
+            $easySms->send($mobile, [
+                'template' => 'SMS_119911016',
+                'data'     => [
+                    'code' => $code,
+                ],
+            ]);
             //验证码入库
             SmsModel::create([
                 'code'        => $code,
@@ -32,12 +38,6 @@ class Sms
                 'ip'          => get_client_ip(),
                 'event'       => $event,
                 'create_time' => time(),
-            ]);
-            $easySms->send($mobile, [
-                'template' => 'SMS_119911016',
-                'data'     => [
-                    'code' => $code,
-                ],
             ]);
             return true;
         } catch (InvalidArgumentException|NoGatewayAvailableException $e) {
@@ -54,18 +54,18 @@ class Sms
         $sms = SmsModel::query()->where(['mobile' => $mobile, 'event' => $event])->orderBy('id', 'desc')->first();
 
         if (empty($sms)) {
-            return false;
+            throw new BusinessException(ErrorCode::ERROR,'验证码错误');
         }
 
         if ($sms['create_time'] < time() - self::$expire || $sms['count'] > self::$count) {
             self::flush($mobile, $event);
-            return false;
+            throw new BusinessException(ErrorCode::ERROR,'验证码已过期');
         }
 
         if ($sms['code'] != $code) {
             ++$sms->count;
             $sms->save();
-            return false;
+            throw new BusinessException(ErrorCode::ERROR,'验证码错误');
         }
         return true;
     }
@@ -73,7 +73,7 @@ class Sms
     /**
      * 清除验证码
      */
-    public static function flush(string $mobile, string $event): bool
+    public static function flush(string $mobile, string $event = 'verify'): bool
     {
         SmsModel::query()->where(['mobile' => $mobile, 'event' => $event])->delete();
         return true;
