@@ -20,6 +20,7 @@ class User extends FormRequest
         'notice'        => ['notice_id'],
         'upload_head'   => ['head_image'],
         'work'          => ['type', 'status'],
+        'upload'        => ['upload', 'type'],
     ];
 
     /**
@@ -69,6 +70,7 @@ class User extends FormRequest
             'head_image' => 'required|active_url',
             'status'     => ['required', Rule::in([0, 1, 2, 3, 4])],
             'type'       => ['required', Rule::in([1, 2])],
+            'upload'     => 'required|file',
         ];
     }
 

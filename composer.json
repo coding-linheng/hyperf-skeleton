@@ -13,6 +13,7 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=8.0",
+        "ext-json": "*",
         "ext-redis": "*",
         "96qbhy/hyperf-auth": "^2.4",
         "friendsofphp/php-cs-fixer": "^3.0",
@@ -42,11 +43,11 @@
         "hyperf/rpc-client": "~2.2.0",
         "hyperf/rpc-server": "~2.2.0",
         "hyperf/scout": "^2.2",
+        "hyperf/snowflake": "^2.2",
         "hyperf/translation": "^2.2",
         "hyperf/validation": "2.2.x-dev",
         "openzipkin/zipkin": "~3.0",
-        "overtrue/flysystem-qiniu": "^1.0",
-        "ext-json": "*"
+        "overtrue/flysystem-qiniu": "^1.0"
     },
     "require-dev": {
         "hyperf/devtool": "~2.2.0",

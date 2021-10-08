@@ -6,6 +6,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
+use Hyperf\Snowflake\IdGeneratorInterface;
 use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -170,7 +171,7 @@ if (!function_exists('es_callback')) {
                 $params['body']['query']['bool']['should'] = [
                     [
                         'query_string' => [
-                            'query'         => $query,
+                            'query' => $query,
                         ],
                     ],
                 ];
@@ -221,5 +222,15 @@ if (!function_exists('isJson')) {
             return $data;
         }
         return false;
+    }
+}
+
+if (!function_exists('snowFlake')) {
+    /**
+     * 雪花算法生成唯一id.
+     */
+    function snowFlake(): int
+    {
+        return di()->get(IdGeneratorInterface::class)->generate();
     }
 }

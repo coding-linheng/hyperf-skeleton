@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\V1\UserCenter;
 
 use App\Common\Sms;
+use App\Common\Utils;
 use App\Constants\UserCenterStatus;
 use App\Controller\AbstractController;
 use App\Model\Noticelook;
@@ -191,6 +192,19 @@ class UserController extends AbstractController
     {
         $money = $this->request->post('money');
         $this->userService->cash(user()['id'], $money);
+        return $this->success();
+    }
+
+    /**
+     * 上传作品
+     */
+    public function uploadWork(User $request): ResponseInterface
+    {
+        $request->scene('upload')->validateResolved();
+        $file = $this->request->file('upload');
+        $type = (int) $this->request->post('type');
+        $data = Utils::upload($file, ['rar', 'zip']);
+        $this->userService->uploadWork(user()['id'], $data, $type);
         return $this->success();
     }
 

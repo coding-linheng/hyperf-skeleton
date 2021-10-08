@@ -44,6 +44,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getMoving', [UserController::class, 'getMoving']);
         Router::put('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
         Router::post('cash', [UserController::class, 'cash']);
+        Router::post('uploadWork', [UserController::class, 'uploadWork']);
         Router::get('worksManage', [UserController::class, 'worksManage']);
     });
 

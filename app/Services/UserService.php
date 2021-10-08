@@ -7,10 +7,12 @@ namespace App\Services;
 use App\Constants\ErrorCode;
 use App\Constants\UserCenterStatus;
 use App\Exception\BusinessException;
+use App\Model\Img;
 use App\Model\Noticelook;
 use App\Model\Tixian;
 use App\Model\User;
 use App\Model\Userdata;
+use App\Model\Wenku;
 use App\Repositories\V1\AlbumRepository;
 use App\Repositories\V1\UserRepository;
 use Exception;
@@ -218,6 +220,19 @@ class UserService extends BaseService
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, $e->getMessage());
         }
+    }
+
+    /**
+     * 上传作品
+     * @return Img|Model|Wenku
+     */
+    public function uploadWork(int $userid, array $fileData, int $type): Wenku|Model|Img
+    {
+        $save = array_merge(['uid' => $userid, 'unnum' => snowFlake(), 'time' => time()], $fileData);
+        return match ($type) {
+            1 => Img::create($save),
+            2 => Wenku::create($save),
+        };
     }
 
     /**

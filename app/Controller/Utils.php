@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Constants\ErrorCode;
-use App\Exception\BusinessException;
-use League\Flysystem\Filesystem;
 use Psr\Http\Message\ResponseInterface;
 
 /*
@@ -18,41 +15,10 @@ class Utils extends AbstractController
     /**
      * 上传接口.
      */
-    public function upload(Filesystem $filesystem): ResponseInterface
+    public function upload(): ResponseInterface
     {
-        try {
-            $file = $this->request->file('upload');
-            $size = sprintf('%.2f', $file->getSize() / 1024 / 1024);
-            $ext  = $file->getExtension();
-
-            if (!in_array($file->getExtension(), ['jpg', 'rar', 'zip'])) {
-                throw new \Exception('非法格式');
-            }
-            $maxSize = match ($ext) {
-                'jpg' => 5,
-                'rar', 'zip' => 1024
-            };
-
-            if ($size > $maxSize) {
-                throw new \Exception('文件过大');
-            }
-
-            if (empty($file) || !$file->isValid()) {
-                throw new \Exception('上传失败');
-            }
-            $stream = fopen($file->getRealPath(), 'r+');
-            $path   = 'public/uploads/' . $file->getClientFilename();
-
-            if ($filesystem->has($path)) {
-                //空间已存在则直接返回
-                return $this->response->success(env('PUBLIC_DOMAIN') . '/' . $path);
-            }
-            $filesystem->writeStream($path, $stream);
-            //获取私有地址 $filesystem->getAdapter()->privateDownloadUrl("");
-            fclose($stream);
-            return $this->response->success(env('PUBLIC_DOMAIN') . '/' . $path);
-        } catch (\Exception $e) {
-            throw new BusinessException(ErrorCode::UPLOAD_FAIL, $e->getMessage());
-        }
+        $file = $this->request->file('upload');
+        $data = \App\Common\Utils::upload($file);
+        return $this->success($data);
     }
 }

@@ -26,6 +26,9 @@ return [
     ],
     'account_plan' => [
         'driver' => App\Driver\AsyncQueue\MyRedisDriver::class,
+        'redis' => [
+            'pool' => 'queue',
+        ],
         'channel' => 'account_plan',
         'timeout' => 2,
         'retry_seconds' => 5,
@@ -34,6 +37,9 @@ return [
     ],
     'logger_plan' => [
         'driver'         => App\Driver\AsyncQueue\MyRedisDriver::class,
+        'redis' => [
+            'pool' => 'queue',
+        ],
         'channel'        => 'logger_plan',
         'timeout'        => 2,
         'retry_seconds'  => 5,
@@ -42,6 +48,9 @@ return [
     ],
     'task_scheduler' => [
         'driver'         => App\Driver\AsyncQueue\MyRedisDriver::class,
+        'redis' => [
+            'pool' => 'queue',
+        ],
         'channel'        => 'task_scheduler',
         'timeout'        => 10,
         'retry_seconds'  => 5,
