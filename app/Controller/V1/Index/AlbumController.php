@@ -6,10 +6,8 @@ namespace App\Controller\V1\Index;
 
 use App\Constants\ErrorCode;
 use App\Controller\AbstractController;
-use App\Exception\BusinessException;
 use App\Services\AlbumService;
 use Hyperf\Di\Annotation\Inject;
-use mysql_xdevapi\Exception;
 use Psr\Http\Message\ResponseInterface;
 
 /*
@@ -45,8 +43,9 @@ class AlbumController extends AbstractController
             $queryString .= $queryString . ' ' . $labels;
         }
         $order = $this->request->input('order', '');
-        if(!empty($order) && !in_array($order,['dtime','g_time','caiji'])){
-           $this->response->error(ErrorCode::VALIDATE_FAIL,"暂不支持的排序筛选");
+
+        if (!empty($order) && !in_array($order, ['dtime', 'g_time', 'caiji'])) {
+            $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
         }
         $list  = $this->albumService->searchAlbumList($queryString, $order);
         return $this->response->success($list);
@@ -54,13 +53,14 @@ class AlbumController extends AbstractController
 
     /**
      * 获取灵感详情.
-     * 返回该灵感图片对应的详细信息以及专辑列表
+     * 返回该灵感图片对应的详细信息以及专辑列表.
      */
     public function getDetail(): ResponseInterface
     {
         $id = $this->request->input('id', 0);
-        if(empty($id)){
-          $this->response->error(ErrorCode::VALIDATE_FAIL,"非法访问！");
+
+        if (empty($id)) {
+            $this->response->error(ErrorCode::VALIDATE_FAIL, '非法访问！');
         }
         $list  = $this->albumService->getDetail(intval($id));
         return $this->response->success($list);

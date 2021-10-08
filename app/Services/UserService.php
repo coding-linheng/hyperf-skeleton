@@ -224,7 +224,6 @@ class UserService extends BaseService
 
     /**
      * 上传作品
-     * @return Img|Model|Wenku
      */
     public function uploadWork(int $userid, array $fileData, int $type): Wenku|Model|Img
     {
