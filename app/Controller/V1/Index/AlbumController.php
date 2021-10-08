@@ -20,9 +20,9 @@ class AlbumController extends AbstractController
     protected AlbumService $albumService;
 
     /**
-     * 获取专辑列表.
+     * 获取随机专辑灵感图片推荐展示列表.
      */
-    public function getList(): ResponseInterface
+    public function getRandList(): ResponseInterface
     {
         $data = $this->albumService->getListPageRand([]);
         return $this->response->success($data);
@@ -65,4 +65,19 @@ class AlbumController extends AbstractController
         $list  = $this->albumService->getDetail(intval($id));
         return $this->response->success($list);
     }
+
+    /**
+     * 获取灵感图片对应的原创作者信息.
+     */
+    public function getAlbumAuthor(): ResponseInterface
+    {
+      $id = $this->request->input('id', 0);
+
+      if (empty($id)) {
+        $this->response->error(ErrorCode::VALIDATE_FAIL, '非法访问！');
+      }
+      $list  = $this->albumService->getAlbumAuthor(intval($id));
+      return $this->response->success($list);
+    }
+
 }

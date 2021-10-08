@@ -50,7 +50,8 @@ Router::addGroup($routerPath . '/', function () {
 
     #灵感
     Router::addGroup('album/', function () {
-     # Router::get('getDetail', [AlbumController::class, 'getDetail']);
+      Router::get('getDetail', [AlbumController::class, 'getDetail']);
+      Router::get('getAlbumAuthor', [AlbumController::class, 'getAlbumAuthor']);
     });
 
     #工具类
@@ -64,9 +65,8 @@ Router::addGroup($routerPath . '/', function () {
 Router::addGroup($routerPath . '/', function () {
     #灵感
     Router::addGroup('album/', function () {
-        Router::get('getList', [AlbumController::class, 'getList']);
+        Router::get('getRandList', [AlbumController::class, 'getRandList']);
         Router::get('searchList', [AlbumController::class, 'searchList']);
-        Router::get('getDetail', [AlbumController::class, 'getDetail']);
     });
     #短信类
     Router::addGroup('sms/', function () {

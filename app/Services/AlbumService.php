@@ -71,4 +71,24 @@ class AlbumService extends BaseService
 
         return $returnData;
     }
+
+  /**
+   * 模糊搜索灵感数据，包含标题和标签.
+   */
+  public function getAlbumAuthor(int $id): mixed
+  {
+    $detailArr = $this->albumRepository->getDetail(['l.id' => $id]);
+
+    if(empty($detailArr)) {
+      return [];
+    }
+    //判断是否是原创
+    if(isset($detailArr['isoriginal']) && $detailArr['isoriginal']!=2){
+      //不是自己的原创
+      $detailArr = $this->albumRepository->getDetail(['l.id' =>  $detailArr['cid']]);
+    }
+    $detailArr['path']          = env('PUBLIC_DOMAIN') . '/' . $detailArr['path'] . '/' . ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC;
+    return $detailArr;
+  }
+
 }

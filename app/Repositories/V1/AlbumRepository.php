@@ -37,10 +37,21 @@ class AlbumRepository extends BaseRepository
     {
         $sql = 'SELECT * FROM dczg_albumlist as l where l.del<=1 and (l.is_color=1 or l.color_id=1 or l.yid=0)';
         $sql .= ' and id >= (SELECT floor( RAND() * ((SELECT MAX(id) FROM dczg_albumlist)-(SELECT MIN(id) FROM dczg_albumlist)) + (SELECT MIN(id) FROM dczg_albumlist))) limit 0,40';
-        return Db::select($sql, []);  //  返回array
-        //      foreach($users as $user){
-        //        echo $user->name;
-        //      }
+        $randListArr= Db::select($sql, []);
+      //处理数据
+      if (!empty($randListArr)){
+        foreach ($randListArr as $key => &$val) {
+          $tmp['id']          = $val->id ?? 0;
+          $tmp['path']        = env('PUBLIC_DOMAIN') . '/' .$val->path . '/' . ImgSizeStyle::ALBUM_LIST_SMALL_PIC;
+          $tmp['title']       = $val->title ?? '';
+          $tmp['looknum']     = $val->looknum ?? 0;
+          $tmp['downnum']     = $val->downnum ?? 0;
+          $tmp['dtime']       = $val->dtime  ?? 0;
+          $randListArr[$key] = $tmp;
+          $tmp                = [];
+        }
+      }
+      return $randListArr;
     }
 
     /**
@@ -101,7 +112,7 @@ class AlbumRepository extends BaseRepository
     /**
      * 灵感图片详细信息，中图展示页面，获取图片，专辑，用户等信息.
      */
-    public function getDetail(array $where, array $column = ['a.name as album_name ', 'l.*', 'u.nickname', 'u.imghead']): Model|Builder|null
+    public function getDetail(array $where, array $column = ['a.name as album_name ','a.isoriginal', 'l.*', 'u.nickname', 'u.imghead']): Model|Builder|null
     {
         return Album::from('albumlist as l')->join('album as a', 'a.id', '=', 'l.aid', 'inner')
             ->join('user as u', 'u.id', '=', 'a.uid', 'inner')
