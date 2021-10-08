@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories\V1;
 
+use App\Constants\ImgSizeStyle;
 use App\Model\Album;
 use App\Model\Albumlist;
 use App\Model\Img;
@@ -72,7 +73,7 @@ class AlbumRepository extends BaseRepository
                   continue;
                 }
                 $tmp['id']          = $val['id'] ?? 0;
-                $tmp['path']        = env('PUBLIC_DOMAIN') . '/' . $val['path'];
+                $tmp['path']        = env('PUBLIC_DOMAIN') . '/' . $val['path']."/".ImgSizeStyle::ALBUM_LIST_SMALL_PIC;
                 $tmp['title']       = $val['title']   ?? '';
                 $tmp['looknum']     = $val['looknum'] ?? 0;
                 $tmp['downnum']     = $val['downnum'] ?? 0;
@@ -90,11 +91,21 @@ class AlbumRepository extends BaseRepository
     public function getAlbumDetailList(array $where, array $query, array $column = ['*']): array
     {
         $page     = ($query['page'] ?? 1) ?: 1;
-        $pageSize = $query['page_size'] ?? 50;
+        $pageSize = $query['page_size'] ?? 100;
         $orm      = Album::from('album as a')->join('albumlist as l', 'a.id', '=', 'l.aid', 'left')->where($where);
         $count    = $orm->count();
         $list     = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
         return ['count' => $count, 'list' => $list->toArray()];
+    }
+
+    /**
+     * 灵感图片详细信息，中图展示页面，获取图片，专辑，用户等信息.
+     */
+    public function getDetail(array $where, array $column = ['a.name as album_name ','l.*','u.nickname','u.imghead']): Model|Builder|null
+    {
+      return Album::from('albumlist as l')->join('album as a', 'a.id', '=', 'l.aid', 'inner')
+        ->join('user as u', 'u.id', '=', 'a.uid', 'inner')
+        ->where($where)->select($column)->first();
     }
 
     /**
@@ -114,6 +125,18 @@ class AlbumRepository extends BaseRepository
         return Albumlist::query()->where($where)->select($column)->first();
     }
 
+    /**
+     * 获取专辑列表信息.
+     */
+    public function getAlbumListDetailPage(array $where,$query, array $column = ['*']): array
+    {
+      $page     = ($query['page'] ?? 1) ?: 1;
+      $pageSize = $query['page_size'] ?? 100;
+      $orm      =  Albumlist::query()->where($where);
+      $count    = $orm->count();
+      $list     = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
+      return ['count' => $count, 'list' => $list->toArray()];
+    }
     /**
      * 获取文库信息列表.
      */

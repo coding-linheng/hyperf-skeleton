@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Constants\ImgSizeStyle;
 use App\Model\User;
 use App\Repositories\V1\AlbumRepository;
 use Hyperf\Di\Annotation\Inject;
@@ -41,4 +42,33 @@ class AlbumService extends BaseService
     {
         return $this->albumRepository->searchAlbumList($queryData, $order);
     }
+  /**
+   * 模糊搜索灵感数据，包含标题和标签.
+   *
+   * @param int $id
+   *
+   * @return mixed
+   */
+  public function getDetail(int $id): mixed {
+    $detailArr = $this->albumRepository->getDetail(['l.id'=>$id]);
+    if(empty($detailArr)){
+      return [];
+    }
+
+    $detailArr['path']=env('PUBLIC_DOMAIN') . '/' .$detailArr['path']."/".ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC;
+    $returnData['album_detail']=$detailArr;
+
+    //搜索该专辑中对应的图片
+    $albumListArr = $this->albumRepository->getAlbumListDetailPage(['aid'=>$detailArr['aid']],[],['id','path','title']);
+    if(!empty($albumListArr)&&isset($albumListArr['list'])){
+      foreach ($albumListArr['list'] as $key=>$val){
+         $albumListArr['list'][$key]['path']=env('PUBLIC_DOMAIN') . '/' . $val['path']."/".ImgSizeStyle::ALBUM_LIST_DETAIL_SMALL_PIC;
+      }
+      $returnData['album_list']=$albumListArr['list'];
+    }else{
+      $returnData['album_list']=[];
+    }
+
+    return $returnData;
+  }
 }

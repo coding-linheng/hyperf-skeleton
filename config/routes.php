@@ -48,6 +48,11 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('worksManage', [UserController::class, 'worksManage']);
     });
 
+    #灵感
+    Router::addGroup('album/', function () {
+     # Router::get('getDetail', [AlbumController::class, 'getDetail']);
+    });
+
     #工具类
     Router::addGroup('utils/', function () {
         Router::post('upload', [Utils::class, 'upload']);
@@ -61,6 +66,7 @@ Router::addGroup($routerPath . '/', function () {
     Router::addGroup('album/', function () {
         Router::get('getList', [AlbumController::class, 'getList']);
         Router::get('searchList', [AlbumController::class, 'searchList']);
+        Router::get('getDetail', [AlbumController::class, 'getDetail']);
     });
     #短信类
     Router::addGroup('sms/', function () {

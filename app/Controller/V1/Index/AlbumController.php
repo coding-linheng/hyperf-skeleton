@@ -53,10 +53,16 @@ class AlbumController extends AbstractController
     }
 
     /**
-     * 获取搜索详情.
+     * 获取灵感详情.
+     * 返回该灵感图片对应的详细信息以及专辑列表
      */
     public function getDetail(): ResponseInterface
     {
-        return $this->response->success();
+        $id = $this->request->input('id', 0);
+        if(empty($id)){
+          $this->response->error(ErrorCode::VALIDATE_FAIL,"非法访问！");
+        }
+        $list  = $this->albumService->getDetail(intval($id));
+        return $this->response->success($list);
     }
 }
