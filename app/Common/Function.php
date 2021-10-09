@@ -138,7 +138,7 @@ if (!function_exists('es_callback')) {
             if ($isFormat) {
                 $query = es_query_format($query);
             }
-            $queryArr = isJson($query, true);
+            $queryArr = is_json($query, true);
             //如果存在must则优先合并，再覆盖
             if (isset($params['body']['query']['bool']['must']) && !empty($params['body']['query']['bool']['must'])) {
                 $queryArr['must'] = array_merge(
@@ -183,13 +183,13 @@ if (!function_exists('es_callback')) {
     }
 }
 
-if (!function_exists('formatEsPageRawData')) {
+if (!function_exists('format_es_page_raw_data')) {
     /**
      * es搜索闭包.
      * @param mixed $rawData
      * @throws array
      */
-    function formatEsPageRawData($rawData): array
+    function format_es_page_raw_data($rawData): array
     {
         $tmp = [];
 
@@ -205,7 +205,7 @@ if (!function_exists('formatEsPageRawData')) {
     }
 }
 
-if (!function_exists('isJson')) {
+if (!function_exists('is_json')) {
     /**
      * 判断字符串是否为 Json 格式.
      *
@@ -214,7 +214,7 @@ if (!function_exists('isJson')) {
      *
      * @return array|bool|object 成功返回转换后的对象或数组，失败返回 false
      */
-    function isJson($data = '', $assoc = false)
+    function is_json($data = '', $assoc = false)
     {
         $data = json_decode($data, $assoc);
 
@@ -225,11 +225,11 @@ if (!function_exists('isJson')) {
     }
 }
 
-if (!function_exists('snowFlake')) {
+if (!function_exists('snow_flake')) {
     /**
      * 雪花算法生成唯一id.
      */
-    function snowFlake(): int
+    function snow_flake(): int
     {
         return di()->get(IdGeneratorInterface::class)->generate();
     }

@@ -227,7 +227,7 @@ class UserService extends BaseService
      */
     public function uploadWork(int $userid, array $fileData, int $type): Wenku|Model|Img
     {
-        $save = array_merge(['uid' => $userid, 'unnum' => snowFlake(), 'time' => time()], $fileData);
+        $save = array_merge(['uid' => $userid, 'unnum' => snow_flake(), 'time' => time()], $fileData);
         return match ($type) {
             1 => Img::create($save),
             2 => Wenku::create($save),

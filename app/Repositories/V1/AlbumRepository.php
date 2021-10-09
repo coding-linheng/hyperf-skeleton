@@ -75,7 +75,7 @@ class AlbumRepository extends BaseRepository
             $orm = $orm->orderBy($order, 'desc');
         }
         $list = $orm->paginateRaw(200)->toArray();
-        $list = formatEsPageRawData($list);
+        $list = format_es_page_raw_data($list);
         //处理数据
         if (!empty($list) && isset($list['data']) && !empty($list['data'])) {
             foreach ($list['data'] as $key => &$val) {
