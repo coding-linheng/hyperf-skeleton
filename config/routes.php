@@ -45,13 +45,15 @@ Router::addGroup($routerPath . '/', function () {
         Router::put('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
         Router::post('cash', [UserController::class, 'cash']);
         Router::post('uploadWork', [UserController::class, 'uploadWork']);
+        Router::post('writeInformationForMaterial', [UserController::class, 'writeInformationForMaterial']);
         Router::get('worksManage', [UserController::class, 'worksManage']);
+        Router::get('getMaterialCategory', [UserController::class, 'getMaterialCategory']);
     });
 
     #灵感
     Router::addGroup('album/', function () {
-      Router::get('getDetail', [AlbumController::class, 'getDetail']);
-      Router::get('getAlbumAuthor', [AlbumController::class, 'getAlbumAuthor']);
+        Router::get('getDetail', [AlbumController::class, 'getDetail']);
+        Router::get('getAlbumAuthor', [AlbumController::class, 'getAlbumAuthor']);
     });
 
     #工具类

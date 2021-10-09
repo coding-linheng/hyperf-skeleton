@@ -21,6 +21,7 @@ class User extends FormRequest
         'upload_head'   => ['head_image'],
         'work'          => ['type', 'status'],
         'upload'        => ['upload', 'type'],
+        'information'   => ['work_id'],
     ];
 
     /**
@@ -71,6 +72,7 @@ class User extends FormRequest
             'status'     => ['required', Rule::in([0, 1, 2, 3, 4])],
             'type'       => ['required', Rule::in([1, 2])],
             'upload'     => 'required|file',
+            'work_id'    => ['required', @Rule::exists('img', 'id')->where(fn ($query) => $query->where(['uid' => user()['id']]))],
         ];
     }
 
@@ -88,6 +90,14 @@ class User extends FormRequest
             'head_image' => '头像',
             'status'     => '状态',
             'type'       => '类型',
+            'work_id'    => '作品',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'work_id.exists' => '作品不存在',
         ];
     }
 }

@@ -82,6 +82,7 @@ return (new PhpCsFixer\Config)
         'single_quote'                           => true,  //将简单字符串的双引号转换为单引号
         'standardize_not_equals'                 => true,  //全部替换<>为!=.
         'multiline_comment_opening_closing'      => true,
+        'cast_spaces'                            => ['space' => 'none'],  //强制转换和变量之间有无空格
         'binary_operator_spaces'                 => ['default' => 'align_single_space']  //等号对齐、数字箭头
     ])
     ->setFinder(

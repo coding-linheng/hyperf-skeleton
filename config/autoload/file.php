@@ -9,6 +9,9 @@ declare(strict_types=1);
  * @contact  group@hyperf.io
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
+
+use Hyperf\Filesystem\Adapter\QiniuAdapterFactory;
+
 return [
     'default' => env('UPLOAD_DRIVE','qiniu'),
     'storage' => [
@@ -71,7 +74,7 @@ return [
             // 'proxy' => null,
         ],
         'qiniu' => [
-            'driver' => \Hyperf\Filesystem\Adapter\QiniuAdapterFactory::class,
+            'driver' => QiniuAdapterFactory::class,
             'accessKey' => env('QINIU_ACCESS_KEY'),
             'secretKey' => env('QINIU_SECRET_KEY'),
             'bucket' => env('QINIU_BUCKET'),

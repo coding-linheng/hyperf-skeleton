@@ -179,7 +179,7 @@ class UserController extends AbstractController
     public function getMessageDetail(User $request): ResponseInterface
     {
         $request->scene('notice')->validateResolved();
-        $id   = (int) $request->input('notice_id');
+        $id   = (int)$request->input('notice_id');
         $data = $this->userService->getMessageDetail($id);
         Noticelook::updateOrCreate(['uid' => user()['id'], 'nid' => $id]);
         return $this->success($data);
@@ -202,7 +202,7 @@ class UserController extends AbstractController
     {
         $request->scene('upload')->validateResolved();
         $file = $this->request->file('upload');
-        $type = (int) $this->request->post('type');
+        $type = (int)$this->request->post('type');
         $data = Utils::upload($file, ['rar', 'zip']);
         $this->userService->uploadWork(user()['id'], $data, $type);
         return $this->success();
@@ -215,9 +215,25 @@ class UserController extends AbstractController
     {
         $request->scene('work')->validateResolved();
         $query  = $request->all();
-        $column = ['id', 'name', 'size', 'img', 'time'];
+        $column = ['id', 'name', 'size', 'img', 'time', 'status'];
         $data   = $this->userService->worksManage(user()['id'], $query, $column);
-        //todo 完善返回信息
         return $this->success($data);
+    }
+
+    /**
+     * 填写信息.
+     */
+    public function writeInformationForMaterial(User $request)
+    {
+        $request->scene('information')->validateResolved();
+        $query = $request->all();
+    }
+
+    /*
+     * 获取素材分类
+     */
+    public function getMaterialCategory(): ResponseInterface
+    {
+        return $this->success($this->userService->getMaterialCategory());
     }
 }
