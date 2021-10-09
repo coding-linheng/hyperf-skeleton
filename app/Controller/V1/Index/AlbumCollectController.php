@@ -7,8 +7,9 @@ namespace App\Controller\V1\Index;
 use App\Controller\AbstractController;
 use App\Request\Album;
 use App\Services\AlbumService;
-use Psr\Http\Message\ResponseInterface;
 use Hyperf\Di\Annotation\Inject;
+use Psr\Http\Message\ResponseInterface;
+
 /*
  * 收藏专辑以及专辑图片相关操作
  */
@@ -17,6 +18,7 @@ class AlbumCollectController extends AbstractController
 {
     #[Inject]
     protected AlbumService $albumService;
+
     /**
      * 获取收藏该专辑的设计师列表.
      */
@@ -49,7 +51,6 @@ class AlbumCollectController extends AbstractController
         return $this->response->success();
     }
 
-
     /**
      * 采集图片灵感图片.
      * 请求参数 cid 采集灵感图片的id
@@ -63,8 +64,8 @@ class AlbumCollectController extends AbstractController
         $request->scene('captureAlbumImg')->validateResolved();
         $aid   = $request->input('aid');
         $cid   = $request->input('cid');
-        $title = $request->input('title','');
-        $list = $this->albumService->captureAlbumImg(intval($cid),intval($aid),(string)$title);
+        $title = $request->input('title', '');
+        $list  = $this->albumService->captureAlbumImg(intval($cid), intval($aid), (string)$title);
         return $this->success($list);
     }
 }

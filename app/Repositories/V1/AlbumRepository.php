@@ -19,6 +19,7 @@ use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
+
 /*
  * 专辑库
  */
@@ -149,7 +150,7 @@ class AlbumRepository extends BaseRepository
      */
     public function getAlbumDetailInfo(array $where, array $column = ['*']): Model|Builder|null
     {
-      return Album::query()->where($where)->select($column)->first();
+        return Album::query()->where($where)->select($column)->first();
     }
 
     /**
@@ -166,93 +167,103 @@ class AlbumRepository extends BaseRepository
         return ['count' => $count, 'list' => $list->toArray()];
     }
 
-   /**
-   * 采集灵感图片.
-   */
-   public function captureAlbumImg($albumlistInfo,$albumInfo,$albumlistInfoOld): array|bool{
-     $uid=user()['id']??0;
-     unset($albumlistInfo['id']);
-     $originAlbumList=Album::where(['id'=>$albumlistInfoOld['aid']])->field('id,uid,isoriginal')->find();
-     if(empty($originAlbumList)){
-       throw new BusinessException(ErrorCode::ERROR, '该图片无法采集！');
-     }
-     Db::beginTransaction();
-     try{
+    /**
+     * 采集灵感图片.
+     * @param mixed $albumlistInfo
+     * @param mixed $albumInfo
+     * @param mixed $albumlistInfoOld
+     */
+    public function captureAlbumImg($albumlistInfo, $albumInfo, $albumlistInfoOld): array|bool
+    {
+        $uid = user()['id'] ?? 0;
+        unset($albumlistInfo['id']);
+        $originAlbumList = Album::where(['id' => $albumlistInfoOld['aid']])->field('id,uid,isoriginal')->find();
 
+        if (empty($originAlbumList)) {
+            throw new BusinessException(ErrorCode::ERROR, '该图片无法采集！');
+        }
+        Db::beginTransaction();
+        try {
        //如果没有采集过
-       $caiJi=Caiji::query()->where(['cid'=>$albumlistInfo['id'],'uid'=>$uid])->first()->toArray();
-       if(empty($caiji)){
-         $add=['cid'=>$albumlistInfo['id'],'uid'=>$uid,'num'=>1];
-         $lastId= Caiji::insertGetId($add);
-         if(!$lastId){
-           throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
-         }
-         $caiJi=$add;
-       }else{
-         //采集满5次了
-         if($caiJi['num']>=5){
-           throw new BusinessException(ErrorCode::ERROR, '该图片你已经采集超过5次,无法完成采集,换一张试试！');
-         }
-         //增加你采集的数据
-         if(!Caiji::where(['cid'=>$albumlistInfo['id'],'uid'=>$uid])->increment('num',1)){
-           throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
-         }
+            $caiJi = Caiji::query()->where(['cid' => $albumlistInfo['id'], 'uid' => $uid])->first()->toArray();
 
-       }
+            if (empty($caiji)) {
+                $add    = ['cid' => $albumlistInfo['id'], 'uid' => $uid, 'num' => 1];
+                $lastId = Caiji::insertGetId($add);
 
-       //修改我的专辑对应的状态，增加专辑的图片数量
-       $albumInfoUpdateData['status']=2;
-       $albumInfoUpdateData['num']=$albumInfo['num']+1;
-       if(!Album::where('id',$albumInfo['id'])->update($albumInfoUpdateData)){
-         throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
-       }
+                if (!$lastId) {
+                    throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
+                }
+                $caiJi = $add;
+            } else {
+                //采集满5次了
+                if ($caiJi['num'] >= 5) {
+                    throw new BusinessException(ErrorCode::ERROR, '该图片你已经采集超过5次,无法完成采集,换一张试试！');
+                }
+                //增加你采集的数据
+                if (!Caiji::where(['cid' => $albumlistInfo['id'], 'uid' => $uid])->increment('num', 1)) {
+                    throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
+                }
+            }
 
-       //增加被采集的数量,采集时间
-       $albumlistUpdateData['g_time']=time();
-       $albumlistUpdateData['dtime']=time();
-       $albumlistUpdateData['caiji']=intval($albumlistInfo['caiji'])+1;
-       if(!Albumlist::where('id',$albumlistInfo['yid'])->update($albumlistUpdateData)){
-         throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
-       }
+            //修改我的专辑对应的状态，增加专辑的图片数量
+            $albumInfoUpdateData['status'] = 2;
+            $albumInfoUpdateData['num']    = $albumInfo['num'] + 1;
 
-       //入库
-       $albumlistInfo['caiji']=0;
-       $albumlistLastId= Albumlist::insertGetId($albumlistInfo);
-       if(!$albumlistLastId){
-         throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
-       }
+            if (!Album::where('id', $albumInfo['id'])->update($albumInfoUpdateData)) {
+                throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
+            }
 
-       //增加采集流水
-       if(!$this->waterDoRepository->addWaterDo($uid,$originAlbumList['uid'],$albumlistInfo['id'],4,$albumInfo['id'],$originAlbumList['isoriginal'],$originAlbumList['id'])){
-         throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
-       }
+            //增加被采集的数量,采集时间
+            $albumlistUpdateData['g_time'] = time();
+            $albumlistUpdateData['dtime']  = time();
+            $albumlistUpdateData['caiji']  = intval($albumlistInfo['caiji']) + 1;
 
-       //修改专辑4张预览图片
-       if(!$this->updateAlbumPreviewImgs($albumInfo['id'])){
-         throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
-       }
+            if (!Albumlist::where('id', $albumlistInfo['yid'])->update($albumlistUpdateData)) {
+                throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
+            }
 
-       Db::commit();
-       return [$albumlistLastId];
-     } catch(\Throwable $ex){
-       Db::rollBack();
-       throw new BusinessException(ErrorCode::ERROR, $ex->getMessage());
-     }
-   }
+            //入库
+            $albumlistInfo['caiji'] = 0;
+            $albumlistLastId        = Albumlist::insertGetId($albumlistInfo);
 
-   /**
-   * 更新album表中预览图字段preview_imgs.
-   */
-   public function updateAlbumPreviewImgs($aid):int{
+            if (!$albumlistLastId) {
+                throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
+            }
 
+            //增加采集流水
+            if (!$this->waterDoRepository->addWaterDo($uid, $originAlbumList['uid'], $albumlistInfo['id'], 4, $albumInfo['id'], $originAlbumList['isoriginal'], $originAlbumList['id'])) {
+                throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
+            }
+
+            //修改专辑4张预览图片
+            if (!$this->updateAlbumPreviewImgs($albumInfo['id'])) {
+                throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
+            }
+
+            Db::commit();
+            return [$albumlistLastId];
+        } catch (\Throwable $ex) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, $ex->getMessage());
+        }
+    }
+
+    /**
+     * 更新album表中预览图字段preview_imgs.
+     * @param mixed $aid
+     */
+    public function updateAlbumPreviewImgs($aid): int
+    {
      //根据专辑ID查询到该专辑中采集数量前4的图片
-     $previewImgs= Albumlist::where('aid',$aid)->orderBy('caiji','desc')->limit(4)->pluck('path')->toArray();
-     if(empty($previewImgs)){
-       $previewImgs=[];
-     }
-     //更新字段
-     return Album::where('id',$aid)->update(['preview_imgs'=>json_encode($previewImgs)]);
-   }
+        $previewImgs = Albumlist::where('aid', $aid)->orderBy('caiji', 'desc')->limit(4)->pluck('path')->toArray();
+
+        if (empty($previewImgs)) {
+            $previewImgs = [];
+        }
+        //更新字段
+        return Album::where('id', $aid)->update(['preview_imgs' => json_encode($previewImgs)]);
+    }
 
     /**
      * 获取文库信息列表.

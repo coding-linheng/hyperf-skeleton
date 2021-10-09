@@ -20,8 +20,8 @@ class Album extends FormRequest
      * Set scene values.
      */
     public $scenes = [
-        'get' => ['id'],
-        'captureAlbumImg'   => ['cid', 'aid','title'], //采集灵感图片
+        'get'               => ['id'],
+        'captureAlbumImg'   => ['cid', 'aid', 'title'], //采集灵感图片
     ];
 
     /**
@@ -38,10 +38,10 @@ class Album extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|exists:albumlist,id',
-            'cid' => 'required|exists:albumlist,id',
-            'aid' => 'required|gt:0',
-            'title'=>"string"
+            'id'    => 'required|exists:albumlist,id',
+            'cid'   => 'required|exists:albumlist,id',
+            'aid'   => 'required|gt:0',
+            'title' => 'string',
         ];
     }
 
@@ -51,6 +51,7 @@ class Album extends FormRequest
             'id.exists' => '专辑不存在',
         ];
     }
+
     /**
      * 获取验证错误的自定义属性.
      */
@@ -58,7 +59,7 @@ class Album extends FormRequest
     {
         return [
             'cid'       => '采集图片ID',
-            'aid'    => '专辑ID',
+            'aid'       => '专辑ID',
         ];
     }
 }

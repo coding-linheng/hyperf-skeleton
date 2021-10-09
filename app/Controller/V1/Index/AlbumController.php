@@ -89,5 +89,4 @@ class AlbumController extends AbstractController
         $list = $this->albumService->getOriginAlbumPic(intval($id));
         return $this->success($list);
     }
-
 }
