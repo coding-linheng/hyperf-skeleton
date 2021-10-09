@@ -90,8 +90,29 @@ class AlbumService extends BaseService
     public function getOriginAlbumPic(int $id): array
     {
         $detailArr         = $this->albumRepository->getAlbumListDetail(['id' => $id], ['name', 'path', 'title']);
+        if(empty($detailArr)){
+            return [];
+        }
         $detailArr         = is_array($detailArr) ?: $detailArr->toArray();
         $detailArr['path'] = get_img_path_private($detailArr['path']);
         return $detailArr;
     }
+    /**
+     * 采集图片灵感图片.
+     * 请求参数 cid 采集灵感图片的id
+     * 请求参数 aid 采集到属于我的专辑的id
+     *
+     * @return array|bool
+     */
+    public function captureAlbumImg(int $cid,$aid): array
+    {
+        $detailArr         = $this->albumRepository->getAlbumListDetail(['id' => $cid], ['name', 'path', 'title']);
+        if(empty($detailArr)){
+            return [];
+        }
+        $detailArr         = is_array($detailArr) ?: $detailArr->toArray();
+        $detailArr['path'] = get_img_path_private($detailArr['path']);
+        return $detailArr;
+    }
+
 }

@@ -14,6 +14,7 @@ declare(strict_types=1);
 use App\Controller\Sms;
 use App\Controller\Utils;
 use App\Controller\V1\HelpCenter;
+use App\Controller\V1\Index\AlbumCollectController;
 use App\Controller\V1\UserCenter\UserController;
 use App\Controller\V1\Index\AlbumController;
 use App\Middleware\JwtMiddleware;
@@ -68,6 +69,8 @@ Router::addGroup($routerPath . '/', function () {
     Router::addGroup('album/', function () {
         Router::get('getRandList', [AlbumController::class, 'getRandList']);
         Router::get('searchList', [AlbumController::class, 'searchList']);
+        Router::get('captureAlbumImg', [AlbumCollectController::class, 'captureAlbumImg']);
+
     });
     #短信类
     Router::addGroup('sms/', function () {

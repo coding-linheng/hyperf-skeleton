@@ -21,6 +21,7 @@ class Album extends FormRequest
      */
     public $scenes = [
         'get' => ['id'],
+        'captureAlbumImg'   => ['cid', 'aid'], //采集灵感图片
     ];
 
     /**
@@ -38,6 +39,8 @@ class Album extends FormRequest
     {
         return [
             'id' => 'required|exists:albumlist,id',
+            'cid' => 'required|exists:albumlist,id',
+            'aid' => 'required|gt:0',
         ];
     }
 
@@ -45,6 +48,16 @@ class Album extends FormRequest
     {
         return [
             'id.exists' => '专辑不存在',
+        ];
+    }
+    /**
+     * 获取验证错误的自定义属性.
+     */
+    public function attributes(): array
+    {
+        return [
+            'cid'       => '采集图片ID',
+            'aid'    => '专辑ID',
         ];
     }
 }
