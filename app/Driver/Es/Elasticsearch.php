@@ -434,7 +434,7 @@ class Elasticsearch
 
             if (isset($terms_field) && in_array($key, $terms_field)) {
                 if (is_int($value)) {
-                    $value = (string) $value;
+                    $value = (string)$value;
                 }
 
                 $condition[] = ['terms' => [$middle_key => explode(',', $value)]];

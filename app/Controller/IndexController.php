@@ -55,7 +55,7 @@ class IndexController extends AbstractController
 
         $member->nickname = $name;
         $member->username = $name;
-        $member->mobile   = (string) $mobile;
+        $member->mobile   = (string)$mobile;
         $member->password = md5('123456');
         $member->save();
         return $this->response->success();

@@ -50,7 +50,7 @@ class CorsMiddleware implements MiddlewareInterface
 
             if ($origin != false) {
                 // offset从5开始，避免http:引发问题
-                $isPort = (int) strripos($origin, ':', 5);
+                $isPort = (int)strripos($origin, ':', 5);
 
                 if ($isPort) {
                     $ifOrigin = in_array(substr($origin, 0, $isPort), $origins);

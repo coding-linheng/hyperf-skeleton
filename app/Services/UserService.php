@@ -7,7 +7,9 @@ namespace App\Services;
 use App\Constants\ErrorCode;
 use App\Constants\UserCenterStatus;
 use App\Exception\BusinessException;
+use App\Model\Fenlei;
 use App\Model\Img;
+use App\Model\Mulu;
 use App\Model\Noticelook;
 use App\Model\Tixian;
 use App\Model\User;
@@ -257,11 +259,37 @@ class UserService extends BaseService
         //预览图处理
         foreach ($list['list'] as $k => $v) {
             if (!empty($v['img']) && !is_null($data = json_decode($v['img'], true))) {
-                $preview = $this->userRepository->getPreview((int) $data['0']) ?? '';
+                $preview = $this->userRepository->getPreview((int)$data['0']) ?? '';
             }
             $list['list'][$k]['preview'] = $preview ?? '';
+            $list['list'][$k]['size']    = sprintf('%.2f', $list['list'][$k]['size'] / 1024 / 1024);
         }
         return array_merge($list, ['count_arr' => $countArr]);
+    }
+
+    public function writeInformationForMaterial(int $userid, array $params)
+    {
+    }
+
+    /**
+     * 获取素材分类.
+     */
+    public function getMaterialCategory(): array
+    {
+        $category = Mulu::query()->pluck('name', 'id')->toArray();
+
+        if (empty($category)) {
+            return [];
+        }
+        $children = Fenlei::query()->whereIn('mid', array_keys($category))->select(['id', 'name', 'mid'])->get()->toArray();
+        $data     = [];
+
+        foreach ($children as $v) {
+            $data[$v['mid']]['id']         = $v['mid'];
+            $data[$v['mid']]['name']       = $category[$v['mid']];
+            $data[$v['mid']]['children'][] = $v;
+        }
+        return array_values($data);
     }
 
     /**

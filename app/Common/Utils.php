@@ -43,8 +43,9 @@ class Utils
             if ($size > $maxSize) {
                 throw new Exception('上传失败:文件过大');
             }
+            //保证数据唯一不重复上传
             $stream     = fopen($file->getRealPath(), 'r+');
-            $path       = 'public/uploads/' . $file->getClientFilename();
+            $path       = 'public/uploads/' . md5_file($file->getRealPath());
             $filesystem = make(Filesystem::class);
             $data       = [
                 'path'   => env('PUBLIC_DOMAIN') . '/' . $path,
