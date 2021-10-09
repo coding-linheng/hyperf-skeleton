@@ -52,6 +52,7 @@ Router::addGroup($routerPath . '/', function () {
     Router::addGroup('album/', function () {
       Router::get('getDetail', [AlbumController::class, 'getDetail']);
       Router::get('getAlbumAuthor', [AlbumController::class, 'getAlbumAuthor']);
+      Router::get('getOriginAlbumPic', [AlbumController::class, 'getOriginAlbumPic']);
     });
 
     #工具类

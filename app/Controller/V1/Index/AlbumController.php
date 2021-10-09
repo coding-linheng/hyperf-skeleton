@@ -77,7 +77,10 @@ class AlbumController extends AbstractController
 
     /**
      * 获取灵感原图详情.
+     * 请求参数 id 灵感图片的id
+     * eg: /v1/album/getOriginAlbumPic?id=1569692
      * 返回该灵感图片原始图片，应该是加密后的原始图片.
+     * {"code":0,"msg":"success","data":{"name":"ia_200001127.jpg","path":"http:\/\/qzdj3z3qz.hn-bkt.clouddn.com\/20210630\/3175jic1n2urpk8.jpg?e=1633766350&token=hl73g4h81_b6ysJCzQ_f_S49_0Ncu8C1mBJZHAje:mzL2-jquyhxZXjtomqUDxKV-tyk=","title":"二十四节气霜降地产海报"}}.
      */
     public function getOriginAlbumPic(Album $request): ResponseInterface
     {
