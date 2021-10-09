@@ -10,6 +10,8 @@ namespace App\Services;
 use App\Constants\ImgSizeStyle;
 use App\Model\User;
 use App\Repositories\V1\AlbumRepository;
+use Hyperf\Database\Model\Builder;
+use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -33,12 +35,9 @@ class AlbumService extends BaseService
     /**
      * 模糊搜索灵感数据，包含标题和标签.
      *
-     * @param mixed $queryData
      * @param $order
-     *
-     * @return mixed
      */
-    public function searchAlbumList($queryData, $order)
+    public function searchAlbumList(mixed $queryData, $order): mixed
     {
         return $this->albumRepository->searchAlbumList($queryData, $order);
     }
@@ -46,13 +45,9 @@ class AlbumService extends BaseService
     /**
      * 模糊搜索灵感数据，包含标题和标签.
      */
-    public function getDetail(int $id): mixed
+    public function getDetail(int $id): array
     {
         $detailArr = $this->albumRepository->getDetail(['l.id' => $id]);
-
-        if (empty($detailArr)) {
-            return [];
-        }
 
         $detailArr['path']          = env('PUBLIC_DOMAIN') . '/' . $detailArr['path'] . '/' . ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC;
         $returnData['album_detail'] = $detailArr;
@@ -62,7 +57,7 @@ class AlbumService extends BaseService
 
         if (!empty($albumListArr) && isset($albumListArr['list'])) {
             foreach ($albumListArr['list'] as $key => $val) {
-                $albumListArr['list'][$key]['path'] = env('PUBLIC_DOMAIN') . '/' . $val['path'] . '/' . ImgSizeStyle::ALBUM_LIST_DETAIL_SMALL_PIC;
+                $albumListArr['list'][$key]['path'] = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_DETAIL_SMALL_PIC);
             }
             $returnData['album_list'] = $albumListArr['list'];
         } else {
@@ -72,23 +67,18 @@ class AlbumService extends BaseService
         return $returnData;
     }
 
-  /**
-   * 模糊搜索灵感数据，包含标题和标签.
-   */
-  public function getAlbumAuthor(int $id): mixed
-  {
-    $detailArr = $this->albumRepository->getDetail(['l.id' => $id]);
-
-    if(empty($detailArr)) {
-      return [];
+    /**
+     * 模糊搜索灵感数据，包含标题和标签.
+     */
+    public function getAlbumAuthor(int $id): Builder|null|Model
+    {
+        $detailArr = $this->albumRepository->getDetail(['l.id' => $id]);
+        //判断是否是原创
+        if (isset($detailArr['isoriginal']) && $detailArr['isoriginal'] != 2) {
+            //不是自己的原创
+            $detailArr = $this->albumRepository->getDetail(['l.id' => $detailArr['cid']]);
+        }
+        $detailArr['path'] = get_img_path($detailArr['path'], ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC);
+        return $detailArr;
     }
-    //判断是否是原创
-    if(isset($detailArr['isoriginal']) && $detailArr['isoriginal']!=2){
-      //不是自己的原创
-      $detailArr = $this->albumRepository->getDetail(['l.id' =>  $detailArr['cid']]);
-    }
-    $detailArr['path']          = env('PUBLIC_DOMAIN') . '/' . $detailArr['path'] . '/' . ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC;
-    return $detailArr;
-  }
-
 }

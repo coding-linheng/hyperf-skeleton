@@ -6,6 +6,7 @@ namespace App\Controller\V1\Index;
 
 use App\Constants\ErrorCode;
 use App\Controller\AbstractController;
+use App\Request\Album;
 use App\Services\AlbumService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
@@ -47,7 +48,7 @@ class AlbumController extends AbstractController
         if (!empty($order) && !in_array($order, ['dtime', 'g_time', 'caiji'])) {
             $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
         }
-        $list  = $this->albumService->searchAlbumList($queryString, $order);
+        $list = $this->albumService->searchAlbumList($queryString, $order);
         return $this->response->success($list);
     }
 
@@ -55,29 +56,22 @@ class AlbumController extends AbstractController
      * 获取灵感详情.
      * 返回该灵感图片对应的详细信息以及专辑列表.
      */
-    public function getDetail(): ResponseInterface
+    public function getDetail(Album $request): ResponseInterface
     {
-        $id = $this->request->input('id', 0);
-
-        if (empty($id)) {
-            $this->response->error(ErrorCode::VALIDATE_FAIL, '非法访问！');
-        }
-        $list  = $this->albumService->getDetail(intval($id));
-        return $this->response->success($list);
+        $request->scene('get')->validateResolved();
+        $id   = $request->input('id');
+        $list = $this->albumService->getDetail(intval($id));
+        return $this->success($list);
     }
 
     /**
      * 获取灵感图片对应的原创作者信息.
      */
-    public function getAlbumAuthor(): ResponseInterface
+    public function getAlbumAuthor(Album $request): ResponseInterface
     {
-      $id = $this->request->input('id', 0);
-
-      if (empty($id)) {
-        $this->response->error(ErrorCode::VALIDATE_FAIL, '非法访问！');
-      }
-      $list  = $this->albumService->getAlbumAuthor(intval($id));
-      return $this->response->success($list);
+        $request->scene('get')->validateResolved();
+        $id   = $request->input('id');
+        $list = $this->albumService->getAlbumAuthor(intval($id));
+        return $this->success($list);
     }
-
 }
