@@ -74,4 +74,16 @@ class AlbumController extends AbstractController
         $list = $this->albumService->getAlbumAuthor(intval($id));
         return $this->success($list);
     }
+
+    /**
+     * 获取灵感原图详情.
+     * 返回该灵感图片原始图片，应该是加密后的原始图片.
+     */
+    public function getOriginAlbumPic(Album $request): ResponseInterface
+    {
+        $request->scene('get')->validateResolved();
+        $id   = $request->input('id');
+        $list = $this->albumService->getOriginAlbumPic(intval($id));
+        return $this->success($list);
+    }
 }
