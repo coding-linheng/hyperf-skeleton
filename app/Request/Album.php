@@ -21,7 +21,7 @@ class Album extends FormRequest
      */
     public $scenes = [
         'get' => ['id'],
-        'captureAlbumImg'   => ['cid', 'aid'], //采集灵感图片
+        'captureAlbumImg'   => ['cid', 'aid','title'], //采集灵感图片
     ];
 
     /**
@@ -41,6 +41,7 @@ class Album extends FormRequest
             'id' => 'required|exists:albumlist,id',
             'cid' => 'required|exists:albumlist,id',
             'aid' => 'required|gt:0',
+            'title'=>"string"
         ];
     }
 

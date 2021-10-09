@@ -63,7 +63,8 @@ class AlbumCollectController extends AbstractController
         $request->scene('captureAlbumImg')->validateResolved();
         $aid   = $request->input('aid');
         $cid   = $request->input('cid');
-        $list = $this->albumService->captureAlbumImg(intval($cid),intval($aid));
+        $title = $request->input('title','');
+        $list = $this->albumService->captureAlbumImg(intval($cid),intval($aid),(string)$title);
         return $this->success($list);
     }
 }

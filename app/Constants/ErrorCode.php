@@ -59,4 +59,10 @@ class ErrorCode extends AbstractConstants
      * @Message("上传失败")
      */
     public const UPLOAD_FAIL = 20001;
+
+    /**
+     * @Message("超出当日最大查看次数")
+     */
+    public const DAY_MAX_LOOK_TIMES = 30000;
+
 }
