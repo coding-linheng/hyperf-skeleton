@@ -8,6 +8,7 @@ use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Snowflake\IdGeneratorInterface;
 use Hyperf\Utils\ApplicationContext;
+use League\Flysystem\Filesystem;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -251,5 +252,19 @@ if (!function_exists('get_img_path')) {
             return $path;
         }
         return $path . '/' . $suffix;
+    }
+}
+
+if (!function_exists('get_img_path_private')) {
+    /**
+     * 获取七牛加密后的图片地址
+     *
+     * @param string $path 地址
+     */
+    function get_img_path_private(string $path, int $expires = 3600): string
+    {
+        $filesystem = make(Filesystem::class);
+        //获取私有地址,默认过期一个小时
+        return $filesystem->getAdapter()->privateDownloadUrl($path, $expires);
     }
 }

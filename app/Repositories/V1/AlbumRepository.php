@@ -42,7 +42,7 @@ class AlbumRepository extends BaseRepository
         if (!empty($randListArr)) {
             foreach ($randListArr as $key => &$val) {
                 $tmp['id']         = $val->id ?? 0;
-                $tmp['path']       = get_img_path($val->path,ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['path']       = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
                 $tmp['title']      = $val->title   ?? '';
                 $tmp['looknum']    = $val->looknum ?? 0;
                 $tmp['downnum']    = $val->downnum ?? 0;
@@ -84,7 +84,7 @@ class AlbumRepository extends BaseRepository
                     continue;
                 }
                 $tmp['id']          = $val['id'] ?? 0;
-                $tmp['path']        = get_img_path($val['path'],ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['path']        = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
                 $tmp['title']       = $val['title']   ?? '';
                 $tmp['looknum']     = $val['looknum'] ?? 0;
                 $tmp['downnum']     = $val['downnum'] ?? 0;

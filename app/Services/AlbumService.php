@@ -49,7 +49,7 @@ class AlbumService extends BaseService
     {
         $detailArr = $this->albumRepository->getDetail(['l.id' => $id]);
 
-        $detailArr['path']          = get_img_path($detailArr['path'],ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC);
+        $detailArr['path']          = get_img_path($detailArr['path'], ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC);
         $returnData['album_detail'] = $detailArr;
 
         //搜索该专辑中对应的图片
@@ -79,6 +79,19 @@ class AlbumService extends BaseService
             $detailArr = $this->albumRepository->getDetail(['l.id' => $detailArr['cid']]);
         }
         $detailArr['path'] = get_img_path($detailArr['path'], ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC);
+        return $detailArr;
+    }
+
+    /**
+     * 获取灵感原图详情.
+     *
+     * @return array|bool
+     */
+    public function getOriginAlbumPic(int $id): array
+    {
+        $detailArr         = $this->albumRepository->getAlbumListDetail(['id' => $id], ['name', 'path', 'title']);
+        $detailArr         = is_array($detailArr) ?: $detailArr->toArray();
+        $detailArr['path'] = get_img_path_private($detailArr['path']);
         return $detailArr;
     }
 }
