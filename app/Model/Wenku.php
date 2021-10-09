@@ -69,5 +69,5 @@ class Wenku extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'unnum' => 'integer', 'uid' => 'integer', 'size' => 'integer', 'status' => 'integer', 'del' => 'integer', 'leixing' => 'integer', 'ttime' => 'integer', 'dtime' => 'integer', 'yesterday' => 'integer', 'shoucang' => 'integer', 'downnum' => 'integer', 'tui' => 'integer', 't_time' => 'integer', 'pagenum' => 'integer', 'step' => 'integer', 'time' => 'integer', 'week' => 'integer', 'weekguanzhu' => 'integer', 'looknum' => 'integer', 'num' => 'integer', 'g_time' => 'integer'];
+    protected $casts = ['id' => 'integer', 'unnum' => 'integer', 'uid' => 'integer', 'size' => 'integer', 'status' => 'integer', 'del' => 'integer', 'leixing' => 'integer', 'ttime' => 'integer', 'dtime' => 'integer', 'yesterday' => 'integer', 'shoucang' => 'integer', 'downnum' => 'integer', 'tui' => 'integer', 't_time' => 'integer', 'pagenum' => 'integer', 'step' => 'integer', 'time' => 'datetime:Y-m-d H:i:s', 'week' => 'integer', 'weekguanzhu' => 'integer', 'looknum' => 'integer', 'num' => 'integer', 'g_time' => 'integer'];
 }

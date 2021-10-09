@@ -241,10 +241,14 @@ if (!function_exists('get_img_path')) {
      * @param string $path 地址
      * @param string $suffix 后缀
      */
-    function get_img_path(string $path, string $suffix): string
+    function get_img_path(string $path, string $suffix = ''): string
     {
         if (!str_contains($path, 'http')) {
             $path = env('PUBLIC_DOMAIN') . $path;
+        }
+
+        if (empty($suffix)) {
+            return $path;
         }
         return $path . '/' . $suffix;
     }

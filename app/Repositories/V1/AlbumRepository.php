@@ -115,8 +115,7 @@ class AlbumRepository extends BaseRepository
     public function getDetail(
         array $where,
         array $column = ['a.name as album_name ', 'a.isoriginal', 'l.*', 'u.nickname', 'u.imghead']
-    ): Model|Builder|null
-    {
+    ): Model|Builder|null {
         return Album::from('albumlist as l')->join('album as a', 'a.id', '=', 'l.aid', 'inner')
             ->join('user as u', 'u.id', '=', 'a.uid', 'inner')
             ->where($where)->select($column)->first();

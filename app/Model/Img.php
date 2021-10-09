@@ -64,5 +64,5 @@ class Img extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'unnum' => 'integer', 'uid' => 'integer', 'size' => 'integer', 'status' => 'integer', 'del' => 'integer', 'leixing' => 'integer', 'ttime' => 'integer', 'dtime' => 'integer', 'shoucang' => 'integer', 'downnum' => 'integer', 'tui' => 'integer', 't_time' => 'integer', 'time' => 'integer', 'week' => 'integer', 'weekguanzhu' => 'integer', 'looknum' => 'integer', 'height' => 'integer', 'yesterday' => 'integer', 'll' => 'integer', 'g_time' => 'integer'];
+    protected $casts = ['id' => 'integer', 'unnum' => 'integer', 'uid' => 'integer', 'size' => 'integer', 'status' => 'integer', 'del' => 'integer', 'leixing' => 'integer', 'ttime' => 'integer', 'dtime' => 'integer', 'shoucang' => 'integer', 'downnum' => 'integer', 'tui' => 'integer', 't_time' => 'integer', 'time' => 'datetime:Y-m-d H:i:s', 'week' => 'integer', 'weekguanzhu' => 'integer', 'looknum' => 'integer', 'height' => 'integer', 'yesterday' => 'integer', 'll' => 'integer', 'g_time' => 'integer'];
 }

@@ -7,9 +7,11 @@ declare(strict_types=1);
 namespace App\Repositories\V1;
 
 use App\Constants\ErrorCode;
+use App\Constants\ImgSizeStyle;
 use App\Exception\BusinessException;
 use App\Model\Daywaterdc;
 use App\Model\Notice;
+use App\Model\Picture;
 use App\Model\Tixian;
 use App\Model\User;
 use App\Model\Userdata;
@@ -18,12 +20,20 @@ use App\Model\Waterdo;
 use App\Model\Waterscore;
 use App\Repositories\BaseRepository;
 use Hyperf\Database\Model\Model;
+use Hyperf\Redis\RedisProxy;
 
 /**
  * 用户库.
  */
 class UserRepository extends BaseRepository
 {
+    private ?RedisProxy $redis;
+
+    public function __construct()
+    {
+        $this->redis = redis('cache');
+    }
+
     /**
      * 获取用户data模型.
      */
@@ -229,5 +239,23 @@ class UserRepository extends BaseRepository
     public function decrMoney(int $userid, string $money): int
     {
         return User::query()->where('id', $userid)->decrement('money', $money);
+    }
+
+    /**
+     * 获取预览图.
+     */
+    public function getPreview(int $picId)
+    {
+        $key = ImgSizeStyle::PREVIEW_IMG_KEY . $picId;
+
+        if (!$this->redis->exists($key)) {
+            $url = Picture::query()->where('id', $picId)->value('url');
+
+            if (empty($url)) {
+                return '';
+            }
+            $this->redis->setex($key, $url, 60 * 60 * 24);
+        }
+        return get_img_path($this->redis->get($key));
     }
 }

@@ -237,22 +237,29 @@ class UserService extends BaseService
     /**
      * 作品管理.
      */
-    public function worksManage(int $userid, array $query): array
+    public function worksManage(int $userid, array $query, array $column = ['*']): array
     {
         //type:1-素材 2-文库
         switch ($query['type']) {
             case 1:
                 $countArr = $this->albumRepository->getMaterialStatistics(['uid' => $userid, 'del' => 0]);
                 $where    = ['uid' => $userid, 'status' => $query['status'], 'del' => 0];
-                $list     = $this->albumRepository->getMaterialList($where, $query);
+                $list     = $this->albumRepository->getMaterialList($where, $query, $column);
                 break;
             case 2:
                 $countArr = $this->albumRepository->getLibraryStatistics(['uid' => $userid, 'del' => 0]);
                 $where    = ['uid' => $userid, 'status' => $query['status'], 'del' => 0];
-                $list     = $this->albumRepository->getLibraryList($where, $query);
+                $list     = $this->albumRepository->getLibraryList($where, $query, $column);
                 break;
             default:
                 throw new BusinessException(ErrorCode::VALIDATE_FAIL);
+        }
+        //预览图处理
+        foreach ($list['list'] as $k => $v) {
+            if (!empty($v['img']) && !is_null($data = json_decode($v['img'], true))) {
+                $preview = $this->userRepository->getPreview((int) $data['0']) ?? '';
+            }
+            $list['list'][$k]['preview'] = $preview ?? '';
         }
         return array_merge($list, ['count_arr' => $countArr]);
     }

@@ -214,8 +214,9 @@ class UserController extends AbstractController
     public function worksManage(User $request): ResponseInterface
     {
         $request->scene('work')->validateResolved();
-        $query = $request->all();
-        $data  = $this->userService->worksManage(user()['id'], $query);
+        $query  = $request->all();
+        $column = ['id', 'name', 'size', 'img', 'time'];
+        $data   = $this->userService->worksManage(user()['id'], $query, $column);
         //todo 完善返回信息
         return $this->success($data);
     }
