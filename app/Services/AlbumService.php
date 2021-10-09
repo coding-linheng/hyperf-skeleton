@@ -49,7 +49,7 @@ class AlbumService extends BaseService
     {
         $detailArr = $this->albumRepository->getDetail(['l.id' => $id]);
 
-        $detailArr['path']          = env('PUBLIC_DOMAIN') . '/' . $detailArr['path'] . '/' . ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC;
+        $detailArr['path']          = get_img_path($detailArr['path'],ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC);
         $returnData['album_detail'] = $detailArr;
 
         //搜索该专辑中对应的图片
