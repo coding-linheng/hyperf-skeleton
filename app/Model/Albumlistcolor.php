@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Hyperf\Scout\Searchable;
 /**
  * @property int $id
  * @property int $pid 图片ID
@@ -25,6 +26,7 @@ namespace App\Model;
  */
 class Albumlistcolor extends Model
 {
+    use Searchable;
     /**
      * The table associated with the model.
      *
