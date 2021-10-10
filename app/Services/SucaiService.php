@@ -16,7 +16,7 @@ use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
 
 /**
- * AlbumService.
+ * SucaiService.
  *
  * @property User $userModel
  */

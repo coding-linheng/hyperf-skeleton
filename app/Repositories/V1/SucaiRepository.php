@@ -17,13 +17,13 @@ use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Db;
 
 /**
- * 流水.
+ * 素材.
  */
 class SucaiRepository extends BaseRepository
 {
 
     /**
-     * 获取专辑列表信息.
+     * 获取素材信息.
      */
     public function getSucaiImgInfo(array $where, array $column = ['*']): Model|Builder|null
     {
@@ -33,8 +33,7 @@ class SucaiRepository extends BaseRepository
     /**
      * 收藏素材图片.
      *
-     * @param  mixed  $albumlistInfo
-     * @param  mixed  $albumInfo
+     * @param         $sucaiInfo
      * @param         $uid
      *
      * @param         $remark
@@ -92,8 +91,7 @@ class SucaiRepository extends BaseRepository
     /**
      * 取消收藏素材图片.
      *
-     * @param  mixed  $albumlistInfo
-     * @param  mixed  $albumInfo
+     * @param         $sucaiInfo
      * @param         $uid
      *
      * @return null|int
