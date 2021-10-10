@@ -278,6 +278,7 @@ class AlbumRepository extends BaseRepository
         Db::commit();
         return Albumlist::where(['id'=>$albumlistInfo['id']])->value('shoucang');
     }
+
     /**
      * 采集灵感图片.
      * @param mixed $albumlistInfo

@@ -42,3 +42,10 @@ ALTER TABLE dczg_shouling ADD COLUMN `img_uid` int NOT NULL DEFAULT '0' COMMENT 
 ALTER TABLE dczg_shouling ADD COLUMN `album_id` int NOT NULL DEFAULT '0' COMMENT '专辑Id';
 ALTER TABLE dczg_shouling ADD COLUMN `remark` varchar(100) DEFAULT NULL COMMENT '收藏备注，来源等';
 ALTER TABLE dczg_shouling ADD COLUMN `c_time` int unsigned NOT NULL DEFAULT '0' COMMENT '收藏时间';
+
+ALTER TABLE dczg_shouimg ADD COLUMN `img_url` varchar(100) DEFAULT NULL COMMENT '图片预览url';
+ALTER TABLE dczg_shouimg ADD COLUMN `img_uid` int NOT NULL DEFAULT '0' COMMENT '图片所属的用户id';
+ALTER TABLE dczg_shouimg ADD COLUMN `album_id` int NOT NULL DEFAULT '0' COMMENT '专辑Id';
+ALTER TABLE dczg_shouimg ADD COLUMN `remark` varchar(100) DEFAULT NULL COMMENT '收藏备注，来源等';
+ALTER TABLE dczg_shouimg ADD COLUMN `c_time` int unsigned NOT NULL DEFAULT '0' COMMENT '收藏时间';
+
