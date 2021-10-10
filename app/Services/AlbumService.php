@@ -10,7 +10,9 @@ namespace App\Services;
 use App\Constants\ErrorCode;
 use App\Constants\ImgSizeStyle;
 use App\Exception\BusinessException;
+use App\Model\Shouling;
 use App\Model\User;
+use App\Model\Userlookling;
 use App\Repositories\V1\AlbumRepository;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
@@ -71,8 +73,12 @@ class AlbumService extends BaseService
 
     /**
      * 模糊搜索灵感数据，包含标题和标签.
+     *
+     * @param  int  $id
+     *
+     * @return array|void
      */
-    public function getAlbumAuthor(int $id): Builder|null|Model
+    public function getAlbumAuthor(int $id): array|null
     {
         $detailArr = $this->albumRepository->getDetail(['l.id' => $id]);
         //判断是否是原创
@@ -87,29 +93,32 @@ class AlbumService extends BaseService
     /**
      * 获取灵感原图详情.
      *
-     * @return array|bool
+     * @return array|void
      */
     public function getOriginAlbumPic(int $id): array
     {
-        $detailArr         = $this->albumRepository->getAlbumListDetail(['id' => $id], ['name', 'path', 'title']);
+        $albumListArr         = $this->albumRepository->getAlbumListDetail(['id' => $id], ['name', 'path', 'title']);
 
-        if (empty($detailArr)) {
+        if (empty($albumListArr)) {
             throw new BusinessException(ErrorCode::ERROR, '图片不存在！');
         }
+        $albumListArr         = is_array($albumListArr) ?: $albumListArr->toArray();
         // 查询该专辑是否为自己上传的，
-        $albumInfo  = $this->albumRepository->getAlbumDetailInfo(['id' => $detailArr['aid']], ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name']);
-
+        $albumInfo  = $this->albumRepository->getAlbumDetailInfo(['id' => $albumListArr['aid']], ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name']);
         if (empty($albumInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '图片专辑不存在！');
         }
-        //todo 检查，当天查询原图地址的次数,如果是自己的则不限,别人制超过每天最大限制则拒绝
-        if ($albumInfo['uid'] != user()['id']) {
+        //如果没登录则不能看
+        if(!isset(user()['id'])){
+            throw new BusinessException(ErrorCode::AUTH_ERROR, '登录后查看！');
+        }
+        //检查，当天查询原图地址的次数,如果是自己的则不限,别人制超过每天最大限制则拒绝
+        if ($albumInfo['uid'] != user()['id'] || $albumInfo['yid']!=0 || $albumListArr['yid']!=0) {
             if (!$this->isCanLookOriginImg($id)) {
                 throw new BusinessException(ErrorCode::DAY_MAX_LOOK_TIMES, '您已经达到当日查询的最高次数！');
             }
         }
-        $detailArr         = is_array($detailArr) ?: $detailArr->toArray();
-        $detailArr['path'] = get_img_path_private($detailArr['path']);
+        $detailArr['path'] = get_img_path_private($albumListArr['path']);
         return $detailArr;
     }
 
@@ -122,7 +131,78 @@ class AlbumService extends BaseService
      */
     public function isCanLookOriginImg($id)
     {
-        return true;
+
+//        $tui=db('userdata')->where(['uid'=>$this->uid])->value('tui');//查看推荐人数
+//        $isview=db('user')->where(['id'=>$this->uid])->value('isview');//是否有查看权限
+        $max=50;
+        $time=strtotime(date('Y-m-d'));
+        $info=Userlookling::where(['uid'=>$this->uid,'time'=>$time])->first()->toArray();
+
+        if(empty($info)){
+            $add=[];
+            $add['uid']=user()['id'];
+            $add['time']=$time;
+            $add['num']=1;
+            $lidarr=[];
+            $lidarr[]=$id;
+            $add['lip']=serialize($lidarr);//序列化灵感ID
+            $lastId= Userlookling::insertGetId($add);
+            if(!$lastId){
+                return false;
+            }else{
+                return true;
+            }
+        }else{
+            //如果有
+            if($info['num']>$max){
+                return false;
+            }
+            $lidarr=unserialize($info['lip']);
+            //现在查看的是之前查看过的不统计
+            if(!in_array($id,$lidarr)){
+                $lidarr[]=$id;
+                $save=[];
+                $save['num']=$info['num']+1;
+                $save['lip']=serialize($lidarr);
+                if(!Userlookling::where(['id'=>$info['id']])->update($save)){
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+
+    /**
+     * 收藏灵感图片.
+     * 请求参数 id 收藏灵感图片的id
+     *
+     * @param  int  $id
+     *
+     * @param       $type
+     *
+     * @return int|null|mixed
+     */
+    public function collectAlbumImg(int $id,$type): int|null
+    {
+        //判断图片是否存在
+        $albumlistInfo = $this->albumRepository->getAlbumListDetail(['id' => $id], ['id', 'aid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'shoucang']);
+        if(empty($albumlistInfo)){
+            throw new BusinessException(ErrorCode::ERROR, '图片不存在！');
+        }
+
+        $albumInfo     = $this->albumRepository->getAlbumDetailInfo(['id' => $albumlistInfo['aid']], ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name']);
+        if($albumInfo['uid']==user()['id']){
+            throw new BusinessException(ErrorCode::ERROR, '请勿操作自己的作品！');
+        }
+
+        //取消采集
+        if($type==2){
+           return  $this->albumRepository->deleteCollectAlbumImg($albumlistInfo, $albumInfo, user()['id']);
+        }else{
+            //采集
+            return $this->albumRepository->collectAlbumImg($albumlistInfo, $albumInfo, user()['id']);
+        }
     }
 
     /**

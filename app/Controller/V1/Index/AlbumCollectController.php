@@ -37,10 +37,16 @@ class AlbumCollectController extends AbstractController
 
     /**
      * 收藏图片.
+     * @param: id 收藏灵感图片的id
+     * @param: type 操作类型，1收藏，2取消，默认不传表示收藏
      */
-    public function collectAlbumImg(): ResponseInterface
+    public function collectAlbumImg(Album $request): ResponseInterface
     {
-        return $this->response->success();
+        $request->scene('get')->validateResolved();
+        $id   = $request->input('id');
+        $type   = $request->input('type',1);
+        $collectNum  = $this->albumService->collectAlbumImg(intval($id),intval($type));
+        return $this->success($collectNum);
     }
 
     /**

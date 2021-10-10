@@ -11,6 +11,8 @@ use App\Model\Album;
 use App\Model\Albumlist;
 use App\Model\Caiji;
 use App\Model\Img;
+use App\Model\Shouling;
+use App\Model\Userdata;
 use App\Model\Wenku;
 use App\Repositories\BaseRepository;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
@@ -118,14 +120,17 @@ class AlbumRepository extends BaseRepository
 
     /**
      * 灵感图片详细信息，中图展示页面，获取图片，专辑，用户等信息.
+     *
+     * @param  array  $where
+     * @param  array  $column
+     *
+     * @return array
      */
-    public function getDetail(
-        array $where,
-        array $column = ['a.name as album_name ', 'a.isoriginal', 'l.*', 'u.nickname', 'u.imghead']
-    ): Model|Builder|null {
+    public function getDetail(array $where, array $column = ['a.name as album_name ', 'a.isoriginal', 'l.*', 'u.nickname', 'u.imghead']): array{
+
         return Album::from('albumlist as l')->join('album as a', 'a.id', '=', 'l.aid', 'inner')
             ->join('user as u', 'u.id', '=', 'a.uid', 'inner')
-            ->where($where)->select($column)->first();
+            ->where($where)->select($column)->first()->toArray();
     }
 
     /**
@@ -167,6 +172,104 @@ class AlbumRepository extends BaseRepository
         return ['count' => $count, 'list' => $list->toArray()];
     }
 
+    /**
+     * 收藏灵感图片.
+     *
+     * @param  mixed  $albumlistInfo
+     * @param  mixed  $albumInfo
+     * @param         $uid
+     *
+     * @return int|null
+     */
+    public function collectAlbumImg($albumlistInfo, $albumInfo, $uid): int|null
+    {
+        $shouLingInfo= Shouling::where(['uid'=>user()['id'],'lid'=>$albumlistInfo['id']])->first()->toArray();
+        if(!empty($shouLingInfo)){
+            return $albumlistInfo['shoucang'];
+        }
+        Db::beginTransaction();
+        $add=[];
+        $add['uid']=$uid;
+        $add['lid']=$albumlistInfo['id'];
+
+        if(!Shouling::insertGetId($add)){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '收藏失败！');
+        }
+        //增加收藏次数
+        if(!Albumlist::where(['id'=>$albumlistInfo['id']])->increment('shoucang',1)){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //统计你自己收藏了多少个
+        if(!Userdata::where(['uid'=>$uid])->increment('shoucang',1)){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //统计灵感一共收藏了多少个
+        if(!Userdata::where(['uid'=>$uid])->increment('shouling',1)){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+        //增加日志
+        if(!$this->waterDoRepository->addWaterDo($uid,$albumInfo['uid'],$albumlistInfo['id'],6)){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+        Db::commit();
+        return Albumlist::where(['id'=>$albumlistInfo['id']])->value('shoucang');
+    }
+
+    /**
+     * 取消收藏灵感图片.
+     *
+     * @param  mixed  $albumlistInfo
+     * @param  mixed  $albumInfo
+     * @param         $uid
+     *
+     * @return null|int
+     */
+    public function deleteCollectAlbumImg($albumlistInfo, $albumInfo, $uid): int|null
+    {
+        $shouLingInfo= Shouling::where(['uid'=>user()['id'],'lid'=>$albumlistInfo['id']])->first()->toArray();
+        if(empty($shouLingInfo)){
+            return $albumlistInfo['shoucang'];
+        }
+        Db::beginTransaction();
+
+        if(!Shouling::where(['uid'=>user()['id'],'lid'=>$albumlistInfo['id']])->delete()){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //减少收藏次数
+        if(!Albumlist::where(['id'=>$albumlistInfo['id']])->decrement('shoucang',1)){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //统计你自己收藏了多少个
+        if(!Userdata::where(['uid'=>$uid])->decrement('shoucang',1)){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //统计灵感一共收藏了多少个
+        if(!Userdata::where(['uid'=>$uid])->decrement('shouling',1)){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //增加日志
+        if(!$this->waterDoRepository->addWaterDo($uid,$albumInfo['uid'],$albumlistInfo['id'],10)){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+        Db::commit();
+        return Albumlist::where(['id'=>$albumlistInfo['id']])->value('shoucang');
+    }
     /**
      * 采集灵感图片.
      * @param mixed $albumlistInfo
@@ -231,7 +334,7 @@ class AlbumRepository extends BaseRepository
                 throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
             }
 
-            //增加采集流水
+            //增加采集增加日志
             if (!$this->waterDoRepository->addWaterDo($uid, $originAlbumList['uid'], $albumlistInfo['id'], 4, $albumInfo['id'], $originAlbumList['isoriginal'], $originAlbumList['id'])) {
                 throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
             }
