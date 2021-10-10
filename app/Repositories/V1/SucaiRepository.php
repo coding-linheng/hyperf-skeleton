@@ -21,7 +21,6 @@ use Hyperf\DbConnection\Db;
  */
 class SucaiRepository extends BaseRepository
 {
-
     /**
      * 获取素材信息.
      */
@@ -33,107 +32,103 @@ class SucaiRepository extends BaseRepository
     /**
      * 收藏素材图片.
      *
-     * @param         $sucaiInfo
-     * @param         $uid
+     * @param $sucaiInfo
+     * @param $uid
      *
-     * @param         $remark
-     *
-     * @return int|null
+     * @param $remark
      */
-    public function collectSucaiImg($sucaiInfo, $uid,$remark): int|null
+    public function collectSucaiImg($sucaiInfo, $uid, $remark): int|null
     {
-        $shouLingInfo= Img::where(['uid'=>user()['id'],'lid'=>$sucaiInfo['id']])->first()->toArray();
+        $shouLingInfo = Img::where(['uid' => user()['id'], 'lid' => $sucaiInfo['id']])->first()->toArray();
 
-        if(!empty($shouLingInfo)){
+        if (!empty($shouLingInfo)) {
             return $sucaiInfo['shoucang'];
         }
 
         Db::beginTransaction();
-        $add=[];
-        $add['uid']=$uid;
-        $add['iid']=$sucaiInfo['id'];
-        $add['img_url']=$sucaiInfo['path'];
-        $add['album_id']=$sucaiInfo['leixing'];
-        $add['img_uid']=$sucaiInfo['uid'];
-        $add['c_time']=time();
-        $add['remark']=$remark;
+        $add             = [];
+        $add['uid']      = $uid;
+        $add['iid']      = $sucaiInfo['id'];
+        $add['img_url']  = $sucaiInfo['path'];
+        $add['album_id'] = $sucaiInfo['leixing'];
+        $add['img_uid']  = $sucaiInfo['uid'];
+        $add['c_time']   = time();
+        $add['remark']   = $remark;
 
-        if(!Shouimg::insertGetId($add)){
+        if (!Shouimg::insertGetId($add)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '收藏失败！');
         }
         //增加收藏次数
-        if(!Img::where(['id'=>$sucaiInfo['id']])->increment('shoucang',1)){
+        if (!Img::where(['id' => $sucaiInfo['id']])->increment('shoucang', 1)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '操作失败！');
         }
 
         //统计你自己收藏了多少个
-        if(!Userdata::where(['uid'=>$uid])->increment('shoucang',1)){
+        if (!Userdata::where(['uid' => $uid])->increment('shoucang', 1)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '操作失败！');
         }
 
         //统计灵感一共收藏了多少个
-        if(!Userdata::where(['uid'=>$uid])->increment('shouling',1)){
+        if (!Userdata::where(['uid' => $uid])->increment('shouling', 1)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '操作失败！');
         }
         //增加日志
-        if(!$this->waterDoRepository->addWaterDo($uid,$sucaiInfo['uid'],$sucaiInfo['id'],6)){
+        if (!$this->waterDoRepository->addWaterDo($uid, $sucaiInfo['uid'], $sucaiInfo['id'], 6)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '操作失败！');
         }
         Db::commit();
-        return Img::where(['id'=>$sucaiInfo['id']])->value('shoucang');
+        return Img::where(['id' => $sucaiInfo['id']])->value('shoucang');
     }
 
     /**
      * 取消收藏素材图片.
      *
-     * @param         $sucaiInfo
-     * @param         $uid
-     *
-     * @return null|int
+     * @param $sucaiInfo
+     * @param $uid
      */
     public function deleteCollectSucaiImg($sucaiInfo, $uid): int|null
     {
-        $shouLingInfo= Img::where(['uid'=>user()['id'],'lid'=>$sucaiInfo['id']])->first()->toArray();
-        if(empty($shouLingInfo)){
+        $shouLingInfo = Img::where(['uid' => user()['id'], 'lid' => $sucaiInfo['id']])->first()->toArray();
+
+        if (empty($shouLingInfo)) {
             return $sucaiInfo['shoucang'];
         }
         Db::beginTransaction();
 
-        if(!Shouimg::where(['uid'=>user()['id'],'lid'=>$sucaiInfo['id']])->delete()){
+        if (!Shouimg::where(['uid' => user()['id'], 'lid' => $sucaiInfo['id']])->delete()) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '操作失败！');
         }
 
         //减少收藏次数
-        if(!Img::where(['id'=>$sucaiInfo['id']])->decrement('shoucang',1)){
+        if (!Img::where(['id' => $sucaiInfo['id']])->decrement('shoucang', 1)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '操作失败！');
         }
 
         //统计你自己收藏了多少个
-        if(!Userdata::where(['uid'=>$uid])->decrement('shoucang',1)){
+        if (!Userdata::where(['uid' => $uid])->decrement('shoucang', 1)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '操作失败！');
         }
 
         //统计灵感一共收藏了多少个
-        if(!Userdata::where(['uid'=>$uid])->decrement('shouling',1)){
+        if (!Userdata::where(['uid' => $uid])->decrement('shouling', 1)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '操作失败！');
         }
 
         //增加日志
-        if(!$this->waterDoRepository->addWaterDo($uid,$sucaiInfo['uid'],$sucaiInfo['id'],10)){
+        if (!$this->waterDoRepository->addWaterDo($uid, $sucaiInfo['uid'], $sucaiInfo['id'], 10)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '操作失败！');
         }
         Db::commit();
-        return Img::where(['id'=>$sucaiInfo['id']])->value('shoucang');
+        return Img::where(['id' => $sucaiInfo['id']])->value('shoucang');
     }
-
 }

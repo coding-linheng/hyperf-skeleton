@@ -11,8 +11,6 @@ use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Model\User;
 use App\Repositories\V1\SucaiRepository;
-use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -24,34 +22,34 @@ class SucaiService extends BaseService
 {
     #[Inject]
     protected SucaiRepository $sucaiRepository;
+
     /**
      * 收藏素材图片.
-     * 请求参数 id 收藏素材图片的id
+     * 请求参数 id 收藏素材图片的id.
      *
-     * @param  int  $id
+     * @param $type
      *
-     * @param       $type
+     * @param $remark
      *
-     * @param       $remark
-     *
-     * @return int|null|mixed
+     * @return null|int|mixed
      */
-    public function collectSucaiImg(int $id,$type,$remark): int|null
+    public function collectSucaiImg(int $id, $type, $remark): int|null
     {
         //判断图片是否存在
         $sucaiInfo = $this->sucaiRepository->getSucaiImgInfo(['id' => $id], ['id', 'aid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'shoucang']);
-        if(empty($sucaiInfo)){
+
+        if (empty($sucaiInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '素材不存在！');
         }
-        if($sucaiInfo['uid']==user()['id']){
+
+        if ($sucaiInfo['uid'] == user()['id']) {
             throw new BusinessException(ErrorCode::ERROR, '请勿操作自己的作品！');
         }
         //取消采集
-        if($type==2){
-            return  $this->sucaiRepository->deleteCollectSucaiImg($sucaiInfo , user()['id']);
-        }else{
-            //采集
-            return $this->sucaiRepository->collectSucaiImg($sucaiInfo, user()['id'],$remark);
+        if ($type == 2) {
+            return $this->sucaiRepository->deleteCollectSucaiImg($sucaiInfo, user()['id']);
         }
+        //采集
+        return $this->sucaiRepository->collectSucaiImg($sucaiInfo, user()['id'], $remark);
     }
 }

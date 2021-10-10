@@ -55,7 +55,6 @@ class Sucai extends FormRequest
     public function attributes(): array
     {
         return [
-
         ];
     }
 }

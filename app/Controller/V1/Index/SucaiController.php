@@ -19,7 +19,6 @@ class SucaiController extends AbstractController
     #[Inject]
     protected SucaiService $sucaiService;
 
-
     /**
      * 收藏素材.
      * @param: id 收藏素材的id
@@ -28,11 +27,10 @@ class SucaiController extends AbstractController
     public function collectSucaiImg(Sucai $request): ResponseInterface
     {
         $request->scene('get')->validateResolved();
-        $id   = $request->input('id');
-        $type   = $request->input('type',1);
-        $remark=$request->path();
-        $collectNum  = $this->sucaiService->collectSucaiImg(intval($id),intval($type),(string)$remark);
+        $id          = $request->input('id');
+        $type        = $request->input('type', 1);
+        $remark      = $request->path();
+        $collectNum  = $this->sucaiService->collectSucaiImg(intval($id), intval($type), (string)$remark);
         return $this->success($collectNum);
     }
-
 }

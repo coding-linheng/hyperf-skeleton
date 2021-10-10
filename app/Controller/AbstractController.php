@@ -109,10 +109,8 @@ abstract class AbstractController
     }
 
     /**
-     * @param  mixed|null|int|void|array  $data
-     * @param  string      $msg  错误消息
-     *
-     * @return ResponseInterface
+     * @param null|array|int|mixed|void $data
+     * @param string $msg 错误消息
      */
     public function success($data = null, string $msg = 'success'): ResponseInterface
     {

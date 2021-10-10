@@ -55,7 +55,6 @@ class Wenku extends FormRequest
     public function attributes(): array
     {
         return [
-
         ];
     }
 }
