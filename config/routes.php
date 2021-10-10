@@ -32,9 +32,6 @@ Router::addGroup($routerPath . '/', function () {
     #用户相关
     Router::addGroup('user/', function () {
         Router::get('getUserinfo', [UserController::class, 'getUserinfo']);
-        Router::put('bindMobile', [UserController::class, 'bindMobile']);
-        Router::put('profile', [UserController::class, 'profile']);
-        Router::put('certification', [UserController::class, 'certification']);
         Router::get('getUserIncome', [UserController::class, 'getUserIncome']);
         Router::get('getMoneyLog', [UserController::class, 'getMoneyLog']);
         Router::get('getCashLog', [UserController::class, 'getCashLog']);
@@ -44,16 +41,22 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getMessageDetail', [UserController::class, 'getMessageDetail']);
         Router::get('getMoving', [UserController::class, 'getMoving']);
         Router::put('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
+        Router::get('worksManage', [UserController::class, 'worksManage']);
+        Router::get('getMaterialCategory', [UserController::class, 'getMaterialCategory']);
+        Router::get('getMaterialFormat', [UserController::class, 'getMaterialFormat']);
+        Router::put('bindMobile', [UserController::class, 'bindMobile']);
+        Router::put('profile', [UserController::class, 'profile']);
+        Router::put('certification', [UserController::class, 'certification']);
         Router::post('cash', [UserController::class, 'cash']);
         Router::post('uploadWork', [UserController::class, 'uploadWork']);
-        Router::get('worksManage', [UserController::class, 'worksManage']);
+        Router::post('writeInformationForMaterial', [UserController::class, 'writeInformationForMaterial']);
     });
 
     #灵感
     Router::addGroup('album/', function () {
-      Router::get('getDetail', [AlbumController::class, 'getDetail']);
-      Router::get('getAlbumAuthor', [AlbumController::class, 'getAlbumAuthor']);
-      Router::get('getOriginAlbumPic', [AlbumController::class, 'getOriginAlbumPic']);
+        Router::get('getDetail', [AlbumController::class, 'getDetail']);
+        Router::get('getAlbumAuthor', [AlbumController::class, 'getAlbumAuthor']);
+        Router::get('getOriginAlbumPic', [AlbumController::class, 'getOriginAlbumPic']);
     });
 
     #工具类

@@ -244,7 +244,7 @@ class UserRepository extends BaseRepository
     /**
      * 获取预览图.
      */
-    public function getPreview(int $picId)
+    public function getPreview(int $picId): string
     {
         $key = ImgSizeStyle::PREVIEW_IMG_KEY . $picId;
 

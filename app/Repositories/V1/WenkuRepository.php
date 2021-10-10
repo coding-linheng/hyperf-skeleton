@@ -18,7 +18,6 @@ use Hyperf\DbConnection\Db;
  */
 class WenkuRepository extends BaseRepository
 {
-
     /**
      * 获取文库信息.
      */
@@ -41,10 +40,8 @@ class WenkuRepository extends BaseRepository
         return ['count' => $count, 'list' => $list->toArray()];
     }
 
-
     public function getLibraryDetail(array $where, array $column = ['*']): Model|Builder|null
     {
         return Wenku::query()->where($where)->select($column)->first();
     }
-
 }

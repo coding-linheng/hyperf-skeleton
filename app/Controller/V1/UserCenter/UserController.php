@@ -26,7 +26,7 @@ class UserController extends AbstractController
     #[Inject]
     protected UserService $userService;
 
-    /*
+    /**
      * 获取用户信息.
      */
     public function getUserinfo(): ResponseInterface
@@ -38,8 +38,8 @@ class UserController extends AbstractController
         return $this->success($this->userService->getUserMerge(user()['id'], $field));
     }
 
-    /*
-     * 绑定手机号
+    /**
+     * 绑定手机号.
      */
     public function bindMobile(User $request): ResponseInterface
     {
@@ -55,8 +55,8 @@ class UserController extends AbstractController
         return $this->success();
     }
 
-    /*
-     * 用户资料
+    /**
+     * 用户资料.
      */
     public function profile(User $request): ResponseInterface
     {
@@ -67,7 +67,7 @@ class UserController extends AbstractController
         return $this->success();
     }
 
-    /*
+    /**
      * 申请认证
      */
     public function certification(User $request): ResponseInterface
@@ -97,7 +97,7 @@ class UserController extends AbstractController
         return $this->success();
     }
 
-    /*
+    /**
      * 获取动态
      */
     public function getMoving(): ResponseInterface
@@ -108,7 +108,7 @@ class UserController extends AbstractController
         return $this->success($data);
     }
 
-    /*
+    /**
      * 获取用户收入统计
      */
     public function getUserIncome(): ResponseInterface
@@ -119,8 +119,8 @@ class UserController extends AbstractController
         return $this->success(array_merge($userMerge->toArray(), $userIncome));
     }
 
-    /*
-     * 资金记录
+    /**
+     * 资金记录.
      */
     public function getMoneyLog(): ResponseInterface
     {
@@ -130,8 +130,8 @@ class UserController extends AbstractController
         return $this->success($data);
     }
 
-    /*
-     * 获取共享分记录
+    /**
+     * 获取共享分记录.
      */
     public function getScoreLog(): ResponseInterface
     {
@@ -141,8 +141,8 @@ class UserController extends AbstractController
         return $this->success($data);
     }
 
-    /*
-     * 获取提现记录
+    /**
+     * 获取提现记录.
      */
     public function getCashLog(): ResponseInterface
     {
@@ -153,7 +153,7 @@ class UserController extends AbstractController
         return $this->success($data);
     }
 
-    /*
+    /**
      * 获取私信
      */
     public function getPrivateMessage(): ResponseInterface
@@ -163,8 +163,8 @@ class UserController extends AbstractController
         return $this->success($data);
     }
 
-    /*
-     * 获取系统公告
+    /**
+     * 获取系统公告.
      */
     public function getSystemMessage(): ResponseInterface
     {
@@ -173,8 +173,8 @@ class UserController extends AbstractController
         return $this->success($data);
     }
 
-    /*
-     * 获取公告详情
+    /**
+     * 获取公告详情.
      */
     public function getMessageDetail(User $request): ResponseInterface
     {
@@ -185,8 +185,8 @@ class UserController extends AbstractController
         return $this->success($data);
     }
 
-    /*
-     * 提现
+    /**
+     * 提现.
      */
     public function cash(): ResponseInterface
     {
@@ -208,8 +208,8 @@ class UserController extends AbstractController
         return $this->success();
     }
 
-    /*
-     * 作品管理
+    /**
+     * 作品管理.
      */
     public function worksManage(User $request): ResponseInterface
     {
@@ -226,14 +226,22 @@ class UserController extends AbstractController
     public function writeInformationForMaterial(User $request)
     {
         $request->scene('information')->validateResolved();
-        $query = $request->all();
+        exit;
     }
 
-    /*
-     * 获取素材分类
+    /**
+     * 获取素材分类.
      */
     public function getMaterialCategory(): ResponseInterface
     {
         return $this->success($this->userService->getMaterialCategory());
+    }
+
+    /**
+     * 获取素材格式.
+     */
+    public function getMaterialFormat(): ResponseInterface
+    {
+        return $this->success($this->userService->getMaterialFormat());
     }
 }

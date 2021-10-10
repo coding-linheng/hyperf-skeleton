@@ -10,14 +10,11 @@ use App\Exception\BusinessException;
 use App\Model\Album;
 use App\Model\Albumlist;
 use App\Model\Caiji;
-use App\Model\Img;
 use App\Model\Shouling;
 use App\Model\Userdata;
-use App\Model\Wenku;
 use App\Repositories\BaseRepository;
 use Hyperf\Contract\LengthAwarePaginatorInterface;
 use Hyperf\Database\Model\Builder;
-use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
@@ -369,6 +366,4 @@ class AlbumRepository extends BaseRepository
         //更新字段
         return Album::where('id', $aid)->update(['preview_imgs' => json_encode($previewImgs)]);
     }
-
-
 }

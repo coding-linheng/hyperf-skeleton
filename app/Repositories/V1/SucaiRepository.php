@@ -58,6 +58,7 @@ class SucaiRepository extends BaseRepository
     {
         return Img::query()->where($where)->groupBy(['status'])->select(Db::raw('count(status) as count'), 'status')->get()->toArray();
     }
+
     /**
      * 收藏素材图片.
      *

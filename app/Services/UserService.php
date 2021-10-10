@@ -8,6 +8,7 @@ use App\Constants\ErrorCode;
 use App\Constants\UserCenterStatus;
 use App\Exception\BusinessException;
 use App\Model\Fenlei;
+use App\Model\Geshi;
 use App\Model\Img;
 use App\Model\Mulu;
 use App\Model\Noticelook;
@@ -26,7 +27,7 @@ use Hyperf\Di\Annotation\Inject;
 
 /**
  * UserService
- * 用户相关逻辑.
+ * 用户中心相关逻辑.
  */
 class UserService extends BaseService
 {
@@ -35,11 +36,12 @@ class UserService extends BaseService
 
     #[Inject]
     protected AlbumRepository $albumRepository;
+
     #[Inject]
     protected WenkuRepository $wenkuRepository;
+
     #[Inject]
     protected SucaiRepository $sucaiRepository;
-
 
     public function __call($name, $arguments)
     {
@@ -274,6 +276,9 @@ class UserService extends BaseService
         return array_merge($list, ['count_arr' => $countArr]);
     }
 
+    /**
+     * 填写信息-素材.
+     */
     public function writeInformationForMaterial(int $userid, array $params)
     {
     }
@@ -297,6 +302,14 @@ class UserService extends BaseService
             $data[$v['mid']]['children'][] = $v;
         }
         return array_values($data);
+    }
+
+    /**
+     * 获取素材格式.
+     */
+    public function getMaterialFormat(): array
+    {
+        return Geshi::query()->select(['id', 'name'])->get()->toArray();
     }
 
     /**
