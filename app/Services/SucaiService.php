@@ -36,7 +36,7 @@ class SucaiService extends BaseService
     public function collectSucaiImg(int $id, $type, $remark): int|null
     {
         //判断图片是否存在
-        $sucaiInfo = $this->sucaiRepository->getSucaiImgInfo(['id' => $id], ['id', 'aid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'shoucang']);
+        $sucaiInfo = $this->sucaiRepository->getSucaiImgInfo(['id' => $id], ['id', 'uid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'shoucang']);
 
         if (empty($sucaiInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '素材不存在！');

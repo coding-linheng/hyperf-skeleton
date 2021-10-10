@@ -118,11 +118,10 @@ class AlbumRepository extends BaseRepository
     /**
      * 灵感图片详细信息，中图展示页面，获取图片，专辑，用户等信息.
      */
-    public function getDetail(array $where, array $column = ['a.name as album_name ', 'a.isoriginal', 'l.*', 'u.nickname', 'u.imghead']): array
-    {
+    public function getDetail(array $where, array $column = ['a.name as album_name ', 'a.isoriginal', 'l.*', 'u.nickname', 'u.imghead']) {
         return Album::from('albumlist as l')->join('album as a', 'a.id', '=', 'l.aid', 'inner')
             ->join('user as u', 'u.id', '=', 'a.uid', 'inner')
-            ->where($where)->select($column)->first()->toArray();
+            ->where($where)->select($column)->first();
     }
 
     /**
@@ -175,7 +174,7 @@ class AlbumRepository extends BaseRepository
      */
     public function collectAlbumImg($albumlistInfo, $albumInfo, $uid, $remark): int|null
     {
-        $shouLingInfo = Shouling::where(['uid' => user()['id'], 'lid' => $albumlistInfo['id']])->first()->toArray();
+        $shouLingInfo = Shouling::where(['uid' => user()['id'], 'lid' => $albumlistInfo['id']])->first();
 
         if (!empty($shouLingInfo)) {
             return $albumlistInfo['shoucang'];
@@ -191,7 +190,7 @@ class AlbumRepository extends BaseRepository
         $add['c_time']   = time();
         $add['remark']   = $remark;
 
-        if (!Shouling::insertGetId($add)) {
+        if (!Shouling::insert($add)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '收藏失败！');
         }
@@ -230,11 +229,12 @@ class AlbumRepository extends BaseRepository
      */
     public function deleteCollectAlbumImg($albumlistInfo, $albumInfo, $uid): int|null
     {
-        $shouLingInfo = Shouling::where(['uid' => user()['id'], 'lid' => $albumlistInfo['id']])->first()->toArray();
+        $shouLingInfo = Shouling::where(['uid' => user()['id'], 'lid' => $albumlistInfo['id']])->first();
 
         if (empty($shouLingInfo)) {
             return $albumlistInfo['shoucang'];
         }
+
         Db::beginTransaction();
 
         if (!Shouling::where(['uid' => user()['id'], 'lid' => $albumlistInfo['id']])->delete()) {
@@ -279,31 +279,37 @@ class AlbumRepository extends BaseRepository
     {
         $uid = user()['id'] ?? 0;
         unset($albumlistInfo['id']);
-        $originAlbumList = Album::where(['id' => $albumlistInfoOld['aid']])->field('id,uid,isoriginal')->find();
+        $originAlbumList = Album::where(['id' => $albumlistInfoOld['aid']])->select(['id','uid','isoriginal'])->first();
 
         if (empty($originAlbumList)) {
             throw new BusinessException(ErrorCode::ERROR, '该图片无法采集！');
         }
+
+        //判断是否该图片已经采集到该专辑里面了
+        $aidlist=Albumlist::where(['aid'=>$albumInfo['id'],'cid'=>$albumlistInfoOld['id']])->first();
+         if(!empty($aidlist)) {
+           throw new BusinessException(ErrorCode::ERROR, '该图片已经采集到该专辑，请勿重复采集！');
+         }
+
+        $originAlbumList =$originAlbumList->toArray();
         Db::beginTransaction();
         try {
             //如果没有采集过
-            $caiJi = Caiji::query()->where(['cid' => $albumlistInfo['id'], 'uid' => $uid])->first()->toArray();
-
-            if (empty($caiji)) {
-                $add    = ['cid' => $albumlistInfo['id'], 'uid' => $uid, 'num' => 1];
-                $lastId = Caiji::insertGetId($add);
-
+            $caiJi = Caiji::query()->where(['cid' => $albumlistInfoOld['id'], 'uid' => $uid])->first();
+            if (empty($caiJi)){
+                $add    = ['cid' => $albumlistInfoOld['id'], 'uid' => $uid, 'num' => 1];
+                $lastId = Caiji::insert($add);
                 if (!$lastId) {
                     throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
                 }
-                $caiJi = $add;
             } else {
+                $caiJi=$caiJi->toArray();
                 //采集满5次了
                 if ($caiJi['num'] >= 5) {
                     throw new BusinessException(ErrorCode::ERROR, '该图片你已经采集超过5次,无法完成采集,换一张试试！');
                 }
                 //增加你采集的数据
-                if (!Caiji::where(['cid' => $albumlistInfo['id'], 'uid' => $uid])->increment('num', 1)) {
+                if (!Caiji::where(['cid' => $albumlistInfoOld['id'], 'uid' => $uid])->increment('num', 1)) {
                     throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
                 }
             }
@@ -313,7 +319,7 @@ class AlbumRepository extends BaseRepository
             $albumInfoUpdateData['num']    = $albumInfo['num'] + 1;
 
             if (!Album::where('id', $albumInfo['id'])->update($albumInfoUpdateData)) {
-                throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
+                throw new BusinessException(ErrorCode::ERROR, '3操作失败,稍后重试！');
             }
 
             //增加被采集的数量,采集时间
@@ -322,7 +328,7 @@ class AlbumRepository extends BaseRepository
             $albumlistUpdateData['caiji']  = intval($albumlistInfo['caiji']) + 1;
 
             if (!Albumlist::where('id', $albumlistInfo['yid'])->update($albumlistUpdateData)) {
-                throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
+                throw new BusinessException(ErrorCode::ERROR, '4操作失败,稍后重试！');
             }
 
             //入库
@@ -334,17 +340,15 @@ class AlbumRepository extends BaseRepository
             }
 
             //增加采集增加日志
-            if (!$this->waterDoRepository->addWaterDo($uid, $originAlbumList['uid'], $albumlistInfo['id'], 4, $albumInfo['id'], $originAlbumList['isoriginal'], $originAlbumList['id'])) {
+            if (!$this->waterDoRepository->addWaterDo($uid, $originAlbumList['uid'], $albumlistInfoOld['id'], 4, $albumInfo['id'], $originAlbumList['isoriginal'], $originAlbumList['id'])) {
                 throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
             }
 
             //修改专辑4张预览图片
-            if (!$this->updateAlbumPreviewImgs($albumInfo['id'])) {
-                throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
-            }
+            $this->updateAlbumPreviewImgs($albumInfo['id']);
 
             Db::commit();
-            return [$albumlistLastId];
+            return ['id'=>$albumlistLastId];
         } catch (\Throwable $ex) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, $ex->getMessage());

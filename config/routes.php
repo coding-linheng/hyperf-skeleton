@@ -58,13 +58,13 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getDetail', [AlbumController::class, 'getDetail']);
         Router::get('getAlbumAuthor', [AlbumController::class, 'getAlbumAuthor']);
         Router::get('getOriginAlbumPic', [AlbumController::class, 'getOriginAlbumPic']);
-        Router::get('captureAlbumImg', [AlbumCollectController::class, 'captureAlbumImg']);
-        Router::get('collectAlbumImg', [AlbumCollectController::class, 'collectAlbumImg']);
+        Router::post('captureAlbumImg', [AlbumCollectController::class, 'captureAlbumImg']);
+        Router::post('collectAlbumImg', [AlbumCollectController::class, 'collectAlbumImg']);
     });
 
     #素材
     Router::addGroup('material/', function () {
-      Router::get('collectImg', [SucaiController::class, 'collectImg']);
+      Router::post('collectImg', [SucaiController::class, 'collectImg']);
     });
 
     #工具类

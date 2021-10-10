@@ -37,7 +37,7 @@ class Sucai extends FormRequest
     public function rules(): array
     {
         return [
-            'id'    => 'required|exists:albumlist,id',
+            'id'    => 'required|exists:img,id',
             'title' => 'string',
         ];
     }

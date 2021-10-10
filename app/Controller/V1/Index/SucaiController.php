@@ -31,6 +31,6 @@ class SucaiController extends AbstractController
         $type        = $request->input('type', 1);
         $remark      = $request->path();
         $collectNum  = $this->sucaiService->collectSucaiImg(intval($id), intval($type), (string)$remark);
-        return $this->success($collectNum);
+        return $this->success(['collect_num'=>$collectNum]);
     }
 }

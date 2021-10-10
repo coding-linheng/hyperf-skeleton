@@ -22,6 +22,8 @@ use Hyperf\DbConnection\Db;
  */
 class SucaiRepository extends BaseRepository
 {
+    #[Inject]
+    protected WaterDoRepository $waterDoRepository;
     /**
      * 获取素材信息.
      */
@@ -69,7 +71,7 @@ class SucaiRepository extends BaseRepository
      */
     public function collectSucaiImg($sucaiInfo, $uid, $remark): int|null
     {
-        $shouLingInfo = Img::where(['uid' => user()['id'], 'lid' => $sucaiInfo['id']])->first()->toArray();
+        $shouLingInfo = Shouimg::where(['uid' => user()['id'], 'iid' => $sucaiInfo['id']])->first();
 
         if (!empty($shouLingInfo)) {
             return $sucaiInfo['shoucang'];
@@ -80,12 +82,12 @@ class SucaiRepository extends BaseRepository
         $add['uid']      = $uid;
         $add['iid']      = $sucaiInfo['id'];
         $add['img_url']  = $sucaiInfo['path'];
-        $add['album_id'] = $sucaiInfo['leixing'];
+        $add['album_id'] = 0;
         $add['img_uid']  = $sucaiInfo['uid'];
         $add['c_time']   = time();
         $add['remark']   = $remark;
 
-        if (!Shouimg::insertGetId($add)) {
+        if (!Shouimg::insert($add)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '收藏失败！');
         }
@@ -123,7 +125,7 @@ class SucaiRepository extends BaseRepository
      */
     public function deleteCollectSucaiImg($sucaiInfo, $uid): int|null
     {
-        $shouLingInfo = Img::where(['uid' => user()['id'], 'lid' => $sucaiInfo['id']])->first()->toArray();
+        $shouLingInfo = Shouimg::where(['uid' => user()['id'], 'iid' => $sucaiInfo['id']])->first();
 
         if (empty($shouLingInfo)) {
             return $sucaiInfo['shoucang'];
