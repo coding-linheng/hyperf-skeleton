@@ -181,9 +181,11 @@ class AlbumService extends BaseService
      *
      * @param       $type
      *
+     * @param       $remark
+     *
      * @return int|null|mixed
      */
-    public function collectAlbumImg(int $id,$type): int|null
+    public function collectAlbumImg(int $id,$type,$remark): int|null
     {
         //判断图片是否存在
         $albumlistInfo = $this->albumRepository->getAlbumListDetail(['id' => $id], ['id', 'aid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'shoucang']);
@@ -201,7 +203,7 @@ class AlbumService extends BaseService
            return  $this->albumRepository->deleteCollectAlbumImg($albumlistInfo, $albumInfo, user()['id']);
         }else{
             //采集
-            return $this->albumRepository->collectAlbumImg($albumlistInfo, $albumInfo, user()['id']);
+            return $this->albumRepository->collectAlbumImg($albumlistInfo, $albumInfo, user()['id'],$remark);
         }
     }
 

@@ -179,18 +179,26 @@ class AlbumRepository extends BaseRepository
      * @param  mixed  $albumInfo
      * @param         $uid
      *
+     * @param         $remark
+     *
      * @return int|null
      */
-    public function collectAlbumImg($albumlistInfo, $albumInfo, $uid): int|null
+    public function collectAlbumImg($albumlistInfo, $albumInfo, $uid,$remark): int|null
     {
         $shouLingInfo= Shouling::where(['uid'=>user()['id'],'lid'=>$albumlistInfo['id']])->first()->toArray();
         if(!empty($shouLingInfo)){
             return $albumlistInfo['shoucang'];
         }
+
         Db::beginTransaction();
         $add=[];
         $add['uid']=$uid;
         $add['lid']=$albumlistInfo['id'];
+        $add['img_url']=$albumlistInfo['path'];
+        $add['album_id']=$albumlistInfo['aid'];
+        $add['img_uid']=$albumInfo['uid'];
+        $add['c_time']=time();
+        $add['remark']=$remark;
 
         if(!Shouling::insertGetId($add)){
             Db::rollBack();

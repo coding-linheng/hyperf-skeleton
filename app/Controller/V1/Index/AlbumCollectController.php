@@ -45,7 +45,8 @@ class AlbumCollectController extends AbstractController
         $request->scene('get')->validateResolved();
         $id   = $request->input('id');
         $type   = $request->input('type',1);
-        $collectNum  = $this->albumService->collectAlbumImg(intval($id),intval($type));
+        $remark=$request->path();
+        $collectNum  = $this->albumService->collectAlbumImg(intval($id),intval($type),(string)$remark);
         return $this->success($collectNum);
     }
 

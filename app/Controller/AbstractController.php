@@ -108,7 +108,13 @@ abstract class AbstractController
         throw new \RuntimeException("仓库{$key}不存在，文件不存在！", StatusCode::ERR_SERVER);
     }
 
-    public function success(mixed $data = null, string $msg = 'success'): ResponseInterface
+    /**
+     * @param  mixed|null|int|void|array  $data
+     * @param  string      $msg  错误消息
+     *
+     * @return ResponseInterface
+     */
+    public function success($data = null, string $msg = 'success'): ResponseInterface
     {
         return $this->response->success($data, $msg);
     }
