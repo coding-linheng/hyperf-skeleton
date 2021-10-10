@@ -11,6 +11,7 @@ use App\Model\Fenlei;
 use App\Model\Geshi;
 use App\Model\Img;
 use App\Model\Mulu;
+use App\Model\Mulurelation;
 use App\Model\Noticelook;
 use App\Model\Tixian;
 use App\Model\User;
@@ -85,7 +86,7 @@ class UserService extends BaseService
                 1, 2 => $this->albumRepository->getAlbumDetail(['a.id' => $v['cid']], ['a.name', 'l.path']),
                 4, 6, 10 => $this->albumRepository->getAlbumListDetail(['id' => $v['cid']], ['name', 'path']),
                 5, 9 => $this->wenkuRepository->getLibraryDetail(['id' => $v['cid']], ['name', 'pdfimg as path']),
-                7, 8 => $this->sucaiRepository->getMaterialDetail(['id' => $v['cid']], ['title as name', 'path']),
+                7, 8 => $this->sucaiRepository->getSucaiImgInfo(['id' => $v['cid']], ['title as name', 'path']),
                 default => null,
             };
             $v['name'] = $detail ? $detail->toArray()['name'] : '';
@@ -279,8 +280,20 @@ class UserService extends BaseService
     /**
      * 填写信息-素材.
      */
-    public function writeInformationForMaterial(int $userid, array $params)
+    public function writeInformationForMaterial(array $params): bool
     {
+        $params['status'] = UserCenterStatus::WORK_MANAGE_REVIEW;
+        Db::beginTransaction();
+        try {
+            $material = $this->sucaiRepository->getSucaiImgInfo(['id' => $params['material_id']]);
+            //记录关联信息
+            Mulurelation::query()->updateOrCreate(['mid' => $params['mulu'], 'iid' => $params['material_id']]);
+            Db::commit();
+            return $material->fill($params)->save();
+        } catch (\Exception $exception) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '填写失败' . $exception->getMessage());
+        }
     }
 
     /**

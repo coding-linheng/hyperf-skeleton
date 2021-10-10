@@ -117,7 +117,7 @@ return [
 
             /*
              * 可选配置
-             * jwt 生命周期，单位分钟
+             * jwt 生命周期，单位秒
              */
             'ttl' => (int) env('SIMPLE_JWT_TTL', 1),
 

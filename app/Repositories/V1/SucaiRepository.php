@@ -46,14 +46,6 @@ class SucaiRepository extends BaseRepository
     }
 
     /**
-     * 获取素材信息.
-     */
-    public function getMaterialDetail(array $where, array $column = ['*']): Model|Builder|null
-    {
-        return Img::query()->where($where)->select($column)->first();
-    }
-
-    /**
      * 获取素材统计
      */
     public function getMaterialStatistics(array $where): Collection|array

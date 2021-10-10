@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Request;
 
 use App\Constants\UserCenterStatus;
+use Hyperf\DbConnection\Db;
 use Hyperf\Validation\Request\FormRequest;
 use Hyperf\Validation\Rule;
 
@@ -22,7 +23,7 @@ class User extends FormRequest
         'upload_head'   => ['head_image'],
         'work'          => ['type', 'status'],
         'upload'        => ['upload', 'type'],
-        'information'   => ['material_id', 'img', 'fenlei', 'geshi', 'title', 'leixing', 'price'],
+        'information'   => ['material_id', 'img', 'mulu', 'geshi', 'title', 'leixing', 'price', 'guanjianci'],
     ];
 
     /**
@@ -74,9 +75,15 @@ class User extends FormRequest
             'type'        => ['required', Rule::in([1, 2])],
             'upload'      => 'required|file',
             'img'         => 'required|active_url',
-            'mulu'        => 'required|exists:mulu,id',
-            'fenlei'      => 'required|exists:fenlei,id',
-            'geshi'       => 'required|exists:geshi,id',
+            'mulu'        => 'required|exists:mulu,id',   //分类
+            'fenlei'      => 'required|exists:fenlei,id', //类型
+            'guanjianci'  => 'required|key_words', //类型
+            'theme'       => [
+                Rule::requiredIf(function () {
+                    return Db::table('scthreefenlei')->where('mid', $this->post('fenlei'))->exists();
+                }), 'exists:scthreefenlei,id',
+            ], //主题
+            'geshi'       => 'required|exists:geshi,id',  //格式
             'title'       => 'required|alpha_dash|between:1,30',
             'leixing'     => ['required', Rule::in([1, 2])],
             'price'       => ['required', 'integer', 'between:1,20'],
@@ -111,16 +118,18 @@ class User extends FormRequest
             'title'       => '标题',
             'leixing'     => '类型',
             'price'       => '价格',
+            'guanjianci'  => '关键词',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'material_id.exists' => '素材不存在或已提交审核',
-            'mulu.exists'        => ':attribute 不存在',
-            'fenlei.exists'      => ':attribute 不存在',
-            'geshi.exists'       => ':attribute 不存在',
+            'material_id.exists'   => '素材不存在或已提交审核',
+            'mulu.exists'          => ':attribute 不存在',
+            'fenlei.exists'        => ':attribute 不存在',
+            'geshi.exists'         => ':attribute 不存在',
+            'guanjianci.key_words' => ':attribute 数量错误',
         ];
     }
 }
