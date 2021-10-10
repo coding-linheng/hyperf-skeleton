@@ -9,7 +9,7 @@ use App\Services\SucaiService;
 use Hyperf\Di\Annotation\Inject;
 
 /*
- * 素材相关操作
+ * 文库相关操作
  */
 
 class WenkuController extends AbstractController
