@@ -16,7 +16,9 @@ use App\Model\User;
 use App\Model\Userdata;
 use App\Model\Wenku;
 use App\Repositories\V1\AlbumRepository;
+use App\Repositories\V1\SucaiRepository;
 use App\Repositories\V1\UserRepository;
+use App\Repositories\V1\WenkuRepository;
 use Exception;
 use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Db;
@@ -33,6 +35,11 @@ class UserService extends BaseService
 
     #[Inject]
     protected AlbumRepository $albumRepository;
+    #[Inject]
+    protected WenkuRepository $wenkuRepository;
+    #[Inject]
+    protected SucaiRepository $sucaiRepository;
+
 
     public function __call($name, $arguments)
     {
@@ -75,8 +82,8 @@ class UserService extends BaseService
             $detail    = match ($v['type']) {
                 1, 2 => $this->albumRepository->getAlbumDetail(['a.id' => $v['cid']], ['a.name', 'l.path']),
                 4, 6, 10 => $this->albumRepository->getAlbumListDetail(['id' => $v['cid']], ['name', 'path']),
-                5, 9 => $this->albumRepository->getLibraryDetail(['id' => $v['cid']], ['name', 'pdfimg as path']),
-                7, 8 => $this->albumRepository->getMaterialDetail(['id' => $v['cid']], ['title as name', 'path']),
+                5, 9 => $this->wenkuRepository->getLibraryDetail(['id' => $v['cid']], ['name', 'pdfimg as path']),
+                7, 8 => $this->sucaiRepository->getMaterialDetail(['id' => $v['cid']], ['title as name', 'path']),
                 default => null,
             };
             $v['name'] = $detail ? $detail->toArray()['name'] : '';
@@ -244,14 +251,14 @@ class UserService extends BaseService
         //type:1-素材 2-文库
         switch ($query['type']) {
             case 1:
-                $countArr = $this->albumRepository->getMaterialStatistics(['uid' => $userid, 'del' => 0]);
+                $countArr = $this->sucaiRepository->getMaterialStatistics(['uid' => $userid, 'del' => 0]);
                 $where    = ['uid' => $userid, 'status' => $query['status'], 'del' => 0];
-                $list     = $this->albumRepository->getMaterialList($where, $query, $column);
+                $list     = $this->sucaiRepository->getMaterialList($where, $query, $column);
                 break;
             case 2:
-                $countArr = $this->albumRepository->getLibraryStatistics(['uid' => $userid, 'del' => 0]);
+                $countArr = $this->wenkuRepository->getLibraryStatistics(['uid' => $userid, 'del' => 0]);
                 $where    = ['uid' => $userid, 'status' => $query['status'], 'del' => 0];
-                $list     = $this->albumRepository->getLibraryList($where, $query, $column);
+                $list     = $this->wenkuRepository->getLibraryList($where, $query, $column);
                 break;
             default:
                 throw new BusinessException(ErrorCode::VALIDATE_FAIL);

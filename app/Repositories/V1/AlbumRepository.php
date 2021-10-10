@@ -370,59 +370,5 @@ class AlbumRepository extends BaseRepository
         return Album::where('id', $aid)->update(['preview_imgs' => json_encode($previewImgs)]);
     }
 
-    /**
-     * 获取文库信息列表.
-     */
-    public function getLibraryList(array $where, array $query, array $column = ['*']): array
-    {
-        $page     = ($query['page'] ?? 1) ?: 1;
-        $pageSize = $query['page_size'] ?? 10;
-        $orm      = Wenku::query()->where($where);
-        $count    = $orm->count();
-        $list     = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
-        return ['count' => $count, 'list' => $list->toArray()];
-    }
 
-    public function getLibraryDetail(array $where, array $column = ['*']): Model|Builder|null
-    {
-        return Wenku::query()->where($where)->select($column)->first();
-    }
-
-    /**
-     * 获取文库信息.
-     */
-    public function getLibraryStatistics(array $where): Collection|array
-    {
-        return Wenku::query()->where($where)->groupBy(['status'])->select(Db::raw('count(status) as count'), 'status')->get()
-            ->toArray();
-    }
-
-    /**
-     * 获取素材信息列表.
-     */
-    public function getMaterialList(array $where, array $query, array $column = ['*']): array
-    {
-        $page     = ($query['page'] ?? 1) ?: 1;
-        $pageSize = $query['page_size'] ?? 10;
-        $orm      = Img::query()->where($where);
-        $count    = $orm->count();
-        $list     = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
-        return ['count' => $count, 'list' => $list->toArray()];
-    }
-
-    /**
-     * 获取素材信息.
-     */
-    public function getMaterialDetail(array $where, array $column = ['*']): Model|Builder|null
-    {
-        return Img::query()->where($where)->select($column)->first();
-    }
-
-    /**
-     * 获取素材统计
-     */
-    public function getMaterialStatistics(array $where): Collection|array
-    {
-        return Img::query()->where($where)->groupBy(['status'])->select(Db::raw('count(status) as count'), 'status')->get()->toArray();
-    }
 }
