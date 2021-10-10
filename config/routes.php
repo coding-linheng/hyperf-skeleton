@@ -15,6 +15,7 @@ use App\Controller\Sms;
 use App\Controller\Utils;
 use App\Controller\V1\HelpCenter;
 use App\Controller\V1\Index\AlbumCollectController;
+use App\Controller\V1\Index\SucaiController;
 use App\Controller\V1\UserCenter\UserController;
 use App\Controller\V1\Index\AlbumController;
 use App\Middleware\JwtMiddleware;
@@ -57,6 +58,13 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getDetail', [AlbumController::class, 'getDetail']);
         Router::get('getAlbumAuthor', [AlbumController::class, 'getAlbumAuthor']);
         Router::get('getOriginAlbumPic', [AlbumController::class, 'getOriginAlbumPic']);
+        Router::get('captureAlbumImg', [AlbumCollectController::class, 'captureAlbumImg']);
+        Router::get('collectAlbumImg', [AlbumCollectController::class, 'collectAlbumImg']);
+    });
+
+    #素材
+    Router::addGroup('material/', function () {
+      Router::get('collectImg', [SucaiController::class, 'collectImg']);
     });
 
     #工具类
@@ -68,17 +76,23 @@ Router::addGroup($routerPath . '/', function () {
 
 //无需登录也可以访问的前端页面接口
 Router::addGroup($routerPath . '/', function () {
+
     #灵感
     Router::addGroup('album/', function () {
         Router::get('getRandList', [AlbumController::class, 'getRandList']);
         Router::get('searchList', [AlbumController::class, 'searchList']);
-        Router::get('captureAlbumImg', [AlbumCollectController::class, 'captureAlbumImg']);
-
     });
+
+    #素材
+    Router::addGroup('material/', function () {
+      Router::get('getList', [SucaiController::class, 'collectImg']);
+    });
+
     #短信类
     Router::addGroup('sms/', function () {
         Router::post('send', [Sms::class, 'send']);
     });
+
     #帮助中心
     Router::addGroup('help/', function () {
         Router::get('getHelpList', [HelpCenter::class, 'getHelpList']);

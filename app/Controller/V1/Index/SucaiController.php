@@ -24,7 +24,7 @@ class SucaiController extends AbstractController
      * @param: id 收藏素材的id
      * @param: type 操作类型，1收藏，2取消，默认不传表示收藏
      */
-    public function collectSucaiImg(Sucai $request): ResponseInterface
+    public function collectImg(Sucai $request): ResponseInterface
     {
         $request->scene('get')->validateResolved();
         $id          = $request->input('id');
