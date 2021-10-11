@@ -16,6 +16,7 @@ use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Db;
+use Hyperf\Di\Annotation\Inject;
 
 /**
  * 素材.

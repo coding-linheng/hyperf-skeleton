@@ -23,6 +23,7 @@ class SucaiController extends AbstractController
      * 收藏素材.
      * @param: id 收藏素材的id
      * @param: type 操作类型，1收藏，2取消，默认不传表示收藏
+     * 返回:  {"code":0,"msg":"success","data":{"collect_num":1}}
      */
     public function collectImg(Sucai $request): ResponseInterface
     {

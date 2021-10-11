@@ -45,7 +45,7 @@ class Sucai extends FormRequest
     public function messages(): array
     {
         return [
-            'id.exists' => '专辑不存在',
+            'id.exists' => '素材不存在',
         ];
     }
 
