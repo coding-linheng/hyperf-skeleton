@@ -9,6 +9,7 @@ use App\Constants\UserCenterStatus;
 use App\Exception\BusinessException;
 use App\Model\Fenlei;
 use App\Model\Geshi;
+use App\Model\Geshirelation;
 use App\Model\Img;
 use App\Model\Mulu;
 use App\Model\Mulurelation;
@@ -288,6 +289,7 @@ class UserService extends BaseService
             $material = $this->sucaiRepository->getSucaiImgInfo(['id' => $params['material_id']]);
             //记录关联信息
             Mulurelation::query()->updateOrCreate(['mid' => $params['mulu'], 'iid' => $params['material_id']]);
+            Geshirelation::query()->updateOrCreate(['mid' => $params['geshi'], 'iid' => $params['material_id']]);
             Db::commit();
             return $material->fill($params)->save();
         } catch (\Exception $exception) {

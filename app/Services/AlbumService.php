@@ -49,10 +49,11 @@ class AlbumService extends BaseService
     public function getDetail(int $id): array
     {
         $detailArr = $this->albumRepository->getDetail(['l.id' => $id]);
-        if(!empty($detailArr)){
-          $detailArr=$detailArr->toArray();
-        }else{
-          throw new BusinessException(ErrorCode::ERROR, '内容不存在！');
+
+        if (!empty($detailArr)) {
+            $detailArr = $detailArr->toArray();
+        } else {
+            throw new BusinessException(ErrorCode::ERROR, '内容不存在！');
         }
         $detailArr['path']          = get_img_path($detailArr['path'], ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC);
         $returnData['album_detail'] = $detailArr;
@@ -80,19 +81,21 @@ class AlbumService extends BaseService
     public function getAlbumAuthor(int $id): array|null
     {
         $detailArr = $this->albumRepository->getDetail(['l.id' => $id]);
-        if(!empty($detailArr)){
-          $detailArr=$detailArr->toArray();
-        }else{
-          throw new BusinessException(ErrorCode::ERROR, '内容不存在！');
+
+        if (!empty($detailArr)) {
+            $detailArr = $detailArr->toArray();
+        } else {
+            throw new BusinessException(ErrorCode::ERROR, '内容不存在！');
         }
         //判断是否是原创
         if (isset($detailArr['isoriginal']) && $detailArr['isoriginal'] != 2) {
             //不是自己的原创
             $detailArr = $this->albumRepository->getDetail(['l.id' => $detailArr['cid']]);
-            if(!empty($detailArr)){
-              $detailArr=$detailArr->toArray();
-            }else{
-              throw new BusinessException(ErrorCode::ERROR, '内容不存在！');
+
+            if (!empty($detailArr)) {
+                $detailArr = $detailArr->toArray();
+            } else {
+                throw new BusinessException(ErrorCode::ERROR, '内容不存在！');
             }
         }
         $detailArr['path'] = get_img_path($detailArr['path'], ImgSizeStyle::ALBUM_LIST_DETAIL_MID_PIC);
@@ -106,27 +109,27 @@ class AlbumService extends BaseService
      */
     public function getOriginAlbumPic(int $id): array
     {
-        $albumListArr         = $this->albumRepository->getAlbumListDetail(['id' => $id], ['id','yid','aid','name', 'path', 'title']);
+        $albumListArr         = $this->albumRepository->getAlbumListDetail(['id' => $id], ['id', 'yid', 'aid', 'name', 'path', 'title']);
 
         if (empty($albumListArr)) {
             throw new BusinessException(ErrorCode::ERROR, '图片不存在！');
         }
         $albumListArr         = is_array($albumListArr) ?: $albumListArr->toArray();
         // 查询该专辑是否为自己上传的，
-        $albumInfo  = $this->albumRepository->getAlbumDetailInfo(['id' => $albumListArr['aid']], ['id','yid','uid', 'ltui', 'tui', 'isoriginal', 'name']);
+        $albumInfo  = $this->albumRepository->getAlbumDetailInfo(['id' => $albumListArr['aid']], ['id', 'yid', 'uid', 'ltui', 'tui', 'isoriginal', 'name']);
 
         if (empty($albumInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '图片专辑不存在！');
         }
         $albumInfo         = is_array($albumInfo) ?: $albumInfo->toArray();
 
-      //如果没登录则不能看
+        //如果没登录则不能看
         if (!isset(user()['id'])) {
             throw new BusinessException(ErrorCode::AUTH_ERROR, '登录后查看！');
         }
         //检查，当天查询原图地址的次数,如果是自己的则不限,别人制超过每天最大限制则拒绝
         if ($albumInfo['uid'] != user()['id'] || $albumInfo['yid'] != 0 || $albumListArr['yid'] != 0) {
-            if (!$this->isCanLookOriginImg($id,user()['id'])) {
+            if (!$this->isCanLookOriginImg($id, user()['id'])) {
                 throw new BusinessException(ErrorCode::DAY_MAX_LOOK_TIMES, '您已经达到当日查询的最高次数！');
             }
         }
@@ -139,9 +142,10 @@ class AlbumService extends BaseService
      * 请求参数 id 采集灵感图片的id.
      *
      * @param mixed $id
+     * @param mixed $uid
      * @return bool
      */
-    public function isCanLookOriginImg($id,$uid)
+    public function isCanLookOriginImg($id, $uid)
     {
 //        $tui=db('userdata')->where(['uid'=>$this->uid])->value('tui');//查看推荐人数
 //        $isview=db('user')->where(['id'=>$this->uid])->value('isview');//是否有查看权限
@@ -164,7 +168,7 @@ class AlbumService extends BaseService
             }
             return true;
         }
-        $info=$info->toArray();
+        $info = $info->toArray();
         //如果有
         if ($info['num'] > $max) {
             return false;
@@ -227,14 +231,15 @@ class AlbumService extends BaseService
      */
     public function captureAlbumImg(int $cid, $aid, string $title): array
     {
-        $albumInfo     = $this->albumRepository->getAlbumDetailInfo(['id' => $aid], ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name','num']);
+        $albumInfo     = $this->albumRepository->getAlbumDetailInfo(['id' => $aid], ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name', 'num']);
         $albumlistInfo = $this->albumRepository->getAlbumListDetail(['id' => $cid], ['id', 'aid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'caiji']);
-        if(empty($albumInfo) ||empty($albumlistInfo)){
-          throw new BusinessException(ErrorCode::ERROR, '图片或者专辑不存在！');
+
+        if (empty($albumInfo) || empty($albumlistInfo)) {
+            throw new BusinessException(ErrorCode::ERROR, '图片或者专辑不存在！');
         }
 
-        $albumInfo=$albumInfo->toArray();
-        $albumlistInfo=$albumlistInfo->toArray();
+        $albumInfo     = $albumInfo->toArray();
+        $albumlistInfo = $albumlistInfo->toArray();
         //检测是否满足可以采集条件
         $this->captureAlbumImgCheck($albumInfo, $albumlistInfo);
 

@@ -41,16 +41,16 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getSystemMessage', [UserController::class, 'getSystemMessage']);
         Router::get('getMessageDetail', [UserController::class, 'getMessageDetail']);
         Router::get('getMoving', [UserController::class, 'getMoving']);
-        Router::put('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
         Router::get('worksManage', [UserController::class, 'worksManage']);
         Router::get('getMaterialCategory', [UserController::class, 'getMaterialCategory']);
         Router::get('getMaterialFormat', [UserController::class, 'getMaterialFormat']);
+        Router::put('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
         Router::put('bindMobile', [UserController::class, 'bindMobile']);
         Router::put('profile', [UserController::class, 'profile']);
         Router::put('certification', [UserController::class, 'certification']);
+        Router::put('writeInformationForMaterial', [UserController::class, 'writeInformationForMaterial']);
         Router::post('cash', [UserController::class, 'cash']);
         Router::post('uploadWork', [UserController::class, 'uploadWork']);
-        Router::post('writeInformationForMaterial', [UserController::class, 'writeInformationForMaterial']);
     });
 
     #灵感
@@ -64,7 +64,7 @@ Router::addGroup($routerPath . '/', function () {
 
     #素材
     Router::addGroup('material/', function () {
-      Router::post('collectImg', [SucaiController::class, 'collectImg']);
+        Router::post('collectImg', [SucaiController::class, 'collectImg']);
     });
 
     #工具类
@@ -85,7 +85,7 @@ Router::addGroup($routerPath . '/', function () {
 
     #素材
     Router::addGroup('material/', function () {
-      Router::get('getList', [SucaiController::class, 'collectImg']);
+        Router::get('getList', [SucaiController::class, 'collectImg']);
     });
 
     #短信类

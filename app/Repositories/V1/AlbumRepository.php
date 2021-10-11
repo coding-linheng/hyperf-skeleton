@@ -118,7 +118,8 @@ class AlbumRepository extends BaseRepository
     /**
      * 灵感图片详细信息，中图展示页面，获取图片，专辑，用户等信息.
      */
-    public function getDetail(array $where, array $column = ['a.name as album_name ', 'a.isoriginal', 'l.*', 'u.nickname', 'u.imghead']) {
+    public function getDetail(array $where, array $column = ['a.name as album_name ', 'a.isoriginal', 'l.*', 'u.nickname', 'u.imghead'])
+    {
         return Album::from('albumlist as l')->join('album as a', 'a.id', '=', 'l.aid', 'inner')
             ->join('user as u', 'u.id', '=', 'a.uid', 'inner')
             ->where($where)->select($column)->first();
@@ -279,31 +280,34 @@ class AlbumRepository extends BaseRepository
     {
         $uid = user()['id'] ?? 0;
         unset($albumlistInfo['id']);
-        $originAlbumList = Album::where(['id' => $albumlistInfoOld['aid']])->select(['id','uid','isoriginal'])->first();
+        $originAlbumList = Album::where(['id' => $albumlistInfoOld['aid']])->select(['id', 'uid', 'isoriginal'])->first();
 
         if (empty($originAlbumList)) {
             throw new BusinessException(ErrorCode::ERROR, '该图片无法采集！');
         }
 
         //判断是否该图片已经采集到该专辑里面了
-        $aidlist=Albumlist::where(['aid'=>$albumInfo['id'],'cid'=>$albumlistInfoOld['id']])->first();
-         if(!empty($aidlist)) {
-           throw new BusinessException(ErrorCode::ERROR, '该图片已经采集到该专辑，请勿重复采集！');
-         }
+        $aidlist = Albumlist::where(['aid' => $albumInfo['id'], 'cid' => $albumlistInfoOld['id']])->first();
 
-        $originAlbumList =$originAlbumList->toArray();
+        if (!empty($aidlist)) {
+            throw new BusinessException(ErrorCode::ERROR, '该图片已经采集到该专辑，请勿重复采集！');
+        }
+
+        $originAlbumList = $originAlbumList->toArray();
         Db::beginTransaction();
         try {
             //如果没有采集过
             $caiJi = Caiji::query()->where(['cid' => $albumlistInfoOld['id'], 'uid' => $uid])->first();
-            if (empty($caiJi)){
+
+            if (empty($caiJi)) {
                 $add    = ['cid' => $albumlistInfoOld['id'], 'uid' => $uid, 'num' => 1];
                 $lastId = Caiji::insert($add);
+
                 if (!$lastId) {
                     throw new BusinessException(ErrorCode::ERROR, '操作失败,稍后重试！');
                 }
             } else {
-                $caiJi=$caiJi->toArray();
+                $caiJi = $caiJi->toArray();
                 //采集满5次了
                 if ($caiJi['num'] >= 5) {
                     throw new BusinessException(ErrorCode::ERROR, '该图片你已经采集超过5次,无法完成采集,换一张试试！');
@@ -348,7 +352,7 @@ class AlbumRepository extends BaseRepository
             $this->updateAlbumPreviewImgs($albumInfo['id']);
 
             Db::commit();
-            return ['id'=>$albumlistLastId];
+            return ['id' => $albumlistLastId];
         } catch (\Throwable $ex) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, $ex->getMessage());

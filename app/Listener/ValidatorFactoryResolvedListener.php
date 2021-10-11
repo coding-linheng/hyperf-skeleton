@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Listener;
 
+use App\Constants\ErrorCode;
+use App\Exception\BusinessException;
+use App\Model\Keyword;
+use App\Model\KeywordsType;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
@@ -32,6 +36,15 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
 
             if (count($keys) < 10 || count($keys) > 20) {
                 return false;
+            }
+            $mustArr = Keyword::query()->whereIn('type', function ($query) {
+                $query->from('keywords_type')->where('must', 1)->select('id')->get();
+            })->pluck('name')->toArray();
+
+            $intersect = array_intersect(array_unique($mustArr), array_unique($keys));
+
+            if (KeywordsType::query()->where('must', 1)->count() > count($intersect)) {
+                throw new BusinessException(ErrorCode::VALIDATE_FAIL, '关键词必选项不足');
             }
             return true;
         });
