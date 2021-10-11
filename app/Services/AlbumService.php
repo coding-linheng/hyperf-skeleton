@@ -130,7 +130,7 @@ class AlbumService extends BaseService
         //检查，当天查询原图地址的次数,如果是自己的则不限,别人制超过每天最大限制则拒绝
         if ($albumInfo['uid'] != user()['id'] || $albumInfo['yid'] != 0 || $albumListArr['yid'] != 0) {
             if (!$this->isCanLookOriginImg($id, user()['id'])) {
-                throw new BusinessException(ErrorCode::DAY_MAX_LOOK_TIMES, '您已经达到当日查询的最高次数！');
+                throw new BusinessException(ErrorCode::DAY_MAX_LOOK_TIMES, '用户每天暂时只可查看100张灵感原图！');
             }
         }
         $detailArr['path'] = get_img_path_private($albumListArr['path']);
