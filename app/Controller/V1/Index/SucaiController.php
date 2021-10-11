@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\V1\Index;
 
+use App\Constants\ErrorCode;
 use App\Controller\AbstractController;
 use App\Request\Sucai;
 use App\Services\SucaiService;
@@ -18,6 +19,31 @@ class SucaiController extends AbstractController
 {
     #[Inject]
     protected SucaiService $sucaiService;
+
+
+
+    /**
+     * 素材搜索展示页面.
+     * query 查询关键字选填，不填为全部
+     * order 排序字段：最新采集 dtime，最新更新 g_time，上周最高采集 caiji
+     * labels 标签筛选 可选.
+     */
+    public function searchImgList(Sucai $request): ResponseInterface
+    {
+//        $queryString = $this->request->input('query', '');
+//        $labels      = $this->request->input('labels', '');
+//
+//        if (!empty($labels)) {
+//          $queryString .= $queryString . ' ' . $labels;
+//        }
+//        $order = $this->request->input('order', '');
+//
+//        if (!empty($order) && !in_array($order, ['dtime', 'g_time', 'caiji'])) {
+//          $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
+//        }
+//        $list = $this->albumService->searchAlbumList($queryString, $order);
+        return $this->response->success([]);
+    }
 
     /**
      * 收藏素材.

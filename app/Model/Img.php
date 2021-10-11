@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace App\Model;
 
+use Hyperf\Scout\Searchable;
+
 /**
  * @property int $id
  * @property int $unnum 唯一编号
@@ -45,6 +47,7 @@ namespace App\Model;
  */
 class Img extends Model
 {
+    use Searchable;
     /**
      * The table associated with the model.
      *
@@ -64,5 +67,283 @@ class Img extends Model
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'unnum' => 'integer', 'uid' => 'integer', 'size' => 'integer', 'status' => 'integer', 'del' => 'integer', 'leixing' => 'integer', 'ttime' => 'integer', 'dtime' => 'integer', 'shoucang' => 'integer', 'downnum' => 'integer', 'tui' => 'integer', 't_time' => 'integer', 'time' => 'datetime:Y-m-d H:i:s', 'week' => 'integer', 'weekguanzhu' => 'integer', 'looknum' => 'integer', 'height' => 'integer', 'yesterday' => 'integer', 'll' => 'integer', 'g_time' => 'integer'];
+    protected $casts = ['id' => 'integer', 'unnum' => 'integer', 'uid' => 'integer', 'size' => 'integer', 'status' => 'integer', 'del' => 'integer', 'leixing' => 'integer', 'ttime' => 'integer', 'dtime' => 'integer', 'shoucang' => 'integer', 'downnum' => 'integer', 'tui' => 'integer', 't_time' => 'integer', 'time' => 'integer', 'week' => 'integer', 'weekguanzhu' => 'integer', 'looknum' => 'integer', 'height' => 'integer', 'yesterday' => 'integer', 'll' => 'integer', 'g_time' => 'integer'];
+
+  // put http://119.23.59.3:9200/dc45
+//{
+//"mappings": {
+//"dc10000albumlist": {
+//"properties": {
+//"aid": {
+//"type": "long"
+//},
+//"b": {
+//  "type": "long"
+//          },
+//          "caiji": {
+//  "type": "long"
+//          },
+//          "cid": {
+//  "type": "long"
+//          },
+//          "color": {
+//  "type": "string"
+//          },
+//          "color_id": {
+//  "type": "long"
+//          },
+//          "colorfenlei": {
+//  "type": "long"
+//          },
+//          "colorlastweek": {
+//  "type": "long"
+//          },
+//          "colortime": {
+//  "type": "long"
+//          },
+//          "coloryesterday": {
+//  "type": "long"
+//          },
+//          "count": {
+//  "type": "long"
+//          },
+//          "del": {
+//  "type": "long"
+//          },
+//          "downnum": {
+//  "type": "long"
+//          },
+//          "dtime": {
+//  "type": "long"
+//          },
+//          "fenlei": {
+//  "type": "long"
+//          },
+//          "g": {
+//  "type": "long"
+//          },
+//          "g_time": {
+//  "type": "long"
+//          },
+//          "height": {
+//  "type": "long"
+//          },
+//          "id": {
+//  "type": "long"
+//          },
+//          "is_color": {
+//  "type": "long"
+//          },
+//          "jtui": {
+//  "type": "long"
+//          },
+//          "jtuitime": {
+//  "type": "long"
+//          },
+//          "label": {
+//  "type": "string",
+//            "analyzer": "ik_max_word",
+//            "search_analyzer": "ik_smart"
+//          },
+//          "laiyuan": {
+//  "type": "string"
+//          },
+//          "lastweek": {
+//  "type": "long"
+//          },
+//          "looknum": {
+//  "type": "long"
+//          },
+//          "name": {
+//  "type": "string",
+//            "analyzer": "ik_max_word",
+//            "search_analyzer": "ik_smart"
+//          },
+//          "path": {
+//  "type": "string"
+//          },
+//          "percent": {
+//  "type": "long"
+//          },
+//          "r": {
+//  "type": "long"
+//          },
+//          "scid": {
+//  "type": "long"
+//          },
+//          "sell": {
+//  "type": "long"
+//          },
+//          "share": {
+//  "type": "long"
+//          },
+//          "shoucang": {
+//  "type": "long"
+//          },
+//          "shoucolor": {
+//  "type": "long"
+//          },
+//          "size": {
+//  "type": "long"
+//          },
+//          "status": {
+//  "type": "long"
+//          },
+//          "suffix": {
+//  "type": "string"
+//          },
+//          "sum": {
+//  "type": "long"
+//          },
+//          "time": {
+//  "type": "long"
+//          },
+//          "title": {
+//  "type": "string",
+//            "analyzer": "ik_max_word",
+//            "search_analyzer": "ik_smart"
+//          },
+//          "tui": {
+//  "type": "long"
+//          },
+//          "tuitime": {
+//  "type": "long"
+//          },
+//          "yesterday": {
+//  "type": "long"
+//          },
+//          "yid": {
+//  "type": "long"
+//          }
+//        }
+//      },
+//    "dc10000img": {
+//  "properties": {
+//    "del": {
+//      "type": "long"
+//      },
+//      "downnum": {
+//      "type": "long"
+//      },
+//      "dtime": {
+//      "type": "long"
+//      },
+//      "g_time": {
+//      "type": "long"
+//      },
+//      "guanjianci": {
+//      "type": "string"
+//      },
+//      "height": {
+//      "type": "long"
+//      },
+//      "id": {
+//      "type": "long"
+//      },
+//      "img": {
+//      "type": "string"
+//      },
+//      "leixing": {
+//      "type": "long"
+//      },
+//      "ll": {
+//      "type": "long"
+//      },
+//      "looknum": {
+//      "type": "long"
+//      },
+//      "name": {
+//      "type": "string",
+//          "analyzer": "ik_max_word",
+//          "search_analyzer": "ik_smart"
+//      },
+//      "path": {
+//      "type": "string"
+//      },
+//      "price": {
+//      "type": "long"
+//      },
+//      "shoucang": {
+//      "type": "long"
+//      },
+//      "size": {
+//      "type": "long"
+//      },
+//      "status": {
+//      "type": "long"
+//      },
+//      "suffix": {
+//      "type": "string"
+//      },
+//      "t_time": {
+//      "type": "long"
+//      },
+//      "text": {
+//      "type": "string"
+//      },
+//      "time": {
+//      "type": "long"
+//      },
+//      "title": {
+//      "type": "string",
+//            "analyzer": "ik_max_word",
+//            "search_analyzer": "ik_smart"
+//      },
+//      "ttime": {
+//      "type": "long"
+//      },
+//      "tui": {
+//      "type": "long"
+//      },
+//      "uid": {
+//      "type": "long"
+//      },
+//      "unnum": {
+//      "type": "long"
+//      },
+//      "week": {
+//      "type": "long"
+//      },
+//      "weekguanzhu": {
+//      "type": "long"
+//      },
+//      "yesterday": {
+//      "type": "long"
+//      }
+//    }
+//  },
+//      "dc10000albumlistcolor": {
+//  "properties": {
+//    "b": {
+//      "type": "long"
+//          },
+//          "color": {
+//      "type": "string"
+//          },
+//          "count": {
+//      "type": "long"
+//          },
+//          "g": {
+//      "type": "long"
+//          },
+//          "id": {
+//      "type": "long"
+//          },
+//          "num": {
+//      "type": "long"
+//          },
+//          "percent": {
+//      "type": "long"
+//          },
+//          "pid": {
+//      "type": "long"
+//          },
+//          "r": {
+//      "type": "long"
+//          }
+//        }
+//      }
+//    }
+//}
+
 }

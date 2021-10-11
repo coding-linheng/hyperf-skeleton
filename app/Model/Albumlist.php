@@ -123,6 +123,7 @@ class Albumlist extends Model
 //导入数据,记得屏蔽掉getPathAttribute 属性修改器
 //php bin/hyperf.php scout:import "App\Model\Albumlist"
 
+// php bin/hyperf.php scout:import "App\Model\Img"
 //搜索具体栏位
 //{"query":{"bool":{"must":[],"must_not":[],"should":[{"query_string":{"default_field":"title","query":"春节吃到嗨"}},{"query_string":{"default_field":"label","query":""}}]}},"from":0,"size":250,"sort":[],"aggs":{}}
 //{"query":{"bool":{"must":[],"must_not":[],"should":[{"query_string":{"default_field":"name","query":"春分节气"}},{"query_string":{"default_field":"title","query":"春分节气"}}]}},"from":0,"size":10,"sort":[],"aggs":{}}
@@ -277,4 +278,284 @@ class Albumlist extends Model
 //			}
 //		}
 //	}
+//}
+
+//创建album,img等索引type
+//put  http://119.23.59.3:9200/dc10000
+//{
+//  "mappings": {
+//  "dc10000albumlist": {
+//    "properties": {
+//      "aid": {
+//        "type": "long"
+//          },
+//          "b": {
+//        "type": "long"
+//          },
+//          "caiji": {
+//        "type": "long"
+//          },
+//          "cid": {
+//        "type": "long"
+//          },
+//          "color": {
+//        "type": "string"
+//          },
+//          "color_id": {
+//        "type": "long"
+//          },
+//          "colorfenlei": {
+//        "type": "long"
+//          },
+//          "colorlastweek": {
+//        "type": "long"
+//          },
+//          "colortime": {
+//        "type": "long"
+//          },
+//          "coloryesterday": {
+//        "type": "long"
+//          },
+//          "count": {
+//        "type": "long"
+//          },
+//          "del": {
+//        "type": "long"
+//          },
+//          "downnum": {
+//        "type": "long"
+//          },
+//          "dtime": {
+//        "type": "long"
+//          },
+//          "fenlei": {
+//        "type": "long"
+//          },
+//          "g": {
+//        "type": "long"
+//          },
+//          "g_time": {
+//        "type": "long"
+//          },
+//          "height": {
+//        "type": "long"
+//          },
+//          "id": {
+//        "type": "long"
+//          },
+//          "is_color": {
+//        "type": "long"
+//          },
+//          "jtui": {
+//        "type": "long"
+//          },
+//          "jtuitime": {
+//        "type": "long"
+//          },
+//          "label": {
+//        "type": "string",
+//            "analyzer": "ik_max_word",
+//            "search_analyzer": "ik_smart"
+//          },
+//          "laiyuan": {
+//        "type": "string"
+//          },
+//          "lastweek": {
+//        "type": "long"
+//          },
+//          "looknum": {
+//        "type": "long"
+//          },
+//          "name": {
+//        "type": "string",
+//            "analyzer": "ik_max_word",
+//            "search_analyzer": "ik_smart"
+//          },
+//          "path": {
+//        "type": "string"
+//          },
+//          "percent": {
+//        "type": "long"
+//          },
+//          "r": {
+//        "type": "long"
+//          },
+//          "scid": {
+//        "type": "long"
+//          },
+//          "sell": {
+//        "type": "long"
+//          },
+//          "share": {
+//        "type": "long"
+//          },
+//          "shoucang": {
+//        "type": "long"
+//          },
+//          "shoucolor": {
+//        "type": "long"
+//          },
+//          "size": {
+//        "type": "long"
+//          },
+//          "status": {
+//        "type": "long"
+//          },
+//          "suffix": {
+//        "type": "string"
+//          },
+//          "sum": {
+//        "type": "long"
+//          },
+//          "time": {
+//        "type": "long"
+//          },
+//          "title": {
+//        "type": "string",
+//            "analyzer": "ik_max_word",
+//            "search_analyzer": "ik_smart"
+//          },
+//          "tui": {
+//        "type": "long"
+//          },
+//          "tuitime": {
+//        "type": "long"
+//          },
+//          "yesterday": {
+//        "type": "long"
+//          },
+//          "yid": {
+//        "type": "long"
+//          }
+//        }
+//      },
+//    "dc10000img": {
+//    "properties": {
+//      "del": {
+//        "type": "long"
+//      },
+//      "downnum": {
+//        "type": "long"
+//      },
+//      "dtime": {
+//        "type": "long"
+//      },
+//      "g_time": {
+//        "type": "long"
+//      },
+//      "guanjianci": {
+//        "type": "string",
+//            "analyzer": "ik_max_word",
+//            "search_analyzer": "ik_smart"
+//      },
+//      "height": {
+//        "type": "long"
+//      },
+//      "id": {
+//        "type": "long"
+//      },
+//      "img": {
+//        "type": "string"
+//      },
+//      "leixing": {
+//        "type": "long"
+//      },
+//      "ll": {
+//        "type": "long"
+//      },
+//      "looknum": {
+//        "type": "long"
+//      },
+//      "name": {
+//        "type": "string",
+//          "analyzer": "ik_max_word",
+//          "search_analyzer": "ik_smart"
+//      },
+//      "path": {
+//        "type": "string"
+//      },
+//      "price": {
+//        "type": "string"
+//      },
+//      "shoucang": {
+//        "type": "long"
+//      },
+//      "size": {
+//        "type": "long"
+//      },
+//      "status": {
+//        "type": "long"
+//      },
+//      "suffix": {
+//        "type": "string"
+//      },
+//      "t_time": {
+//        "type": "long"
+//      },
+//      "text": {
+//        "type": "string"
+//      },
+//      "time": {
+//        "type": "long"
+//      },
+//      "title": {
+//        "type": "string",
+//            "analyzer": "ik_max_word",
+//            "search_analyzer": "ik_smart"
+//      },
+//      "ttime": {
+//        "type": "long"
+//      },
+//      "tui": {
+//        "type": "long"
+//      },
+//      "uid": {
+//        "type": "long"
+//      },
+//      "unnum": {
+//        "type": "long"
+//      },
+//      "week": {
+//        "type": "long"
+//      },
+//      "weekguanzhu": {
+//        "type": "long"
+//      },
+//      "yesterday": {
+//        "type": "long"
+//      }
+//    }
+//  },
+//      "dc10000albumlistcolor": {
+//    "properties": {
+//      "b": {
+//        "type": "long"
+//          },
+//          "color": {
+//        "type": "string"
+//          },
+//          "count": {
+//        "type": "long"
+//          },
+//          "g": {
+//        "type": "long"
+//          },
+//          "id": {
+//        "type": "long"
+//          },
+//          "num": {
+//        "type": "long"
+//          },
+//          "percent": {
+//        "type": "long"
+//          },
+//          "pid": {
+//        "type": "long"
+//          },
+//          "r": {
+//        "type": "long"
+//          }
+//        }
+//      }
+//    }
 //}
