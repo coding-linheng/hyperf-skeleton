@@ -47,6 +47,7 @@ class SucaiController extends AbstractController
         $request->scene('searchImgList')->validateResolved();
         $queryString = $request->input('query', '');
         $labels      = $request->input('labels', '');
+
         if (!empty($labels)) {
           $queryString .= $queryString . ' ' . $labels;
         }
@@ -64,10 +65,11 @@ class SucaiController extends AbstractController
 //        }
         //有搜索分类时不需要排序，按Es搜索引擎推荐排序
         $order = $request->input('order', '');
-        if(empty($lid)&&empty($order)&&empty($queryString)){
-            $order='g_time';
+
+        if (empty($lid) && empty($order) && empty($queryString)) {
+            $order = 'g_time';
         }
-        $list = $this->sucaiService->searchImgList($queryString,$queryParam,$where, $order);
+        $list = $this->sucaiService->searchImgList($queryString, $queryParam, $where, $order);
         return $this->response->success($list);
     }
 
@@ -84,7 +86,7 @@ class SucaiController extends AbstractController
         $type        = $request->input('type', 1);
         $remark      = $request->path();
         $collectNum  = $this->sucaiService->collectSucaiImg(intval($id), intval($type), (string)$remark);
-        return $this->success(['collect_num'=>$collectNum]);
+        return $this->success(['collect_num' => $collectNum]);
     }
 
     /**
@@ -95,9 +97,8 @@ class SucaiController extends AbstractController
     {
         $request->scene('get')->validateResolved();
         $id          = $request->input('id');
-        $list  = $this->sucaiService->getDetail(intval($id));
+        $list        = $this->sucaiService->getDetail(intval($id));
         return $this->success($list);
-
     }
 
     /**

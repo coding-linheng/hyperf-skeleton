@@ -70,7 +70,6 @@ class SucaiService extends BaseService
         //采集
         return $this->sucaiRepository->collectSucaiImg($sucaiInfo, user()['id'], $remark);
     }
-
     /**
      * 素材详情页.
      * @param: id 素材的id

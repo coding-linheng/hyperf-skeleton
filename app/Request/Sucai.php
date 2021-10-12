@@ -22,7 +22,7 @@ class Sucai extends FormRequest
      */
     public $scenes = [
         'get'               => ['id'],
-        'searchImgList'     => ['query','order','lid','mulu_id','labels'],
+        'searchImgList'     => ['query', 'order', 'lid', 'mulu_id', 'labels'],
     ];
 
     /**
@@ -39,12 +39,12 @@ class Sucai extends FormRequest
     public function rules(): array
     {
         return [
-            'id'    => 'required|exists:img,id',
-            'lid' => Rule::in([0,1, 2]),
+            'id'      => 'required|exists:img,id',
+            'lid'     => Rule::in([0, 1, 2]),
             'mulu_id' => 'digits',
-            'order' => Rule::in(['g_time', 'id', 'dtime', 'tui', 'downnum']),
-            'labels' => 'string',
-            'query' => 'string',
+            'order'   => Rule::in(['g_time', 'id', 'dtime', 'tui', 'downnum']),
+            'labels'  => 'string',
+            'query'   => 'string',
         ];
     }
 

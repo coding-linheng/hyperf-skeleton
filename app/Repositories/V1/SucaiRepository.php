@@ -16,7 +16,6 @@ use App\Model\Geshirelation;
 use App\Model\Img;
 use App\Model\Mulu;
 use App\Model\Shouimg;
-use App\Model\Sucaiguanggao;
 use App\Model\Userdata;
 use App\Repositories\BaseRepository;
 use Hyperf\Database\Model\Builder;
@@ -71,18 +70,21 @@ class SucaiRepository extends BaseRepository
      * @param $whereParam
      * @param $where
      * @param $order
+     * @param mixed $wheres
      *
      * @return mixed
      */
-    public function searchImgList($query,$whereParam,$wheres,$order)
+    public function searchImgList($query, $whereParam, $wheres, $order)
     {
         $orm = Img::search($query, es_callback($whereParam));
+
         if (!empty($order)) {
             $orm = $orm->orderBy($order, 'desc');
         }
-        if(!empty($wheres)){
-            foreach ($wheres as $field=> $where){
-                $orm=$orm->where($field,$where);
+
+        if (!empty($wheres)) {
+            foreach ($wheres as $field => $where) {
+                $orm = $orm->where($field, $where);
             }
         }
         $list = $orm->paginateRaw(200)->toArray();

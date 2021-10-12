@@ -97,8 +97,8 @@ if (!function_exists('es_query_format')) {
             if (!is_array($v) || count($v) < 2) {
                 continue;
             }
-            $key = '';
-            $boolArr=[];
+            $key     = '';
+            $boolArr = [];
             switch ($v[0]) {
                 case '||':
                 case 'or':
@@ -115,18 +115,20 @@ if (!function_exists('es_query_format')) {
                     $key = 'must_not';
                     break;
                 case 'in':
-                    $key = 'filter';
-                    $boolArr= [['terms' => ["{$k}"=>$v[1]]]];
+                    $key     = 'filter';
+                    $boolArr = [['terms' => ["{$k}" => $v[1]]]];
                     break;
                 default:
                     continue 2;
             }
             $queryString  = $v[1];
-            if(empty($queryString)){
-                $queryString="*";
+
+            if (empty($queryString)) {
+                $queryString = '*';
             }
-            if(empty($boolArr)){
-                $boolArr= [['query_string' => ['default_field' => "{$k}", 'query' => "{$queryString}"]]];
+
+            if (empty($boolArr)) {
+                $boolArr = [['query_string' => ['default_field' => "{$k}", 'query' => "{$queryString}"]]];
             }
             //如果是filter则特殊一点
             $params[$key] = array_merge(
@@ -174,6 +176,7 @@ if (!function_exists('es_callback')) {
                     $params['body']['query']['bool']['must_not']
                 );
             }
+
             if (isset($params['body']['query']['bool']['filter']) && !empty($params['body']['query']['bool']['filter'])) {
                 $queryArr['filter'] = array_merge(
                     $queryArr['filter'],
