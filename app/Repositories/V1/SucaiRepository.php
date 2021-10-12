@@ -32,37 +32,38 @@ class SucaiRepository extends BaseRepository
     #[Inject]
     protected WaterDoRepository $waterDoRepository;
 
+    /**
+     * 自定义随机分页列表.
+     * @param mixed $uid
+     */
+    public function getListPageRand($uid): array
+    {
+        $sql         = 'SELECT * FROM dczg_img as i where i.del<=1 and i.status=3 and i.uid=' . $uid;
+        $sql         .= ' and id >= (SELECT floor( RAND() * ((SELECT MAX(id) FROM dczg_img)-(SELECT MIN(id) FROM dczg_img)) + (SELECT MIN(id) FROM dczg_img))) limit 0,40';
+        $randListArr = Db::select($sql, []);
+        //处理数据
+        if (!empty($randListArr)) {
+            //找到目录列表
+            $muluArr = $this->getMulu();
 
-  /**
-   * 自定义随机分页列表.
-   */
-  public function getListPageRand($uid): array
-  {
-    $sql         = 'SELECT * FROM dczg_img as i where i.del<=1 and i.status=3 and i.uid='.$uid;
-    $sql         .= ' and id >= (SELECT floor( RAND() * ((SELECT MAX(id) FROM dczg_img)-(SELECT MIN(id) FROM dczg_img)) + (SELECT MIN(id) FROM dczg_img))) limit 0,40';
-    $randListArr = Db::select($sql, []);
-    //处理数据
-    if (!empty($randListArr)) {
-      //找到目录列表
-      $muluArr=$this->getMulu();
-      foreach ($randListArr as $key => &$val) {
-        $tmp['id']         = $val->id ?? 0;
-        $tmp['path']       = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
-        $tmp['title']      = $val->title   ?? '';
-        $tmp['shoucang']    = $val->shoucang ?? 0;
-        $tmp['price']    = $val->price ?? 0;
-        $tmp['leixing']    = $val->leixing ?? 0;
-        $tmp['downnum']    = $val->downnum ?? 0;
-        $tmp['dtime']      = $val->dtime   ?? 0;
-        $tmp['mulu']      = isset($val->mulu_id) && isset($muluArr[$val->mulu_id]) ? $muluArr[$val->mulu_id] :"";
-        $randListArr[$key] = $tmp;
-        $tmp               = [];
-      }
+            foreach ($randListArr as $key => &$val) {
+                $tmp['id']          = $val->id ?? 0;
+                $tmp['path']        = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['title']       = $val->title    ?? '';
+                $tmp['shoucang']    = $val->shoucang ?? 0;
+                $tmp['price']       = $val->price    ?? 0;
+                $tmp['leixing']     = $val->leixing  ?? 0;
+                $tmp['downnum']     = $val->downnum  ?? 0;
+                $tmp['dtime']       = $val->dtime    ?? 0;
+                $tmp['mulu']        = isset($val->mulu_id) && isset($muluArr[$val->mulu_id]) ? $muluArr[$val->mulu_id] : '';
+                $randListArr[$key]  = $tmp;
+                $tmp                = [];
+            }
+        }
+        return $randListArr;
     }
-    return $randListArr;
-  }
 
-  /**
+    /**
      * 模糊搜索素材数据，包含标题和关键字及其他筛选.
      *
      * @param $query
@@ -92,35 +93,40 @@ class SucaiRepository extends BaseRepository
         //处理数据
         if (!empty($list) && isset($list['data']) && !empty($list['data'])) {
             //找到目录列表
-            $muluArr=$this->getMulu();
+            $muluArr = $this->getMulu();
+
             foreach ($list['data'] as $key => &$val) {
                 if (!isset($val['id']) || empty($val['title'])) {
                     unset($list['data'][$key]);
                     continue;
                 }
-                $tmp['id']          = $val['id'] ?? 0;
-                $tmp['path']        = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
-                $tmp['title']       = $val['title']   ?? '';
-                $tmp['shoucang']     = $val['shoucang'] ?? 0;
-                $tmp['downnum']     = $val['downnum'] ?? 0;
-                $tmp['dtime']       = $val['dtime']   ?? 0;
-                $tmp['price']       = $val['price']   ?? 0;
+                $tmp['id']            = $val['id'] ?? 0;
+                $tmp['path']          = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['title']         = $val['title']     ?? '';
+                $tmp['shoucang']      = $val['shoucang']  ?? 0;
+                $tmp['downnum']       = $val['downnum']   ?? 0;
+                $tmp['dtime']         = $val['dtime']     ?? 0;
+                $tmp['price']         = $val['price']     ?? 0;
                 $tmp['leixing']       = $val['leixing']   ?? 0;
-                $tmp['mulu']=isset($val['mulu_id']) && isset($muluArr[$val['mulu_id']]) ? $muluArr[$val['mulu_id']] :"";
-                $list['data'][$key] = $tmp;
-                $tmp                = [];
+                $tmp['mulu']          = isset($val['mulu_id']) && isset($muluArr[$val['mulu_id']]) ? $muluArr[$val['mulu_id']] : '';
+                $list['data'][$key]   = $tmp;
+                $tmp                  = [];
             }
         }
         return $list;
     }
 
-    public function getMulu(){
-      $muluArr=[];
-      $muluArrRes=Mulu::query()->get()->toArray();
-      if(!empty($muluArrRes)) foreach ($muluArrRes as $k=>$v){
-        $muluArr[$v['id']]=$v['name'];
-      }
-      return $muluArr;
+    public function getMulu()
+    {
+        $muluArr    = [];
+        $muluArrRes = Mulu::query()->get()->toArray();
+
+        if (!empty($muluArrRes)) {
+            foreach ($muluArrRes as $k => $v) {
+                $muluArr[$v['id']] = $v['name'];
+            }
+        }
+        return $muluArr;
     }
 
     /**
@@ -134,55 +140,66 @@ class SucaiRepository extends BaseRepository
     /**
      * 获取素材信息包含作者昵称头像.
      */
-    public function getSucaiImgDetailInfo(array $where, array $column = ['img.*','u.nickname','u.imghead']): Model|Builder|null
+    public function getSucaiImgDetailInfo(array $where, array $column = ['img.*', 'u.nickname', 'u.imghead']): Model|Builder|null
     {
-        return Img::query()->leftJoin('user as u','u.id','=','img.uid')->where($where)->select($column)->first();
+        return Img::query()->leftJoin('user as u', 'u.id', '=', 'img.uid')->where($where)->select($column)->first();
     }
 
     /**
      * 增加在看次数.
+     * @param mixed $id
+     * @param mixed $count
      */
-    public function IncImgCount($id,$count=1): int {
-      return Img::query()->where('id',$id)->increment('looknum',$count);
+    public function IncImgCount($id, $count = 1): int
+    {
+        return Img::query()->where('id', $id)->increment('looknum', $count);
     }
 
     /**
      * 统计作品个数.
      */
-    public function totalImgCount(array $where): int {
-      return Img::query()->where($where)->count();
+    public function totalImgCount(array $where): int
+    {
+        return Img::query()->where($where)->count();
     }
 
     /**
      * 是否关收藏图片.
+     * @param mixed $uid
+     * @param mixed $targetId
      */
-    public function isShouCangImg($uid,$targetId): Model|null {
-      return Shouimg::query()->where(['uid'=>$uid,'iid'=>$targetId])->first();
+    public function isShouCangImg($uid, $targetId): Model|null
+    {
+        return Shouimg::query()->where(['uid' => $uid, 'iid' => $targetId])->first();
     }
 
     /**
      * 获取分类.
+     * @param mixed $id
      */
-    public function getFenLei($id): Model|null {
-          $fenleiid=Fenleirelation::query()->where(['iid'=>$id])->orderBy('mid asc')->first();
-          return Fenlei::query()->where(['id'=>$fenleiid['mid']])->first();
+    public function getFenLei($id): Model|null
+    {
+        $fenleiid = Fenleirelation::query()->where(['iid' => $id])->orderBy('mid asc')->first();
+        return Fenlei::query()->where(['id' => $fenleiid['mid']])->first();
     }
 
     /**
      * 获取格式.
+     * @param mixed $id
      */
-    public function getImgFormat($id): Model|null {
-
-      $geshi=Geshirelation::query()->where(['iid'=>$id])->first();
-      return Geshi::query()->where(['id'=>$geshi['mid']])->first();
-
+    public function getImgFormat($id): Model|null
+    {
+        $geshi = Geshirelation::query()->where(['iid' => $id])->first();
+        return Geshi::query()->where(['id' => $geshi['mid']])->first();
     }
 
-   /**
-   * 获取目录.
-   */
-    public function getMuluInfo($id): Model|null {
-      return Mulu::query()->where(['id'=>$id])->first();
+    /**
+     * 获取目录.
+     * @param mixed $id
+     */
+    public function getMuluInfo($id): Model|null
+    {
+        return Mulu::query()->where(['id' => $id])->first();
     }
 
     /**
@@ -310,9 +327,10 @@ class SucaiRepository extends BaseRepository
     }
 
     /**
-     * 素材详情页面广告
+     * 素材详情页面广告.
      */
-    public function getSuCaiAdvertisement(){
-      return Sucaiguanggao::query()->orderBy("id desc")->get()->toArray();
+    public function getSuCaiAdvertisement()
+    {
+        return Sucaiguanggao::query()->orderBy('id desc')->get()->toArray();
     }
 }

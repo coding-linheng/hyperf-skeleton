@@ -262,10 +262,11 @@ class UserRepository extends BaseRepository
 
     /**
      * 是否关注用户.
+     * @param mixed $uid
+     * @param mixed $targetId
      */
-    public function isGuanzhuUser($uid,$targetId): Model|null {
-      return Guanzhuuser::query()->where(['uid'=>$uid,'bid'=>$targetId])->first();
+    public function isGuanzhuUser($uid, $targetId): Model|null
+    {
+        return Guanzhuuser::query()->where(['uid' => $uid, 'bid' => $targetId])->first();
     }
-
-
 }
