@@ -1,5 +1,6 @@
+###素材王国数据表修改记录
 
-##新增sql
+- 新增sql
 ```sql
 ALTER TABLE dczg_shouling ADD COLUMN `img_url` varchar(100) DEFAULT NULL COMMENT '图片预览url';
 ALTER TABLE dczg_shouling ADD COLUMN `img_uid` int NOT NULL DEFAULT '0' COMMENT '图片所属的用户id';
@@ -15,8 +16,13 @@ ALTER TABLE dczg_shouimg ADD COLUMN `album_id` int NOT NULL DEFAULT '0' COMMENT 
 ALTER TABLE dczg_shouimg ADD COLUMN `remark` varchar(100) DEFAULT NULL COMMENT '收藏备注，来源等';
 ALTER TABLE dczg_shouimg ADD COLUMN `c_time` int unsigned NOT NULL DEFAULT '0' COMMENT '收藏时间';
 ```
+
+```sql
+ALTER TABLE dczg_img ADD COLUMN `mulu_id` int NOT NULL COMMENT '分类目录id';
+ALTER TABLE dczg_img ADD COLUMN `geshi_id` int NOT NULL COMMENT '分类目录id';
+```
 ---
-###新增数据表
+- 新增数据表
 ```sql
 CREATE TABLE `dczg_keywords_type` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -37,5 +43,6 @@ CREATE TABLE `dczg_keywords` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='关键词';
 ```
+
 
 

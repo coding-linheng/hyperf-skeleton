@@ -34,10 +34,11 @@ class SucaiService extends BaseService
      *
      * @return mixed
      */
-    public function searchImgList($query,$whereParam,$where,$order)
+    public function searchImgList($query, $whereParam, $where, $order)
     {
-        return $this->sucaiRepository->searchImgList($query,$whereParam,$where,$order);
+        return $this->sucaiRepository->searchImgList($query, $whereParam, $where, $order);
     }
+
     /**
      * 收藏素材图片.
      * 请求参数 id 收藏素材图片的id.
@@ -67,6 +68,7 @@ class SucaiService extends BaseService
         //采集
         return $this->sucaiRepository->collectSucaiImg($sucaiInfo, user()['id'], $remark);
     }
+
     /**
      * 素材详情页.
      * @param: id 素材的id
@@ -77,16 +79,17 @@ class SucaiService extends BaseService
     {
         //判断图片是否存在
         $sucaiInfo = $this->sucaiRepository->getSucaiImgDetailInfo(['id' => $id], ['id', 'uid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'shoucang']);
+
         if (empty($sucaiInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '素材不存在！');
         }
-        $sucaiInfo=$sucaiInfo->toArray();
+        $sucaiInfo = $sucaiInfo->toArray();
         //已删除
-        if($sucaiInfo['del']==1){
+        if ($sucaiInfo['del'] == 1) {
             throw new BusinessException(ErrorCode::ERROR, '素材已删除！');
         }
         //未正常通过
-        if($sucaiInfo['status']!=3){
+        if ($sucaiInfo['status'] != 3) {
             throw new BusinessException(ErrorCode::ERROR, '素材暂时不能查看！');
         }
         //查询
@@ -140,8 +143,8 @@ class SucaiService extends BaseService
 
 //
 //        //主题
-////        $sciid=db('scthreefenleirelation')->where(['iid'=>$id])->order('mid asc')->find();
-////        $scthemefenlei=db('scthreefenlei')->where(['id'=>$sciid['mid']])->find();
+        ////        $sciid=db('scthreefenleirelation')->where(['iid'=>$id])->order('mid asc')->find();
+        ////        $scthemefenlei=db('scthreefenlei')->where(['id'=>$sciid['mid']])->find();
 //        $this->assign('scthemefenlei',[]);
 //
 //        //获取格式
@@ -213,5 +216,4 @@ class SucaiService extends BaseService
 //        $this->assign('userdata',$userdata
         return [];
     }
-
 }

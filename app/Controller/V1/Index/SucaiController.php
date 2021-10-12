@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\V1\Index;
 
-use App\Constants\ErrorCode;
 use App\Controller\AbstractController;
 use App\Request\Sucai;
 use App\Services\SucaiService;
@@ -20,15 +19,14 @@ class SucaiController extends AbstractController
     #[Inject]
     protected SucaiService $sucaiService;
 
-
     /**
      * 素材搜索展示页面.
      * query 搜素关键字，热门搜索，不填为全部
      * order 排序字段：默认 g_time, 最新 id，热门 downnum
      * labels 标签筛选 可选.
-     * lid 不传该字段或者传0则表示默认全部，1共享，2原创, mulu_id：分类,新版取消
+     * lid 不传该字段或者传0则表示默认全部，1共享，2原创, mulu_id：分类,新版取消.
      *
-     * @param  Sucai  $request
+     * @param Sucai $request
      *
      * {"code":0,"msg":"success","data":{"current_page":1,
      * "data":[
@@ -39,24 +37,24 @@ class SucaiController extends AbstractController
      * "last_page_url":"http:\/\/192.168.10.9:9701\/v1\/material\/searchImgList?query=520%E5%91%8A%E7%99%BD%E5%AD%A3&page=2712",
      * "next_page_url":"http:\/\/192.168.10.9:9701\/v1\/material\/searchImgList?query=520%E5%91%8A%E7%99%BD%E5%AD%A3&page=2",
      * "path":"http:\/\/192.168.10.9:9701\/v1\/material\/searchImgList","per_page":10,"prev_page_url":null,"to":5,"total":27115}}
-     *
-     * @return ResponseInterface
      */
     public function searchImgList(Sucai $request): ResponseInterface
     {
         $request->scene('searchImgList')->validateResolved();
         $queryString = $request->input('query', '');
         $labels      = $request->input('labels', '');
+
         if (!empty($labels)) {
-          $queryString .= $queryString . ' ' . $labels;
+            $queryString .= $queryString . ' ' . $labels;
         }
 
-        $lid= $request->input('lid', 0);
+        $lid = $request->input('lid', 0);
         //如果有筛选，则处理
         $queryParam = ['title' => ['or', "{$queryString}"], 'guanjianci' => ['or', "{$queryString}"]];
-        $where=[];
-        if(!empty($lid)){
-            $where=['leixing'=>$lid];
+        $where      = [];
+
+        if (!empty($lid)) {
+            $where = ['leixing' => $lid];
         }
 //       $muLuId= $request->input('mulu_id', 0);
 //        if(!empty($muLuId)){
@@ -64,10 +62,11 @@ class SucaiController extends AbstractController
 //        }
         //有搜索分类时不需要排序，按Es搜索引擎推荐排序
         $order = $request->input('order', '');
-        if(empty($lid)&&empty($order)&&empty($queryString)){
-            $order='g_time';
+
+        if (empty($lid) && empty($order) && empty($queryString)) {
+            $order = 'g_time';
         }
-        $list = $this->sucaiService->searchImgList($queryString,$queryParam,$where, $order);
+        $list = $this->sucaiService->searchImgList($queryString, $queryParam, $where, $order);
         return $this->response->success($list);
     }
 
@@ -84,7 +83,7 @@ class SucaiController extends AbstractController
         $type        = $request->input('type', 1);
         $remark      = $request->path();
         $collectNum  = $this->sucaiService->collectSucaiImg(intval($id), intval($type), (string)$remark);
-        return $this->success(['collect_num'=>$collectNum]);
+        return $this->success(['collect_num' => $collectNum]);
     }
 
     /**
@@ -95,9 +94,8 @@ class SucaiController extends AbstractController
     {
         $request->scene('get')->validateResolved();
         $id          = $request->input('id');
-        $list  = $this->sucaiService->getDetail(intval($id));
+        $list        = $this->sucaiService->getDetail(intval($id));
         return $this->success($list);
-
     }
 
     /**
@@ -111,7 +109,7 @@ class SucaiController extends AbstractController
         $type        = $request->input('type', 1);
         $remark      = $request->path();
         $collectNum  = $this->sucaiService->collectSucaiImg(intval($id), intval($type), (string)$remark);
-        return $this->success(['collect_num'=>$collectNum]);
+        return $this->success(['collect_num' => $collectNum]);
     }
 
     /**
@@ -125,6 +123,6 @@ class SucaiController extends AbstractController
         $type        = $request->input('type', 1);
         $remark      = $request->path();
         $collectNum  = $this->sucaiService->collectSucaiImg(intval($id), intval($type), (string)$remark);
-        return $this->success(['collect_num'=>$collectNum]);
+        return $this->success(['collect_num' => $collectNum]);
     }
 }

@@ -48,6 +48,7 @@ use Hyperf\Scout\Searchable;
 class Img extends Model
 {
     use Searchable;
+
     /**
      * The table associated with the model.
      *
@@ -60,7 +61,7 @@ class Img extends Model
      *
      * @var array
      */
-    protected $fillable = ['id', 'unnum', 'uid', 'path', 'suffix', 'size', 'name', 'status', 'del', 'img', 'title', 'leixing', 'price', 'ttime', 'dtime', 'text', 'shoucang', 'downnum', 'tui', 't_time', 'time', 'week', 'weekguanzhu', 'looknum', 'height', 'yesterday', 'll', 'guanjianci', 'g_time'];
+    protected $fillable = ['id', 'unnum', 'uid', 'path', 'suffix', 'size', 'name', 'status', 'del', 'img', 'title', 'leixing', 'price', 'ttime', 'dtime', 'text', 'shoucang', 'downnum', 'tui', 't_time', 'time', 'week', 'weekguanzhu', 'looknum', 'height', 'yesterday', 'll', 'guanjianci', 'g_time', 'mulu_id', 'geshi_id'];
 
     /**
      * The attributes that should be cast to native types.
@@ -69,7 +70,7 @@ class Img extends Model
      */
     protected $casts = ['id' => 'integer', 'unnum' => 'integer', 'uid' => 'integer', 'size' => 'integer', 'status' => 'integer', 'del' => 'integer', 'leixing' => 'integer', 'ttime' => 'integer', 'dtime' => 'integer', 'shoucang' => 'integer', 'downnum' => 'integer', 'tui' => 'integer', 't_time' => 'integer', 'time' => 'integer', 'week' => 'integer', 'weekguanzhu' => 'integer', 'looknum' => 'integer', 'height' => 'integer', 'yesterday' => 'integer', 'll' => 'integer', 'g_time' => 'integer'];
 
-  // put http://119.23.59.3:9200/dc45
+    // put http://119.23.59.3:9200/dc45
 //{
 //"mappings": {
 //"dc10000albumlist": {
@@ -345,5 +346,4 @@ class Img extends Model
 //      }
 //    }
 //}
-
 }
