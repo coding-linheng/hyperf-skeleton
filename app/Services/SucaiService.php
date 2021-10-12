@@ -24,6 +24,20 @@ class SucaiService extends BaseService
     protected SucaiRepository $sucaiRepository;
 
     /**
+     * 模糊搜索素材数据，包含标题和关键字及其他筛选.
+     *
+     * @param $query
+     *
+     * @param $whereParam
+     * @param $order
+     *
+     * @return mixed
+     */
+    public function searchImgList($query,$whereParam,$order)
+    {
+        return $this->sucaiRepository->searchImgList($query,$whereParam,$order);
+    }
+    /**
      * 收藏素材图片.
      * 请求参数 id 收藏素材图片的id.
      *

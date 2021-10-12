@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace App\Repositories\V1;
 
 use App\Constants\ErrorCode;
+use App\Constants\ImgSizeStyle;
 use App\Exception\BusinessException;
 use App\Model\Img;
 use App\Model\Shouimg;
@@ -25,6 +26,44 @@ class SucaiRepository extends BaseRepository
 {
     #[Inject]
     protected WaterDoRepository $waterDoRepository;
+
+    /**
+     * 模糊搜索素材数据，包含标题和关键字及其他筛选.
+     *
+     * @param $query
+     *
+     * @param $whereParam
+     * @param $order
+     *
+     * @return mixed
+     */
+    public function searchImgList($query,$whereParam,$order)
+    {
+        $orm = Img::search($query, es_callback($whereParam));
+        if (!empty($order)) {
+            $orm = $orm->orderBy($order, 'desc');
+        }
+        $list = $orm->paginateRaw(200)->toArray();
+        $list = format_es_page_raw_data($list);
+        //处理数据
+        if (!empty($list) && isset($list['data']) && !empty($list['data'])) {
+            foreach ($list['data'] as $key => &$val) {
+                if (!isset($val['id']) || empty($val['title'])) {
+                    unset($list['data'][$key]);
+                    continue;
+                }
+                $tmp['id']          = $val['id'] ?? 0;
+                $tmp['path']        = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['title']       = $val['title']   ?? '';
+                $tmp['looknum']     = $val['looknum'] ?? 0;
+                $tmp['downnum']     = $val['downnum'] ?? 0;
+                $tmp['dtime']       = $val['dtime']   ?? 0;
+                $list['data'][$key] = $tmp;
+                $tmp                = [];
+            }
+        }
+        return $list;
+    }
     /**
      * 获取素材信息.
      */
