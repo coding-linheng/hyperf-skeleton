@@ -88,6 +88,13 @@ class SucaiRepository extends BaseRepository
     }
 
     /**
+     * 获取素材信息包含作者昵称头像.
+     */
+    public function getSucaiImgDetailInfo(array $where, array $column = ['img.*','u.nickname','u.imghead']): Model|Builder|null
+    {
+        return Img::query()->leftJoin('user as u','u.id','=','img.uid')->where($where)->select($column)->first();
+    }
+    /**
      * 获取素材信息列表.
      */
     public function getMaterialList(array $where, array $query, array $column = ['*']): array
