@@ -85,7 +85,7 @@ Router::addGroup($routerPath . '/', function () {
 
     #素材
     Router::addGroup('material/', function () {
-        Router::get('getList', [SucaiController::class, 'collectImg']);
+        Router::get('searchImgList', [SucaiController::class, 'searchImgList']);
     });
 
     #短信类
