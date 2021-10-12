@@ -29,13 +29,14 @@ class SucaiService extends BaseService
      * @param $query
      *
      * @param $whereParam
+     * @param $where
      * @param $order
      *
      * @return mixed
      */
-    public function searchImgList($query,$whereParam,$order)
+    public function searchImgList($query,$whereParam,$where,$order)
     {
-        return $this->sucaiRepository->searchImgList($query,$whereParam,$order);
+        return $this->sucaiRepository->searchImgList($query,$whereParam,$where,$order);
     }
     /**
      * 收藏素材图片.

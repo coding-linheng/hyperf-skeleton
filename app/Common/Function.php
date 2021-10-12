@@ -122,6 +122,9 @@ if (!function_exists('es_query_format')) {
                     continue 2;
             }
             $queryString  = $v[1];
+            if(empty($queryString)){
+                $queryString="*";
+            }
             if(empty($boolArr)){
                 $boolArr= [['query_string' => ['default_field' => "{$k}", 'query' => "{$queryString}"]]];
             }

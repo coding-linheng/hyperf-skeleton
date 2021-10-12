@@ -66,6 +66,8 @@ Router::addGroup($routerPath . '/', function () {
     Router::addGroup('material/', function () {
         Router::post('collectImg', [SucaiController::class, 'collectImg']);
         Router::post('getDetail', [SucaiController::class, 'getDetail']);
+        Router::post('recommendList', [SucaiController::class, 'recommendList']);
+        Router::post('getListByAuthor', [SucaiController::class, 'getListByAuthor']);
     });
 
     #工具类

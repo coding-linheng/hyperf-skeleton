@@ -10,6 +10,7 @@ use App\Constants\ErrorCode;
 use App\Constants\ImgSizeStyle;
 use App\Exception\BusinessException;
 use App\Model\Img;
+use App\Model\Mulu;
 use App\Model\Shouimg;
 use App\Model\Userdata;
 use App\Repositories\BaseRepository;
@@ -33,20 +34,31 @@ class SucaiRepository extends BaseRepository
      * @param $query
      *
      * @param $whereParam
+     * @param $where
      * @param $order
      *
      * @return mixed
      */
-    public function searchImgList($query,$whereParam,$order)
+    public function searchImgList($query,$whereParam,$wheres,$order)
     {
         $orm = Img::search($query, es_callback($whereParam));
         if (!empty($order)) {
             $orm = $orm->orderBy($order, 'desc');
         }
+        if(!empty($wheres)){
+            foreach ($wheres as $field=> $where){
+                $orm=$orm->where($field,$where);
+            }
+        }
         $list = $orm->paginateRaw(200)->toArray();
         $list = format_es_page_raw_data($list);
         //处理数据
         if (!empty($list) && isset($list['data']) && !empty($list['data'])) {
+            //找到目录列表
+            $muluArrRes=Mulu::query()->get()->toArray();
+            if(!empty($muluArrRes)) foreach ($muluArrRes as $k=>$v){
+                   $muluArr[$v['id']]=$v['name'];
+            }
             foreach ($list['data'] as $key => &$val) {
                 if (!isset($val['id']) || empty($val['title'])) {
                     unset($list['data'][$key]);
@@ -55,9 +67,12 @@ class SucaiRepository extends BaseRepository
                 $tmp['id']          = $val['id'] ?? 0;
                 $tmp['path']        = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
                 $tmp['title']       = $val['title']   ?? '';
-                $tmp['looknum']     = $val['looknum'] ?? 0;
+                $tmp['shoucang']     = $val['shoucang'] ?? 0;
                 $tmp['downnum']     = $val['downnum'] ?? 0;
                 $tmp['dtime']       = $val['dtime']   ?? 0;
+                $tmp['price']       = $val['price']   ?? 0;
+                $tmp['leixing']       = $val['leixing']   ?? 0;
+                $tmp['mulu']=isset($val['mulu_id']) && isset($muluArr[$val['mulu_id']]) ? $muluArr[$val['mulu_id']] :"";
                 $list['data'][$key] = $tmp;
                 $tmp                = [];
             }
