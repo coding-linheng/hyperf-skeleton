@@ -108,10 +108,8 @@ class SucaiController extends AbstractController
     {
         $request->scene('get')->validateResolved();
         $id          = $request->input('id');
-        $type        = $request->input('type', 1);
-        $remark      = $request->path();
-        $collectNum  = $this->sucaiService->collectSucaiImg(intval($id), intval($type), (string)$remark);
-        return $this->success(['collect_num'=>$collectNum]);
+        $list  = $this->sucaiService->recommendList(intval($id));
+        return $this->success($list);
     }
 
     /**
@@ -122,9 +120,7 @@ class SucaiController extends AbstractController
     {
         $request->scene('get')->validateResolved();
         $id          = $request->input('id');
-        $type        = $request->input('type', 1);
-        $remark      = $request->path();
-        $collectNum  = $this->sucaiService->collectSucaiImg(intval($id), intval($type), (string)$remark);
-        return $this->success(['collect_num'=>$collectNum]);
+        $list  = $this->sucaiService->getListByAuthor(intval($id));
+        return $this->success($list);
     }
 }

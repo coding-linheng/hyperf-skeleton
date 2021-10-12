@@ -11,6 +11,7 @@ use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Model\User;
 use App\Repositories\V1\SucaiRepository;
+use App\Repositories\V1\UserRepository;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -23,6 +24,8 @@ class SucaiService extends BaseService
     #[Inject]
     protected SucaiRepository $sucaiRepository;
 
+    #[Inject]
+    protected UserRepository $userRepository;
     /**
      * 模糊搜索素材数据，包含标题和关键字及其他筛选.
      *
@@ -67,6 +70,7 @@ class SucaiService extends BaseService
         //采集
         return $this->sucaiRepository->collectSucaiImg($sucaiInfo, user()['id'], $remark);
     }
+
     /**
      * 素材详情页.
      * @param: id 素材的id
@@ -75,8 +79,9 @@ class SucaiService extends BaseService
      */
     public function getDetail(int $id): array|null
     {
+        $uid=user()['id'];
         //判断图片是否存在
-        $sucaiInfo = $this->sucaiRepository->getSucaiImgDetailInfo(['id' => $id], ['id', 'uid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'shoucang']);
+        $sucaiInfo = $this->sucaiRepository->getSucaiImgDetailInfo(['id' => $id], ['id', 'uid', 'suffix', 'size', 'height', 'name', 'path', 'title','guanjianci',  'shoucang']);
         if (empty($sucaiInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '素材不存在！');
         }
@@ -89,129 +94,85 @@ class SucaiService extends BaseService
         if($sucaiInfo['status']!=3){
             throw new BusinessException(ErrorCode::ERROR, '素材暂时不能查看！');
         }
-        //查询
 
-//        //统计
-//        $tongji=db('img')->where(['uid'=>$info['uid'],'del'=>0])->field("count(status) as num,status")->group('status')->select();
-//        $arr=[];
-//        $arr[0]=0;
-//        $arr[1]=0;
-//        $arr[2]=0;
-//        $arr[3]=0;
-//        if(!empty($tongji)){
-//            foreach($tongji as $v){
-//                if($v['status']==0){
-//                    $arr[0]=$v['num'];
-//                }elseif($v['status']==1){
-//                    $arr[1]=$v['num'];
-//                }elseif($v['status']==2){
-//                    $arr[2]=$v['num'];
-//                }elseif($v['status']==3){
-//                    $arr[3]=$v['num'];
-//                }
-//            }
-//        }
-//        $this->assign('tongji',$arr);
-//
-//        //是否关注
-//        if($this->uid==null){
-//            $this->assign('guanuser',1);//未关注
-//            $this->assign('shoucang',1);//未关注
-//        }else{
-//            $guanuser=db('guanzhuuser')->where(['uid'=>$this->uid,'bid'=>$info['uid']])->find();
-//            if(empty($guanuser)){
-//                $this->assign('guanuser',1);
-//            }else{
-//                $this->assign('guanuser',2);
-//            }
-//            //是否收藏
-//            $shoucang=db('shouimg')->where(['uid'=>$this->uid,'iid'=>$id])->find();
-//            if(empty($shoucang)){
-//                $this->assign('shoucang',1);//未关注
-//            }else{
-//                $this->assign('shoucang',2);
-//            }
-//        }
+        //查询他的作品个数
+        $sucaiInfo['total_num'] = $this->sucaiRepository->totalImgCount(['uid' => $sucaiInfo['uid'],'del'=>0,'status'=>3]);
 
-//        //类型
-//        $fenleiid=db('fenleirelation')->where(['iid'=>$id])->order('mid asc')->find();
-//        $fenlei=db('fenlei')->where(['id'=>$fenleiid['mid']])->find();
-//        $this->assign('fenlei',$fenlei);
+        //是否关注
+        $guanZhuUser=  $this->userRepository->isGuanzhuUser($uid,$sucaiInfo['uid']);
+        if(empty($guanZhuUser)){
+          $sucaiInfo['guan_user'] =1;
+        }else{
+          $sucaiInfo['guan_user'] =2;
+        }
 
-//
-//        //主题
-////        $sciid=db('scthreefenleirelation')->where(['iid'=>$id])->order('mid asc')->find();
-////        $scthemefenlei=db('scthreefenlei')->where(['id'=>$sciid['mid']])->find();
-//        $this->assign('scthemefenlei',[]);
-//
-//        //获取格式
-//        $geshi=db('geshirelation')->where(['iid'=>$id])->find();
-//        $geshi=db('geshi')->where(['id'=>$geshi['mid']])->find();
-//        $Sucaiajax=new Sucaiajax();
-//        //$getsztj=$Sucaiajax->getsztj();
-//        $this->assign('cainixihuan',[]);
-//
-//        //本类素材
-//        //$thisfenleisucai=$Sucaiajax->thisfenleisucai($fenlei['mid'],0,0,15);//素材
-//        $this->assign('total',30);
-//        $this->assign('thisfenleisucai',[]);
-
-//
-//        //自己的
-//        $thisfenleisucais=db('img')->where(['uid'=>$info['uid'],'status'=>3,'del'=>0])->order("rand()")->paginate(15);
-//        $thisfenleisucais->toArray();
-//        $arrIds=$fIdNameArr=[];
-//        foreach ($thisfenleisucais as $key => $value) {
-//            array_push($arrIds,$value['id']);
-//        }
-//        if(!empty($arrIds)){
-//            $idstrs=implode(',',$arrIds);
-//            $fnameArr= db('fenleirelation')
-//                ->alias('r')
-//                ->join("dczg_fenlei f","f.id=r.mid",'left')
-//                ->where("r.iid in ({$idstrs})")
-//                ->field('r.iid,f.name')->select();
-//            if(!empty($fnameArr)){
-//                foreach($fnameArr as $k=>$fname){
-//                    $fIdNameArr[$fname['iid']]=$fname['name'];
-//                }
-//            }
-//            foreach ($thisfenleisucais as $key => $value) {
-//                $data = $value;
-//                $data['fname']=isset($fIdNameArr[$value['id']])?$fIdNameArr[$value['id']]:'';
-//                $thisfenleisucais->offsetSet($key,$data);
-//            }
-//        }
-//        $this->assign('total',$thisfenleisucais->lastPage());
-//        $this->assign('thisfenleisucais',$thisfenleisucais);
-//
-//        //浏览量
-//        db('img')->where(['id'=>$id])->setInc('looknum');
-//        //我的合集
-//        //$myheji=db('heji')->where(['uid'=>$this->uid])->field('id,title')->select();
-//        $this->assign('myheji',[]);
-//       //推荐合集
-//        //$list=(new Heji())->getheji(10,true,"rand()");
-//        $this->assign('heji',[]);
-//        $cache['heji']=[];
-//
-//        //广告位
-//        //$guanggaowei=db('sucaiguanggao')->order("id desc")->select();
-//        $this->assign('guanggaowei',[]);
-//        $cache['guanggaowei']=[];
-//
-//        //关键词
-//        $linglebel=array_unique(explode(' ', $info['guanjianci']));
-//        foreach($linglebel as $k=>$v){
-//            if(trim($v)==''){
-//                unset($linglebel[$k]);
-//            }
-//        }
-//        $this->assign('linglebel',$linglebel);
-
-//        $userdata=db('userdata')->where(['uid'=>$info['uid']])->field('shoucang,zhuanji,zuopin,shouling,shousucai,shouwen,sucainum,wenkunum')->find();
-//        $this->assign('userdata',$userdata
-        return [];
+        //是否收藏
+        $shoucang=$this->sucaiRepository->isShouCangImg($uid,$sucaiInfo['id']);;
+        if(empty($shoucang)){
+          $sucaiInfo['shoucang'] =1;
+        }else{
+          $sucaiInfo['shoucang'] =2;
+        }
+        //类型
+        $sucaiInfo['fenlei']=$this->sucaiRepository->getFenLei($id);
+        $sucaiInfo['format']=$this->sucaiRepository->getImgFormat($id);
+        //浏览量
+        $this->sucaiRepository->IncImgCount($id);
+        //广告位
+        $sucaiInfo['advertisement']=$this->sucaiRepository->getSuCaiAdvertisement();
+        //关键词
+        $linglebel=array_unique(explode(' ', $sucaiInfo['guanjianci']));
+        foreach($linglebel as $k=>$v){
+            if(trim($v)==''){
+                unset($linglebel[$k]);
+            }
+        }
+        $sucaiInfo['key_words']=$linglebel;
+        $sucaiInfo['userdata']=$this->userRepository->getUserData($sucaiInfo['uid']);
+        return $sucaiInfo;
     }
+
+
+  /**
+   * 相关推荐.
+   * @param: id 素材的id
+   *
+   * @return null|array|mixed
+   */
+  public function recommendList(int $id): array|null
+  {
+
+    //本类素材
+    $sucaiInfo = $this->sucaiRepository->getSucaiImgDetailInfo(['id' => $id], ['id', 'uid', 'suffix', 'size', 'height', 'name', 'path', 'title','guanjianci', 'shoucang']);
+    if (empty($sucaiInfo)) {
+      throw new BusinessException(ErrorCode::ERROR, '素材不存在！');
+    }
+    //如果有筛选，则处理
+    $queryString=$sucaiInfo['title']. ' ' . $sucaiInfo['guanjianci'];
+    $queryParam = ['title' => ['or', "{$queryString}"], 'guanjianci' => ['or', "{$queryString}"]];
+    $where=[];
+    return $this->searchImgList($queryString,$queryParam,$where, '');
+
+  }
+
+  /**
+   * 素材详情页--作者其他.
+   *
+   * @param int $id
+   *
+   * @return array|null
+   */
+  public function getListByAuthor(int $id): array|null
+  {
+
+    $sucaiInfo = $this->sucaiRepository->getSucaiImgDetailInfo(['id' => $id], ['id', 'uid', 'suffix', 'size', 'height', 'name', 'path', 'title','guanjianci', 'shoucang']);
+    if (empty($sucaiInfo)) {
+      throw new BusinessException(ErrorCode::ERROR, '素材不存在！');
+    }
+    return $this->sucaiRepository->getListPageRand($sucaiInfo['uid']);
+
+  }
+
+
 
 }

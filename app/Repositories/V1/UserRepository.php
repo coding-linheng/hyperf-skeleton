@@ -10,6 +10,7 @@ use App\Constants\ErrorCode;
 use App\Constants\ImgSizeStyle;
 use App\Exception\BusinessException;
 use App\Model\Daywaterdc;
+use App\Model\Guanzhuuser;
 use App\Model\Notice;
 use App\Model\Picture;
 use App\Model\Tixian;
@@ -258,4 +259,13 @@ class UserRepository extends BaseRepository
         }
         return get_img_path($this->redis->get($key));
     }
+
+    /**
+     * 是否关注用户.
+     */
+    public function isGuanzhuUser($uid,$targetId): Model|null {
+      return Guanzhuuser::query()->where(['uid'=>$uid,'bid'=>$targetId])->first();
+    }
+
+
 }
