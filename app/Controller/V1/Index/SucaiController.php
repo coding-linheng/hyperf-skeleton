@@ -69,4 +69,18 @@ class SucaiController extends AbstractController
         $collectNum  = $this->sucaiService->collectSucaiImg(intval($id), intval($type), (string)$remark);
         return $this->success(['collect_num'=>$collectNum]);
     }
+
+    /**
+     * 素材详情页.
+     * @param: id 素材的id
+     */
+    public function getDetail(Sucai $request): ResponseInterface
+    {
+        $request->scene('get')->validateResolved();
+        $id          = $request->input('id');
+        $type        = $request->input('type', 1);
+        $remark      = $request->path();
+        $collectNum  = $this->sucaiService->collectSucaiImg(intval($id), intval($type), (string)$remark);
+        return $this->success(['collect_num'=>$collectNum]);
+    }
 }
