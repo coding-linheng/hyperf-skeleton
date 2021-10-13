@@ -39,4 +39,40 @@ class WenkuController extends AbstractController
         $list                     = $this->wenkuService->getList($query);
         return $this->success($list);
     }
+
+    /**
+     * 文库详情页.
+     * @param: id 文库的id
+     */
+    public function getDetail(Wenku $request): ResponseInterface
+    {
+        $request->scene('get')->validateResolved();
+        $id          = $request->input('id');
+        $list        = $this->wenkuService->getDetail(intval($id));
+        return $this->success($list);
+    }
+
+    /**
+     * 文库详情页--相关推荐.
+     * @param: id 素材的id
+     */
+    public function recommendList(Wenku $request): ResponseInterface
+    {
+        $request->scene('get')->validateResolved();
+        $id          = $request->input('id');
+        $list        = $this->wenkuService->recommendList(intval($id));
+        return $this->success($list);
+    }
+
+    /**
+     * 文库详情页--作者其他.
+     * @param: id 素材的id
+     */
+    public function getListByAuthor(Wenku $request): ResponseInterface
+    {
+        $request->scene('get')->validateResolved();
+        $id          = $request->input('id');
+        $list        = $this->wenkuService->getListByAuthor(intval($id));
+        return $this->success($list);
+    }
 }

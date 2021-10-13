@@ -37,14 +37,23 @@ class UserRepository extends BaseRepository
 
     /**
      * 获取用户data模型.
+     * @param mixed $hideArr
      */
-    public function getUserData(int $userid): Userdata
+    public function getUserData(int $userid, $hideArr = []): Userdata
     {
         /** @var Userdata $userData */
         $userData = Userdata::query()->where('uid', $userid)->first();
 
         if (empty($userData)) {
             throw new BusinessException(ErrorCode::ERROR, '用户不存在');
+        }
+
+        if (!empty($hideArr)) {
+            foreach ($hideArr as $col) {
+                if (isset($userData->{$col})) {
+                    unset($userData->{$col});
+                }
+            }
         }
         return $userData;
     }

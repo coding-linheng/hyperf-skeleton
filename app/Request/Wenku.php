@@ -39,7 +39,7 @@ class Wenku extends FormRequest
     public function rules(): array
     {
         return [
-            'id'      => 'required|exists:albumlist,id',
+            'id'      => 'required|exists:wenku,id',
             'lid'     => Rule::in([0, 1, 2]),
             'mulu_id' => 'digits',
             'order'   => Rule::in(['g_time', 'id', 'dtime', 'tui', 'downnum']),

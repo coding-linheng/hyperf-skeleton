@@ -16,6 +16,7 @@ use App\Model\Geshirelation;
 use App\Model\Img;
 use App\Model\Mulu;
 use App\Model\Shouimg;
+use App\Model\Sucaiguanggao;
 use App\Model\Userdata;
 use App\Repositories\BaseRepository;
 use Hyperf\Database\Model\Builder;

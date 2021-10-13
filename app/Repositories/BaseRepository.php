@@ -110,6 +110,27 @@ class BaseRepository
     }
 
     //后续改成批量处理一次查询多张图片的
+    public function getPictureById($imgId, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC)
+    {
+        if (empty($imgId)) {
+            return '';
+        }
+        $redis  = redis('cache');
+        $keyUrl = $redis->zRangeByScore($this->dbPictureCacheKey, $imgId, $imgId);
+
+        if (!empty($keyUrl) && count($keyUrl) > 0) {
+            return get_img_path($keyUrl[0], $suffix);
+        }
+        $path = Picture::query()->where(['id' => $imgId])->first();
+
+        if (empty($path)) {
+            return '';
+        }
+        $redis->zAdd($this->dbPictureCacheKey, $imgId, $path->url);
+        return get_img_path($path->url, $suffix);
+    }
+
+    //后续改成批量处理一次查询多张图片的
     public function getPicturejson($imgStr, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC)
     {
         if (empty($imgStr)) {

@@ -134,7 +134,7 @@ class SucaiService extends BaseService
             }
         }
         $sucaiInfo['key_words'] = $linglebel;
-        $sucaiInfo['userdata']  = $this->userRepository->getUserData($sucaiInfo['uid']);
+        $sucaiInfo['userdata']  = $this->userRepository->getUserData($sucaiInfo['uid'], ['id', 'uid', 'name', 'tel', 'cardnum', 'zhi', 'qq', 'email', 'cardimg', 'cardimg1']);
         return $sucaiInfo;
     }
 

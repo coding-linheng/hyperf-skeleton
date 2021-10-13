@@ -71,6 +71,13 @@ Router::addGroup($routerPath . '/', function () {
         Router::post('getListByAuthor', [SucaiController::class, 'getListByAuthor']);
     });
 
+    #文库
+    Router::addGroup('document/', function () {
+        Router::post('getDetail', [WenkuController::class, 'getDetail']);
+        Router::post('recommendList', [WenkuController::class, 'recommendList']);
+        Router::post('getListByAuthor', [WenkuController::class, 'getListByAuthor']);
+    });
+
     #工具类
     Router::addGroup('utils/', function () {
         Router::post('upload', [Utils::class, 'upload']);
