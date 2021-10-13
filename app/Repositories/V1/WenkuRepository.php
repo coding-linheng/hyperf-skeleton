@@ -138,6 +138,11 @@ class WenkuRepository extends BaseRepository
             $where['w.leixing'] = $query['lid'];
         }
 
+        if (!empty($query['uid'])) {
+            $where['w.uid'] = $query['uid'];
+        }
+        //分类
+
         $page     = ($query['page'] ?? 1) ?: 1;
         $pageSize = $query['page_size'] ?? 20;
         $orm      = Db::table('wenku as w')->leftJoin('user as u', 'u.id', '=', 'w.uid')->where($where);

@@ -59,8 +59,10 @@ class WenkuController extends AbstractController
     public function recommendList(Wenku $request): ResponseInterface
     {
         $request->scene('get')->validateResolved();
-        $id          = $request->input('id');
-        $list        = $this->wenkuService->recommendList(intval($id));
+        $id                       = $request->input('id');
+        $query['page']            = $request->input('page', 1);
+        $query['page_size']       = $request->input('page_size', 20);
+        $list                     = $this->wenkuService->recommendList(intval($id), $query);
         return $this->success($list);
     }
 
@@ -71,8 +73,10 @@ class WenkuController extends AbstractController
     public function getListByAuthor(Wenku $request): ResponseInterface
     {
         $request->scene('get')->validateResolved();
-        $id          = $request->input('id');
-        $list        = $this->wenkuService->getListByAuthor(intval($id));
+        $id                       = $request->input('id');
+        $query['page']            = $request->input('page', 1);
+        $query['page_size']       = $request->input('page_size', 20);
+        $list                     = $this->wenkuService->getListByAuthor(intval($id), $query);
         return $this->success($list);
     }
 }

@@ -90,16 +90,17 @@ class WenkuService extends BaseService
         $info['advertisement'] = $this->wenkuRepository->getAdvertisement(7);
         //用户数据
         $info['userdata']  = $this->userRepository->getUserData($info['uid'], ['id', 'uid', 'name', 'tel', 'cardnum', 'zhi', 'qq', 'email', 'cardimg', 'cardimg1']);
-        return [];
+        return $info;
     }
 
     /**
      * 文库详情页--相关推荐.
      * @param: id 文库的id
      *
+     * @param mixed $query
      * @return null|array|mixed
      */
-    public function recommendList(int $id): array|null
+    public function recommendList(int $id, $query): array|null
     {
         //猜你喜欢
 //        $this->caini();
@@ -122,25 +123,25 @@ class WenkuService extends BaseService
         }
         $info = $info->toArray();
 
-        //如果有筛选，则处理
-        //$queryString = $sucaiInfo['title'] . ' ' . $sucaiInfo['guanjianci'];
-        //$queryParams  = ['title' => ['or', "{$queryString}"], 'guanjianci' => ['or', "{$queryString}"]];
-        return $this->getList([]);
+        $query['query'] = $info['title'];
+        return $this->wenkuRepository->getSearchWenkuList($query);
     }
 
     /**
      * 文库详情页--作者其他.
      * @param: id 文库的id
+     * @param mixed $query
      */
-    public function getListByAuthor(int $id): array|null
+    public function getListByAuthor(int $id, $query): array|null
     {
         $info =  $this->wenkuRepository->getDetailInfoById($id);
 
         if (empty($info)) {
             throw new BusinessException(ErrorCode::ERROR, '文库不存在！');
         }
-        $info = $info->toArray();
-        $this->wenkuRepository->getListPageRand($info['uid']);
+        $info         = $info->toArray();
+        $query['uid'] = $info['uid'];
+        $this->wenkuRepository->getSearchWenkuList($query);
         return $info;
     }
 }
