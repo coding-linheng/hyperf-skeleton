@@ -22,6 +22,6 @@ class TaskSchedulerConsumer extends ConsumerProcess
     protected array $handlers = [
         TaskType::ACCOUNT_LOGIN      => Login::class,
         TaskType::RECORD_REQUEST_LOG => RecordRequestLog::class,
-        TaskType::CACHE_PIC => CachePicture::class,
+        TaskType::CACHE_PIC          => CachePicture::class,
     ];
 }

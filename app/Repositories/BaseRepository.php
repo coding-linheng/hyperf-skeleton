@@ -42,7 +42,8 @@ class BaseRepository
      */
     protected array $businessContainerKey = ['auth', 'adminPermission'];
 
-    protected $dbPictureCacheKey="db_picture";
+    protected $dbPictureCacheKey = 'db_picture';
+
     /**
      * __get
      * 隐式注入服务类
@@ -109,41 +110,47 @@ class BaseRepository
     }
 
     //后续改成批量处理一次查询多张图片的
-    public  function getPicturejson($imgStr,$suffix=ImgSizeStyle::ALBUM_LIST_SMALL_PIC){
-        if(empty($imgStr)){
+    public function getPicturejson($imgStr, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC)
+    {
+        if (empty($imgStr)) {
             return '';
         }
-        $img=json_decode($imgStr,true);
-        if(empty($img) || count($img)<1){
+        $img = json_decode($imgStr, true);
+
+        if (empty($img) || count($img) < 1) {
             return '';
         }
         $redis = redis('cache');
         //从未缓存或者缓存条数少于20000都会触发一次全部缓存
-        if(!$redis->exists([$this->dbPictureCacheKey]) || $redis->zCard($this->dbPictureCacheKey)<20000){
-           if($redis->setnx("lockPictureTmp",1)) {
-                $redis->expire("lockPictureTmp",30);
-               $this->rePushPicToRedis($redis);
-           }
+        if (!$redis->exists([$this->dbPictureCacheKey]) || $redis->zCard($this->dbPictureCacheKey) < 20000) {
+            if ($redis->setnx('lockPictureTmp', 1)) {
+                $redis->expire('lockPictureTmp', 30);
+                $this->rePushPicToRedis($redis);
+            }
         }
-        $keyUrl=$redis->zRangeByScore($this->dbPictureCacheKey,$img[0],$img[0]);
-        if(!empty($keyUrl) && count($keyUrl)>0){
-            return  get_img_path($keyUrl[0], $suffix);
+        $keyUrl = $redis->zRangeByScore($this->dbPictureCacheKey, $img[0], $img[0]);
+
+        if (!empty($keyUrl) && count($keyUrl) > 0) {
+            return get_img_path($keyUrl[0], $suffix);
         }
-        $path=Picture::query()->where(['id'=>$img[0]])->first();
-        if(empty($path)){
+        $path = Picture::query()->where(['id' => $img[0]])->first();
+
+        if (empty($path)) {
             return '';
         }
-        $redis->zAdd($this->dbPictureCacheKey,$img[0],$path->url);
-        return  get_img_path($path->url, $suffix);
+        $redis->zAdd($this->dbPictureCacheKey, $img[0], $path->url);
+        return get_img_path($path->url, $suffix);
     }
+
     //缓存所有预览图到redis
-    public  function rePushPicToRedis($redis){
+    public function rePushPicToRedis($redis)
+    {
         //判断是否存在zset key db_picture
-        $redis->expire($this->dbPictureCacheKey,3600*7*24);
+        $redis->expire($this->dbPictureCacheKey, 3600 * 7 * 24);
         //使用异步队列跑
         $cacheProducerTask = di()->get(CachePlanProducer::class);
         //将请求日志推入异步队列记录入库
-        echo "push to cache queue!";
-        $cacheProducerTask->cachePicture(['cache_key'=>$this->dbPictureCacheKey], 0);
+        echo 'push to cache queue!';
+        $cacheProducerTask->cachePicture(['cache_key' => $this->dbPictureCacheKey], 0);
     }
 }

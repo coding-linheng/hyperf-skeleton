@@ -22,7 +22,7 @@ class Wenku extends FormRequest
      */
     public $scenes = [
         'get'               => ['id'],
-        'list'     => ['query', 'order', 'lid', 'mulu_id', 'labels'],
+        'list'              => ['query', 'order', 'lid', 'mulu_id', 'labels'],
     ];
 
     /**
@@ -39,7 +39,7 @@ class Wenku extends FormRequest
     public function rules(): array
     {
         return [
-            'id'    => 'required|exists:albumlist,id',
+            'id'      => 'required|exists:albumlist,id',
             'lid'     => Rule::in([0, 1, 2]),
             'mulu_id' => 'digits',
             'order'   => Rule::in(['g_time', 'id', 'dtime', 'tui', 'downnum']),

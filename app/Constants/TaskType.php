@@ -17,6 +17,7 @@ class TaskType
 
     // 刷新缓存请求
     public const CACHE_PIC = 2001;
+
     /**
      * 获取计划任务类型.
      *
@@ -27,7 +28,7 @@ class TaskType
         return [
             self::ACCOUNT_LOGIN      => '登录',
             self::RECORD_REQUEST_LOG => '记录请求日志',
-            self::CACHE_PIC => '缓存PIC图片表',
+            self::CACHE_PIC          => '缓存PIC图片表',
         ];
     }
 }

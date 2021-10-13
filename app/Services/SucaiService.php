@@ -146,7 +146,7 @@ class SucaiService extends BaseService
      */
     public function recommendList(int $id): array|null
     {
-    //本类素材
+        //本类素材
         $sucaiInfo = $this->sucaiRepository->getSucaiImgDetailInfo(['id' => $id], ['id', 'uid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'guanjianci', 'shoucang']);
 
         if (empty($sucaiInfo)) {
