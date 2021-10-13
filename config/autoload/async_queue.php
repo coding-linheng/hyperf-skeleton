@@ -57,5 +57,16 @@ return [
         'handle_timeout' => 10,
         'processes'      => 1,
     ],
+    'cache_plan' => [
+        'driver'         => App\Driver\AsyncQueue\MyRedisDriver::class,
+        'redis' => [
+            'pool' => 'queue',
+        ],
+        'channel'        => 'task_scheduler',
+        'timeout'        => 10,
+        'retry_seconds'  => 5,
+        'handle_timeout' => 10,
+        'processes'      => 1,
+    ],
 
 ];
