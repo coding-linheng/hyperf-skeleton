@@ -54,15 +54,15 @@ class WenkuController extends AbstractController
 
     /**
      * 文库详情页--相关推荐.
-     * @param: id 素材的id
+     * @param: id 文库的id
      */
     public function recommendList(Wenku $request): ResponseInterface
     {
         $request->scene('get')->validateResolved();
-        $id                       = $request->input('id');
+        // $id                       = $request->input('id');
         $query['page']            = $request->input('page', 1);
         $query['page_size']       = $request->input('page_size', 20);
-        $list                     = $this->wenkuService->recommendList(intval($id), $query);
+        $list                     = $this->wenkuService->recommendList($query);
         return $this->success($list);
     }
 

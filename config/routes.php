@@ -66,16 +66,14 @@ Router::addGroup($routerPath . '/', function () {
     #素材
     Router::addGroup('material/', function () {
         Router::post('collectImg', [SucaiController::class, 'collectImg']);
-        Router::post('getDetail', [SucaiController::class, 'getDetail']);
-        Router::post('recommendList', [SucaiController::class, 'recommendList']);
-        Router::post('getListByAuthor', [SucaiController::class, 'getListByAuthor']);
+        Router::get('getDetail', [SucaiController::class, 'getDetail']);
+        Router::get('getListByAuthor', [SucaiController::class, 'getListByAuthor']);
     });
 
     #文库
     Router::addGroup('document/', function () {
-        Router::post('getDetail', [WenkuController::class, 'getDetail']);
-        Router::post('recommendList', [WenkuController::class, 'recommendList']);
-        Router::post('getListByAuthor', [WenkuController::class, 'getListByAuthor']);
+        Router::get('getDetail', [WenkuController::class, 'getDetail']);
+        Router::get('getListByAuthor', [WenkuController::class, 'getListByAuthor']);
     });
 
     #工具类
@@ -97,11 +95,13 @@ Router::addGroup($routerPath . '/', function () {
     #素材
     Router::addGroup('material/', function () {
         Router::get('searchList', [SucaiController::class, 'searchImgList']);
+        Router::get('recommendList', [SucaiController::class, 'recommendList']);
     });
 
     #文库
     Router::addGroup('document/', function () {
         Router::get('searchList', [WenkuController::class, 'getList']);
+        Router::get('recommendList', [WenkuController::class, 'recommendList']);
     });
 
     #短信类

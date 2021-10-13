@@ -51,7 +51,7 @@ class Wenku extends FormRequest
     public function messages(): array
     {
         return [
-            'id.exists' => '专辑不存在',
+            'id.exists' => '文库不存在',
         ];
     }
 

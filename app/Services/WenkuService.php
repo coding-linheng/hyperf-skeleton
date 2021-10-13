@@ -52,7 +52,7 @@ class WenkuService extends BaseService
         if (empty($info)) {
             throw new BusinessException(ErrorCode::ERROR, '文库不存在！');
         }
-        $info = $info->toArray();
+        $info = json_decode(json_encode($info), true);
 
         //已删除
         if ($info['del'] == 1) {
@@ -97,33 +97,12 @@ class WenkuService extends BaseService
      * 文库详情页--相关推荐.
      * @param: id 文库的id
      *
-     * @param mixed $query
      * @return null|array|mixed
      */
-    public function recommendList(int $id, $query): array|null
+    public function recommendList(mixed $query): array|null
     {
         //猜你喜欢
-//        $this->caini();
-//        $Wenkuajax=new Wenkuajax();
-//        $wenkucaini=$Wenkuajax->getwenkutj(0,0,10,1);
-//        foreach ($wenkucaini as $k=> $v){
-//            $data = $v;
-//            if($v['img']){
-//                $pdfimg=getsucaijson($v['img']);
-//                $wenkucaini[$k]['pdfimg']=$pdfimg;
-//            }else{
-//                $wenkucaini[$k]['pdfimg']='/'.$v['pdfimg'];
-//            }
-//        }
-
-        $info =  $this->wenkuRepository->getDetailInfoById($id);
-
-        if (empty($info)) {
-            throw new BusinessException(ErrorCode::ERROR, '文库不存在！');
-        }
-        $info = $info->toArray();
-
-        $query['query'] = $info['title'];
+        $query['rand'] = 1;
         return $this->wenkuRepository->getSearchWenkuList($query);
     }
 
@@ -139,9 +118,7 @@ class WenkuService extends BaseService
         if (empty($info)) {
             throw new BusinessException(ErrorCode::ERROR, '文库不存在！');
         }
-        $info         = $info->toArray();
-        $query['uid'] = $info['uid'];
-        $this->wenkuRepository->getSearchWenkuList($query);
-        return $info;
+        $query['uid'] = $info->uid;
+        return $this->wenkuRepository->getSearchWenkuList($query);
     }
 }

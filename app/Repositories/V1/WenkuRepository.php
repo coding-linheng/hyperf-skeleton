@@ -114,9 +114,9 @@ class WenkuRepository extends BaseRepository
 
     /**
      * 通过id获取详情.
-     * @param mixed $id
+     * @param int $id
      */
-    public function getDetailInfoById($id): Model|Builder|null
+    public function getDetailInfoById($id)
     {
         return Db::table('wenku as w')->leftJoin('user as u', 'u.id', '=', 'w.uid')->where('w.id', $id)->select(['w.*', 'u.nickname as username', 'u.imghead'])->first();
     }
@@ -133,6 +133,7 @@ class WenkuRepository extends BaseRepository
         } else {
             $order = 'w.' . $query['order'];
         }
+
         //类型 1共享，2原创
         if (!empty($query['lid'])) {
             $where['w.leixing'] = $query['lid'];
@@ -141,7 +142,6 @@ class WenkuRepository extends BaseRepository
         if (!empty($query['uid'])) {
             $where['w.uid'] = $query['uid'];
         }
-        //分类
 
         $page     = ($query['page'] ?? 1) ?: 1;
         $pageSize = $query['page_size'] ?? 20;
@@ -150,9 +150,15 @@ class WenkuRepository extends BaseRepository
         if (!empty($query['query'])) {
             $orm = $orm->where('w.title', 'like', '%' . $query['query'] . '%');
         }
+        //如果有随机排序的
+        if (!empty($query['rand'])) {
+            $orm = $orm->inRandomOrder();
+        } else {
+            $orm = $orm->orderBy($order, 'desc');
+        }
 
         $count    = $orm->count();
-        $list     = $orm->select(['w.id', 'w.img', 'w.title', 'w.price', 'w.price', 'w.shoucang', 'w.downnum', 'w.looknum', 'w.pdfimg', 'w.leixing', 'u.nickname as username', 'u.imghead'])->orderBy($order, 'desc')->orderBy('w.id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
+        $list     = $orm->select(['w.id', 'w.img', 'w.title', 'w.price', 'w.price', 'w.shoucang', 'w.downnum', 'w.looknum', 'w.pdfimg', 'w.leixing', 'u.nickname as username', 'u.imghead'])->orderBy('w.id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
 
         if (empty($list)) {
             return ['count' => 0, 'list' => []];
