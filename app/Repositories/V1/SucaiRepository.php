@@ -101,7 +101,8 @@ class SucaiRepository extends BaseRepository
                     continue;
                 }
                 $tmp['id']            = $val['id'] ?? 0;
-                $tmp['path']          = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                //$tmp['path']          = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['img'] =$this->getPicturejson($val['img'],ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
                 $tmp['title']         = $val['title']     ?? '';
                 $tmp['shoucang']      = $val['shoucang']  ?? 0;
                 $tmp['downnum']       = $val['downnum']   ?? 0;

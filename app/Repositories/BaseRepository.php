@@ -15,7 +15,10 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Constants\ImgSizeStyle;
 use App\Constants\StatusCode;
+use App\Model\Picture;
+use App\Task\Producer\CachePlanProducer;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Container\ContainerInterface;
 
@@ -39,6 +42,7 @@ class BaseRepository
      */
     protected array $businessContainerKey = ['auth', 'adminPermission'];
 
+    protected $dbPictureCacheKey="db_picture";
     /**
      * __get
      * 隐式注入服务类
@@ -102,5 +106,39 @@ class BaseRepository
             return $this->container->get($className);
         }
         throw new \RuntimeException("服务{$key}不存在，文件不存在！", StatusCode::ERR_SERVER);
+    }
+
+    //后续改成批量处理一次查询多张图片的
+    public  function getPicturejson($imgStr,$suffix=ImgSizeStyle::ALBUM_LIST_SMALL_PIC){
+        if(empty($imgStr)){
+            return '';
+        }
+        $img=json_decode($imgStr,true);
+        if(empty($img) || count($img)<1){
+            return '';
+        }
+        $redis = redis('cache');
+        $this->rePushPicToRedis($redis);
+        $keyUrl=$redis->zRangeByScore($this->dbPictureCacheKey,$img[0],$img[0]);
+        if(!empty($keyUrl) && count($keyUrl)>0){
+            return  get_img_path($keyUrl[0], $suffix);
+        }
+        $path=Picture::query()->where(['id'=>$img[0]])->first();
+        if(empty($path)){
+            return '';
+        }
+        $redis->zAdd($this->dbPictureCacheKey,$img[0],$path->url);
+        return  get_img_path($path->url, $suffix);
+    }
+    //缓存所有预览图到redis
+    public  function rePushPicToRedis($redis){
+        //判断是否存在zset key db_picture
+        if(!$redis->exists($this->dbPictureCacheKey)){
+            $redis->expire($this->dbPictureCacheKey,3600*7*24);
+            //使用异步队列跑
+            $cacheProducerTask = di()->get(CachePlanProducer::class);
+            //将请求日志推入异步队列记录入库
+            $cacheProducerTask->cachePicture(['cache_key'=>$this->dbPictureCacheKey], 0);
+        }
     }
 }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace App\Request;
 
 use Hyperf\Validation\Request\FormRequest;
+use Hyperf\Validation\Rule;
 
 class Wenku extends FormRequest
 {
@@ -21,6 +22,7 @@ class Wenku extends FormRequest
      */
     public $scenes = [
         'get'               => ['id'],
+        'list'     => ['query', 'order', 'lid', 'mulu_id', 'labels'],
     ];
 
     /**
@@ -38,7 +40,11 @@ class Wenku extends FormRequest
     {
         return [
             'id'    => 'required|exists:albumlist,id',
-            'title' => 'string',
+            'lid'     => Rule::in([0, 1, 2]),
+            'mulu_id' => 'digits',
+            'order'   => Rule::in(['g_time', 'id', 'dtime', 'tui', 'downnum']),
+            'labels'  => 'string',
+            'query'   => 'string',
         ];
     }
 
