@@ -6,6 +6,7 @@ namespace App\Task\Consumer;
 
 use App\Constants\TaskType;
 use App\Task\Consumer\AccountPlan\Scheduler\Login;
+use App\Task\Consumer\CachePlan\Scheduler\CachePicture;
 use App\Task\Consumer\LoggerPlan\Scheduler\RecordRequestLog;
 use Hyperf\Process\Annotation\Process;
 
@@ -21,5 +22,6 @@ class TaskSchedulerConsumer extends ConsumerProcess
     protected array $handlers = [
         TaskType::ACCOUNT_LOGIN      => Login::class,
         TaskType::RECORD_REQUEST_LOG => RecordRequestLog::class,
+        TaskType::CACHE_PIC => CachePicture::class,
     ];
 }

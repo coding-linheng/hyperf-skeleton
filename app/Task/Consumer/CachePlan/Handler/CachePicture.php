@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Task\Consumer\CachePlan\Handler;
 
 use App\Model\Picture;
-use App\Services\RequestLogService;
 
 class CachePicture
 {
     public function __invoke(array $data): bool
     {
         try {
+            echo "=================start do CachePicture!".json_encode($data);
             if(isset($data['cache_key']) && !empty($data['cache_key'])){
                 $cacheKey=$data['cache_key'];
             }else{

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Task\Consumer\CachePlan;
 
-use App\Task\Consumer\CachePlan\Scheduler\CachePicture;
+use App\Task\Consumer\CachePlan\Handler\CachePicture;
 use App\Task\Consumer\ConsumerProcess;
-use App\Task\Consumer\LoggerPlan\Handler\RecordRequestLog;
 use Hyperf\Process\Annotation\Process;
 
 /**
