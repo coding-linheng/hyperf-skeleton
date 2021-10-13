@@ -62,7 +62,7 @@ return [
         'redis' => [
             'pool' => 'queue',
         ],
-        'channel'        => 'task_scheduler',
+        'channel'        => 'cache_plan',
         'timeout'        => 10,
         'retry_seconds'  => 5,
         'handle_timeout' => 10,

@@ -118,10 +118,13 @@ class BaseRepository
             return '';
         }
         $redis = redis('cache');
-        if(!$redis->exists([$this->dbPictureCacheKey])){
-            $this->rePushPicToRedis($redis);
+        //从未缓存或者缓存条数少于20000都会触发一次全部缓存
+        if(!$redis->exists([$this->dbPictureCacheKey]) || $redis->zCard($this->dbPictureCacheKey)<20000){
+           if($redis->setnx("lockPictureTmp",1)) {
+                $redis->expire("lockPictureTmp",30);
+               $this->rePushPicToRedis($redis);
+           }
         }
-
         $keyUrl=$redis->zRangeByScore($this->dbPictureCacheKey,$img[0],$img[0]);
         if(!empty($keyUrl) && count($keyUrl)>0){
             return  get_img_path($keyUrl[0], $suffix);
@@ -136,7 +139,6 @@ class BaseRepository
     //缓存所有预览图到redis
     public  function rePushPicToRedis($redis){
         //判断是否存在zset key db_picture
-        echo "push to cache queue1!";
         $redis->expire($this->dbPictureCacheKey,3600*7*24);
         //使用异步队列跑
         $cacheProducerTask = di()->get(CachePlanProducer::class);
