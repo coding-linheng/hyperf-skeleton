@@ -16,6 +16,7 @@ use App\Controller\Utils;
 use App\Controller\V1\HelpCenter;
 use App\Controller\V1\Index\AlbumCollectController;
 use App\Controller\V1\Index\SucaiController;
+use App\Controller\V1\Index\WenkuController;
 use App\Controller\V1\UserCenter\UserController;
 use App\Controller\V1\Index\AlbumController;
 use App\Middleware\JwtMiddleware;
@@ -88,7 +89,12 @@ Router::addGroup($routerPath . '/', function () {
 
     #素材
     Router::addGroup('material/', function () {
-        Router::get('searchImgList', [SucaiController::class, 'searchImgList']);
+        Router::get('searchList', [SucaiController::class, 'searchImgList']);
+    });
+
+    #文库
+    Router::addGroup('document/', function () {
+        Router::get('searchList', [WenkuController::class, 'getList']);
     });
 
     #短信类

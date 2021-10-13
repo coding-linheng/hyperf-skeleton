@@ -36,7 +36,7 @@ class WenkuController extends AbstractController
         $query['lid']          = $request->input('lid',0);
         $query['mulu_id']     = $request->input('mulu_id',0);
         $query['page'] = $request->input('page',1);
-        $query['page_size'] = $request->input('page',20);
+        $query['page_size'] = $request->input('page_size',20);
         $list= $this->wenkuService->getList($query);
         return $this->success($list);
     }

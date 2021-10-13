@@ -65,31 +65,38 @@ class WenkuRepository extends BaseRepository
             $order='w.'.$query['order'];
         }
         //类型 1共享，2原创
-        if(empty($query['lid'])){
+        if(!empty($query['lid'])){
             $where['w.leixing']=$query['lid'];
         }
-        //类型 1共享，2原创
-        if(empty($query['w.title'])){
-            $where['w.title']=$query['lid'];
-        }
-
         $page     = ($query['page'] ?? 1) ?: 1;
         $pageSize = $query['page_size'] ?? 20;
         $orm = Db::table('wenku as w')->leftJoin('user as u','u.id','=','w.uid')->where($where);
+
+        if(!empty($query['query'])){
+            $orm=$orm->where('w.title','like','%'.$query['query'].'%');
+            //$where['w.title']=['like','%'.$query['query'].'%'];
+        }
+
+
         //$orm      = Wenku::query()->leftJoin('user as u','u.id','=','w.uid')->where($where);
         $count    = $orm->count();
-        $list     = $orm->select("w.*,u.nickname as username")->orderBy($order, 'desc')->orderBy('w.id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get()->toArray();
-        foreach ($list as $k=> $v){
-            $data = $v;
-            if(!empty($v['img'])){
-                $pdfimg=$this->getPicturejson($v['img']);
-                $data['pdfimg']=$pdfimg;
-            }else{
-                $data['pdfimg']='/'.$v['pdfimg'];
-            }
-            $list[$k]=$data;
+        $list     = $orm->select(['w.id','w.img','w.title','w.price','w.price','w.shoucang','w.downnum','w.looknum','w.pdfimg','w.leixing','u.nickname as username','u.imghead'])->orderBy($order, 'desc')->orderBy('w.id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
+
+        if(empty($list)){
+            return ['count' => 0, 'list' => []];
         }
-        return ['count' => $count, 'list' => $list];
+//        $list=$list->toArray();
+//        var_dump($list);
+        foreach ($list as  &$v){
+            $data = $v;
+            if(!empty($v->img)){
+                $pdfimg=$this->getPicturejson($v->img);
+                $v->pdfimg=$pdfimg;
+            }else{
+                $v->pdfimg='/'.$v->pdfimg;
+            }
+        }
+        return ['count' => $count, 'list' => $list->toArray()];
     }
 
 
