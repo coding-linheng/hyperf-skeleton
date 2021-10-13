@@ -181,7 +181,7 @@ class SucaiRepository extends BaseRepository
      */
     public function getFenLei($id): Model|null
     {
-        $fenleiid = Fenleirelation::query()->where(['iid' => $id])->orderBy('mid asc')->first();
+        $fenleiid = Fenleirelation::query()->where(['iid' => $id])->orderBy('mid', 'asc')->first();
         return Fenlei::query()->where(['id' => $fenleiid['mid']])->first();
     }
 
@@ -333,6 +333,6 @@ class SucaiRepository extends BaseRepository
      */
     public function getSuCaiAdvertisement()
     {
-        return Sucaiguanggao::query()->orderBy('id desc')->get()->toArray();
+        return Sucaiguanggao::query()->orderBy('id', 'desc')->get()->toArray();
     }
 }

@@ -51,7 +51,7 @@ class SucaiController extends AbstractController
         $lid = $request->input('lid', 0);
         //如果有筛选，则处理
         $queryParam = ['title' => ['or', "{$queryString}"], 'guanjianci' => ['or', "{$queryString}"]];
-        $where      = [];
+        $where      = ['del' => 0,'status'=>3];
 
         if (!empty($lid)) {
             $where = ['leixing' => $lid];
