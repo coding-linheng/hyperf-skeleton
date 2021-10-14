@@ -158,7 +158,7 @@ class WenkuRepository extends BaseRepository
         }
 
         $count    = $orm->count();
-        $list     = $orm->select(['w.id', 'w.img', 'w.title', 'w.price', 'w.price', 'w.shoucang', 'w.downnum', 'w.looknum', 'w.pdfimg', 'w.leixing', 'u.nickname as username', 'u.imghead'])->orderBy('w.id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
+        $list     = $orm->select(['w.id', 'w.img', 'w.title', 'w.price', 'w.shoucang', 'w.downnum', 'w.looknum', 'w.pdfimg', 'w.leixing', 'u.nickname as username', 'u.imghead'])->orderBy('w.id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
 
         if (empty($list)) {
             return ['count' => 0, 'list' => []];
@@ -173,19 +173,5 @@ class WenkuRepository extends BaseRepository
             }
         }
         return ['count' => $count, 'list' => $list->toArray()];
-    }
-
-    //获取详情图片地址
-    public function getImgsUrl($imgs, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC)
-    {
-        $pictures   = json_decode($imgs, true);
-        $pictureTmp = [];
-
-        if (is_array($pictures)) {
-            foreach ($pictures as $pid) {
-                $pictureTmp[] =  $this->getPictureById($pid, $suffix);
-            }
-        }
-        return $pictureTmp;
     }
 }

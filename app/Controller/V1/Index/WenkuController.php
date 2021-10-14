@@ -53,6 +53,18 @@ class WenkuController extends AbstractController
     }
 
     /**
+     * 获取文库下载地址.
+     * @param: id 文库的id
+     */
+    public function getDownUrl(Wenku $request): ResponseInterface
+    {
+        $request->scene('get')->validateResolved();
+        $id          = $request->input('id');
+        $list        = $this->wenkuService->getDownUrl(intval($id));
+        return $this->success($list);
+    }
+
+    /**
      * 文库详情页--相关推荐.
      * @param: id 文库的id
      */
@@ -79,4 +91,5 @@ class WenkuController extends AbstractController
         $list                     = $this->wenkuService->getListByAuthor(intval($id), $query);
         return $this->success($list);
     }
+
 }

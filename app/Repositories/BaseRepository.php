@@ -109,7 +109,23 @@ class BaseRepository
         throw new \RuntimeException("服务{$key}不存在，文件不存在！", StatusCode::ERR_SERVER);
     }
 
-    //后续改成批量处理一次查询多张图片的
+    /*======================= 以下为各仓库公用函数部分=============================================*/
+
+    //获取详情图片地址
+    public function getImgsUrl($imgs, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC)
+    {
+        $pictures   = json_decode($imgs, true);
+        $pictureTmp = [];
+
+        if (is_array($pictures)) {
+            foreach ($pictures as $pid) {
+                $pictureTmp[] =  $this->getPictureById($pid, $suffix);
+            }
+        }
+        return $pictureTmp;
+    }
+
+    //根据id查询图片地址
     public function getPictureById($imgId, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC)
     {
         if (empty($imgId)) {
@@ -130,7 +146,7 @@ class BaseRepository
         return get_img_path($path->url, $suffix);
     }
 
-    //后续改成批量处理一次查询多张图片的
+    //查询json字符串 查询图片数据
     public function getPictureJson($imgStr, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC): string
     {
         if (empty($imgStr)) {

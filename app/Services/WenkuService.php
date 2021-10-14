@@ -39,6 +39,33 @@ class WenkuService extends BaseService
     }
 
     /**
+     * 获取文库的下载地址.
+     * @param: id 文库的id
+     *
+     * @return null|array|mixed
+     */
+    public function getDownUrl(int $id): array|null
+    {
+        $uid = user()['id'];
+        //判断图片是否存在
+        $info =  $this->wenkuRepository->getDetailInfoById($id);
+        if (empty($info)) {
+            throw new BusinessException(ErrorCode::ERROR, '文库不存在！');
+        }
+        //已删除
+        if ($info['del'] == 1) {
+            throw new BusinessException(ErrorCode::ERROR, '文库已删除！');
+        }
+        //未正常通过
+        if ($info['status'] != 3) {
+            throw new BusinessException(ErrorCode::ERROR, '文库暂时不能下载！');
+        }
+        $info = json_decode(json_encode($info), true);
+        $downLoadUrl=get_img_path_private($info['path']);
+
+        return ['downLoadUrl'=>$downLoadUrl];
+    }
+    /**
      * 详情页.
      * @param: id 文库的id
      *
@@ -52,7 +79,9 @@ class WenkuService extends BaseService
         if (empty($info)) {
             throw new BusinessException(ErrorCode::ERROR, '文库不存在！');
         }
+
         $info = json_decode(json_encode($info), true);
+        unset($info['path']);
 
         //已删除
         if ($info['del'] == 1) {

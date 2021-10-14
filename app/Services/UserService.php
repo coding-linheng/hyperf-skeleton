@@ -348,4 +348,27 @@ class UserService extends BaseService
         unset($v);
         return $data;
     }
+
+    //判断有没有权限
+    public function jurisdiction($id){
+//        $userinfo=db('user')->where(['id'=>$id])->field('vip')->find();
+//        if($userinfo['vip']==0){
+//            return false;
+//        }
+//        //权限素材
+//        $sucai=db('uservip')->where(['uid'=>$id,'type'=>1])->find();
+//        if(empty($sucai) || $sucai['time'] < time()){
+//            $sucaiquanxian=0;
+//        }else{
+//            $sucaiquanxian=$sucai['vip'];
+//        }
+//        //文库
+//        $wenku=db('uservip')->where(['uid'=>$id,'type'=>2])->find();
+//        if(empty($wenku) || $wenku['time'] < time()){
+//            $wenkuquanxian=0;
+//        }else{
+//            $wenkuquanxian=$wenku['vip'];
+//        }
+//        return ['sucai'=>$sucaiquanxian,'wenku'=>$wenkuquanxian];//到期了
+    }
 }

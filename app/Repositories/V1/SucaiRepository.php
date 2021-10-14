@@ -16,6 +16,8 @@ use App\Model\Geshirelation;
 use App\Model\Img;
 use App\Model\Mulu;
 use App\Model\Shouimg;
+use App\Model\Sucaidown;
+use App\Model\Sucaidowndc;
 use App\Model\Sucaiguanggao;
 use App\Model\Userdata;
 use App\Repositories\BaseRepository;
@@ -147,6 +149,30 @@ class SucaiRepository extends BaseRepository
         return Img::query()->leftJoin('user as u', 'u.id', '=', 'img.uid')->where($where)->select($column)->first();
     }
 
+    /**
+     * 获取共享素材下载信息.
+     *
+     * @param  array  $where
+     * @param  array  $column
+     *
+     * @return Builder|Model|null
+     */
+    public function getSuCaiDown(array $where, array $column = ['*']): Model|Builder|null
+    {
+        return Sucaidown::query()->where($where)->select($column)->first();
+    }
+    /**
+     * 获取地产币素材下载信息.
+     *
+     * @param  array  $where
+     * @param  array  $column
+     *
+     * @return Builder|Model|null
+     */
+    public function getSuCaiDownDc(array $where, array $column = ['*']): Model|Builder|null
+    {
+        return Sucaidowndc::query()->where($where)->select($column)->first();
+    }
     /**
      * 增加在看次数.
      * @param mixed $id

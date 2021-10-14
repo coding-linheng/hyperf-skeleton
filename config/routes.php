@@ -67,12 +67,14 @@ Router::addGroup($routerPath . '/', function () {
     Router::addGroup('material/', function () {
         Router::post('collectImg', [SucaiController::class, 'collectImg']);
         Router::get('getDetail', [SucaiController::class, 'getDetail']);
+        Router::get('getDownUrl', [SucaiController::class, 'getDownUrl']);
         Router::get('getListByAuthor', [SucaiController::class, 'getListByAuthor']);
     });
 
     #文库
     Router::addGroup('document/', function () {
         Router::get('getDetail', [WenkuController::class, 'getDetail']);
+        Router::get('getDownUrl', [WenkuController::class, 'getDownUrl']);
         Router::get('getListByAuthor', [WenkuController::class, 'getListByAuthor']);
     });
 

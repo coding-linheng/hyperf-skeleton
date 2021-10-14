@@ -6,6 +6,7 @@ namespace App\Controller\V1\Index;
 
 use App\Controller\AbstractController;
 use App\Request\Sucai;
+use App\Request\Wenku;
 use App\Services\SucaiService;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
@@ -97,7 +98,17 @@ class SucaiController extends AbstractController
         $list        = $this->sucaiService->getDetail(intval($id));
         return $this->success($list);
     }
-
+    /**
+     * 获取素材的下载地址.
+     * @param: id 素材的id
+     */
+    public function getDownUrl(Sucai $request): ResponseInterface
+    {
+        $request->scene('get')->validateResolved();
+        $id          = $request->input('id');
+        $list        = $this->sucaiService->getDownUrl(intval($id));
+        return $this->success($list);
+    }
     /**
      * 素材详情页--相关推荐.
      * @param: id 素材的id
