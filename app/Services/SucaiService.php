@@ -422,141 +422,148 @@ class SucaiService extends BaseService
             }
         }
 
-      //花的原创币
-      //判断用户是不是在时间之内
-      $uservip = $this->userRepository->getUserVip(['uid' => $this->uid, 'type' => 4]);
-      Db::beginTransaction();
-      if (!empty($uservip) && $uservip->time >= time()) {
-        $uservip = $uservip->toArray();
-        //本人是素材vip直接下载
-        $time = strtotime(date('Y-m-d'));
-        //当天第一次下载可以下载免费素材，后续没权限的则没法下载
-        $sucaidown = $this->sucaiRepository->getSuCaiDown(['uid' => $uid, 'time' => $time]);
-        //你下载了素材
-        $addWaterDownSucaiData = [
-          'wid'   => $sucaiInfo['id'],
-          'bid'   => $sucaiInfo['uid'],
-          'uid'   => $uid,
-          'score' => 0,
-          'dc'    => 0,
-          'type'  => 2,
-          'vip'   => 1, //vip下载
-          'time'  => time(),
-        ];
+        //花的原创币
+        //判断用户是不是在时间之内
+        $uservip = $this->userRepository->getUserVip(['uid' => $this->uid, 'type' => 4]);
+        Db::beginTransaction();
 
-        if (empty($sucaidown)) {
-          if (!$this->sucaiRepository->addSuCaiDown(['ids' => $sucaiInfo['id'], 'uid' => $uid, 'time' => $time])) {
-            Db::rollBack();
-            throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
-          }
-          //你下载了素材
-          if (!$this->waterDoRepository->addWaterDownSucaiData($addWaterDownSucaiData)) {
-            Db::rollBack();
-            throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
-          }
+        if (!empty($uservip) && $uservip->time >= time()) {
+            $uservip = $uservip->toArray();
+            //本人是素材vip直接下载
+            $time = strtotime(date('Y-m-d'));
+            //当天第一次下载可以下载免费素材，后续没权限的则没法下载
+            $sucaidown = $this->sucaiRepository->getSuCaiDown(['uid' => $uid, 'time' => $time]);
+            //你下载了素材
+            $addWaterDownSucaiData = [
+                'wid'   => $sucaiInfo['id'],
+                'bid'   => $sucaiInfo['uid'],
+                'uid'   => $uid,
+                'score' => 0,
+                'dc'    => 0,
+                'type'  => 2,
+                'vip'   => 1, //vip下载
+                'time'  => time(),
+            ];
 
-          if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
-            Db::rollBack();
-            throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
-          }
-          //给用户增加原创币流水
-          $postscore=0.10;//给钱
-          if(!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'], 1)){
-            Db::rollBack();
-            throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
-          }
-          Db::commit();
-          return true;
-        }else{
-          if($uservip['vip']==6){
-            $count=8;
-          }elseif($uservip['vip']==7){
-            $count=10;
-          }
-          $arr=explode(',', $sucaidown['ids']);
-          if(in_array($sucaiInfo['id'],$arr)){
-            Db::commit();
-            return true;
-          }
-          if(count($arr) < $count){
-            $ids = $sucaidown['ids'] . ',' . $sucaiInfo['id'];
+            if (empty($sucaidown)) {
+                if (!$this->sucaiRepository->addSuCaiDown(['ids' => $sucaiInfo['id'], 'uid' => $uid, 'time' => $time])) {
+                    Db::rollBack();
+                    throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+                }
+                //你下载了素材
+                if (!$this->waterDoRepository->addWaterDownSucaiData($addWaterDownSucaiData)) {
+                    Db::rollBack();
+                    throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+                }
 
-            if (!$this->sucaiRepository->updateSuCaiDown(['id' => $sucaidown['id']], ['ids' => $ids])) {
-              Db::rollBack();
-              throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
-            }
-            //下载日志
-            if (!$this->waterDoRepository->addWaterDownSucaiData($addWaterDownSucaiData)) {
-              Db::rollBack();
-              throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+                if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
+                    Db::rollBack();
+                    throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+                }
+                //给用户增加原创币流水
+                $postscore = 0.10; //给钱
+
+                if (!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'], 1)) {
+                    Db::rollBack();
+                    throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+                }
+                Db::commit();
+                return true;
             }
 
-            if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
-              Db::rollBack();
-              throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+            if ($uservip['vip'] == 6) {
+                $count = 8;
+            } elseif ($uservip['vip'] == 7) {
+                $count = 10;
+            }
+            $arr = explode(',', $sucaidown['ids']);
+
+            if (in_array($sucaiInfo['id'], $arr)) {
+                Db::commit();
+                return true;
             }
 
-            //给用户增加原创币流水
-            $postscore=0.10;//给钱
-            if(!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'], 1)){
-              Db::rollBack();
-              throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+            if (count($arr) < $count) {
+                $ids = $sucaidown['ids'] . ',' . $sucaiInfo['id'];
+
+                if (!$this->sucaiRepository->updateSuCaiDown(['id' => $sucaidown['id']], ['ids' => $ids])) {
+                    Db::rollBack();
+                    throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+                }
+                //下载日志
+                if (!$this->waterDoRepository->addWaterDownSucaiData($addWaterDownSucaiData)) {
+                    Db::rollBack();
+                    throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+                }
+
+                if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
+                    Db::rollBack();
+                    throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+                }
+
+                //给用户增加原创币流水
+                $postscore = 0.10; //给钱
+                if (!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'], 1)) {
+                    Db::rollBack();
+                    throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+                }
+
+                Db::commit();
+                return true;
             }
-            Db::commit();
-            return true;
         }
-        }
-      }
 
-          $userinfo = $this->userRepository->getUser($uid);
+        $userinfo = $this->userRepository->getUser($uid);
 
-          if (empty($userinfo)) {
+        if (empty($userinfo)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '请重新登录后再重试！');
-          }
+        }
 
-          if ($userinfo->dc < $sucaiInfo['price']) {
+        if ($userinfo->dc < $sucaiInfo['price']) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '您的原创币不够！');
-          }
+        }
 
-        if(!$this->userRepository->decDc($uid,$sucaiInfo['price'])){
-          Db::rollBack();
-          throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+        if (!$this->userRepository->decDc($uid, $sucaiInfo['price'])) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
         }
 
         //增加下载流水
-        if (!$this->waterDoRepository->addWaterDownSucai($sucaiInfo['id'], $sucaiInfo['uid'], $uid,0, $sucaiInfo['price'])) {
-          Db::rollBack();
-          throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+        if (!$this->waterDoRepository->addWaterDownSucai($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0, $sucaiInfo['price'])) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
         }
 
-      $add=[];
-      $add['uid']=$uid;
-      $add['score']=$sucaiInfo['price'];
-      $add['type']=4;
-      $add['status']=1;//素材下载扣除
-      $add['wid']=$sucaiInfo['id'];
-      $add['bid']=$sucaiInfo['id'];
-      $add['name']=$sucaiInfo['title'];
-      $add['time']=time();
-      if(!$this->waterDoRepository->addWaterDc($add)){
-        Db::rollBack();
-        throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
-      }
-      //给用户增加原创币流水
-      $postscore=round($sucaiInfo['price']*0.9,2);//给的原创币
-      if(!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'])){
-        Db::rollBack();
-        throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+        $add           = [];
+        $add['uid']    = $uid;
+        $add['score']  = $sucaiInfo['price'];
+        $add['type']   = 4;
+        $add['status'] = 1; //素材下载扣除
+        $add['wid']    = $sucaiInfo['id'];
+        $add['bid']    = $sucaiInfo['id'];
+        $add['name']   = $sucaiInfo['title'];
+        $add['time']   = time();
+
+        if (!$this->waterDoRepository->addWaterDc($add)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+        }
+        //给用户增加原创币流水
+      $postscore = round($sucaiInfo['price'] * 0.9, 2); //给的原创币
+
+      if (!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'])) {
+          Db::rollBack();
+          throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
       }
 
-      if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
-        Db::rollBack();
-        throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
-      }
+        if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+        }
 
-      Db::commit();
+        Db::commit();
         return true;
     }
 

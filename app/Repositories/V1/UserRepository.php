@@ -341,25 +341,27 @@ class UserRepository extends BaseRepository
         return User::query()->where(['id' => $uid])->decrement('score', $score);
     }
 
-  /**
-   * 增加原创币.
-   *
-   * @param mixed $uid
-   * @param mixed $score
-   */
-  public function incDc($uid, $dc = 1): int
-  {
-    return User::query()->where(['id' => $uid])->increment('dc', $dc);
-  }
+    /**
+     * 增加原创币.
+     *
+     * @param mixed $uid
+     * @param mixed $score
+     * @param mixed $dc
+     */
+    public function incDc($uid, $dc = 1): int
+    {
+        return User::query()->where(['id' => $uid])->increment('dc', $dc);
+    }
 
-  /**
-   * 扣除原创币.
-   *
-   * @param mixed $uid
-   * @param mixed $score
-   */
-  public function decDc($uid, $dc = 1): int
-  {
-    return User::query()->where(['id' => $uid])->decrement('dc', $dc);
-  }
+    /**
+     * 扣除原创币.
+     *
+     * @param mixed $uid
+     * @param mixed $score
+     * @param mixed $dc
+     */
+    public function decDc($uid, $dc = 1): int
+    {
+        return User::query()->where(['id' => $uid])->decrement('dc', $dc);
+    }
 }
