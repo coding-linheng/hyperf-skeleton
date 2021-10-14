@@ -16,6 +16,7 @@ use App\Model\Picture;
 use App\Model\Tixian;
 use App\Model\User;
 use App\Model\Userdata;
+use App\Model\Uservip;
 use App\Model\Waterdc;
 use App\Model\Waterdo;
 use App\Model\Waterscore;
@@ -277,5 +278,41 @@ class UserRepository extends BaseRepository
     public function isGuanzhuUser($uid, $targetId): Model|null
     {
         return Guanzhuuser::query()->where(['uid' => $uid, 'bid' => $targetId])->first();
+    }
+
+
+    /**
+     * 判断是否有Vip.
+     *
+     * @param  mixed  $uid
+     * @param         $type
+     *
+     * @return Model|null
+     */
+    public function getUserVip($uid, $type): Model|null
+    {
+        return Uservip::query()->where(['uid' => $uid, 'type'=>$type])->first();
+    }
+    //判断有没有权限
+    public function jurisdiction($id){
+        $userinfo=User::query()->where(['id'=>$id])->first();
+        if(empty($userinfo) ||$userinfo->vip==0){
+            return false;
+        }
+        //权限素材
+        $sucai=$this->getUserVip(['uid'=>$id,'type'=>1]);
+        if(empty($sucai) || $sucai->time < time()){
+            $sucaiquanxian=0;
+        }else{
+            $sucaiquanxian=$sucai->vip;
+        }
+        //文库
+        $wenku=Uservip::query()->where(['uid'=>$id,'type'=>2])->first();
+        if(empty($wenku) || $wenku->time < time()){
+            $wenkuquanxian=0;
+        }else{
+            $wenkuquanxian=$wenku->vip;
+        }
+        return ['sucai'=>$sucaiquanxian,'wenku'=>$wenkuquanxian];
     }
 }

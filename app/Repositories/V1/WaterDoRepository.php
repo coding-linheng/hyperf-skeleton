@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace App\Repositories\V1;
 
 use App\Model\Waterdo;
+use App\Model\Waterdown;
 use App\Repositories\BaseRepository;
 
 /**
@@ -37,5 +38,18 @@ class WaterDoRepository extends BaseRepository
         $add['aid']      = $aid;
         $add['time']     = time();
         return Waterdo::insertGetId($add);
+    }
+
+    //添加下载素材流水
+    public function addWaterDownSucai($wid,$bid,$uid,$score=0,$dc=0){
+        $add=[];
+        $add['wid']=$wid;
+        $add['bid']=$bid;
+        $add['uid']=$uid;
+        $add['score']=$score;
+        $add['dc']=$dc;
+        $add['type']=2;
+        $add['time']=time();
+        return Waterdown::insertGetId($add);
     }
 }
