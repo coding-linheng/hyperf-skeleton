@@ -166,7 +166,7 @@ class WenkuRepository extends BaseRepository
 
         foreach ($list as &$v) {
             if (!empty($v->img)) {
-                $pdfimg    = $this->getPicturejson($v->img);
+                $pdfimg    = $this->getPictureJson($v->img);
                 $v->pdfimg = $pdfimg;
             } else {
                 $v->pdfimg = '/' . $v->pdfimg;

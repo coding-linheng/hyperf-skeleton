@@ -83,7 +83,7 @@ class SucaiService extends BaseService
     {
         $uid = user()['id'];
         //判断图片是否存在
-        $sucaiInfo = $this->sucaiRepository->getSucaiImgDetailInfo(['img.id' => $id], ['img.id','img.del','img.status', 'uid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'guanjianci',  'shoucang']);
+        $sucaiInfo = $this->sucaiRepository->getSucaiImgDetailInfo(['img.id' => $id], ['img.id', 'img.del', 'img.status', 'uid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'guanjianci',  'shoucang']);
 
         if (empty($sucaiInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '素材不存在！');
@@ -147,7 +147,7 @@ class SucaiService extends BaseService
     public function recommendList(int $id): array|null
     {
         //本类素材
-        $sucaiInfo = $this->sucaiRepository->getSucaiImgDetailInfo(['img.id' => $id], ['img.id','img.del','img.status', 'uid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'guanjianci', 'shoucang']);
+        $sucaiInfo = $this->sucaiRepository->getSucaiImgDetailInfo(['img.id' => $id], ['img.id', 'img.del', 'img.status', 'uid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'guanjianci', 'shoucang']);
 
         if (empty($sucaiInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '素材不存在！');

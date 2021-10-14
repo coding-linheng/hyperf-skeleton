@@ -269,9 +269,12 @@ class UserService extends BaseService
         }
         //预览图处理
         foreach ($list['list'] as $k => $v) {
-            if (!empty($v['img']) && !is_null($data = json_decode($v['img'], true))) {
-                $preview = $this->userRepository->getPreview((int)$data['0']) ?? '';
-            }
+//            if (!empty($v['img']) && !is_null($data = json_decode($v['img'], true))) {
+//                $preview = $this->userRepository->getPreview((int)$data['0']) ?? '';
+//            }
+            //todo 预览图后缀
+            $preview = $this->userRepository->getPictureJson($v['img']);
+
             $list['list'][$k]['preview'] = $preview ?? '';
             $list['list'][$k]['size']    = sprintf('%.2f', $list['list'][$k]['size'] / 1024 / 1024);
         }

@@ -131,7 +131,7 @@ class BaseRepository
     }
 
     //后续改成批量处理一次查询多张图片的
-    public function getPicturejson($imgStr, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC)
+    public function getPictureJson($imgStr, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC): string
     {
         if (empty($imgStr)) {
             return '';
@@ -154,6 +154,7 @@ class BaseRepository
         if (!empty($keyUrl) && count($keyUrl) > 0) {
             return get_img_path($keyUrl[0], $suffix);
         }
+        /** @var Picture $path */
         $path = Picture::query()->where(['id' => $img[0]])->first();
 
         if (empty($path)) {
