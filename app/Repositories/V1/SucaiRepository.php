@@ -152,35 +152,43 @@ class SucaiRepository extends BaseRepository
 
     /**
      * 获取共享素材下载信息.
-     *
-     * @param  array  $where
-     * @param  array  $column
-     *
-     * @return Builder|Model|null
      */
     public function getSuCaiDown(array $where, array $column = ['*']): Model|Builder|null
     {
         return Sucaidown::query()->where($where)->select($column)->first();
     }
+
+    /**
+     * 添加共享素材下载信息.
+     *
+     * @param array $where
+     * @param array $column
+     */
+    public function addSuCaiDown(array $data): int
+    {
+        return Sucaidown::query()->insertGetId($data);
+    }
+
+    /**
+     * 修改共享素材下载信息.
+     *
+     * @param array $column
+     */
+    public function updateSuCaiDown(array $where, array $data): int
+    {
+        return Sucaidown::query()->where($where)->update($data);
+    }
+
     /**
      * 获取地产币素材下载信息.
-     *
-     * @param  array  $where
-     * @param  array  $column
-     *
-     * @return Builder|Model|null
      */
     public function getSuCaiDownDc(array $where, array $column = ['*']): Model|Builder|null
     {
         return Sucaidowndc::query()->where($where)->select($column)->first();
     }
+
     /**
      * 获取当天免费素材下载信息.
-     *
-     * @param  array  $where
-     * @param  array  $column
-     *
-     * @return Builder|Model|null
      */
     public function getDayDownSuCai(array $where, array $column = ['*']): Model|Builder|null
     {
@@ -189,10 +197,6 @@ class SucaiRepository extends BaseRepository
 
     /**
      * 增加当天免费素材下载信息.
-     *
-     * @param  array  $data
-     *
-     * @return int
      */
     public function addDayDownSuCai(array $data): int
     {
@@ -202,23 +206,18 @@ class SucaiRepository extends BaseRepository
     /**
      * 增加当天免费素材下载次数.
      *
-     * @param  array  $where
-     * @param  int    $num
-     *
-     * @return int
+     * @param int $num
      */
-    public function incDayDownSuCai(array $where,$num=1): int
+    public function incDayDownSuCai(array $where, $num = 1): int
     {
-        return Daydownsucai::query()->where($where)->increment('num',$num);
+        return Daydownsucai::query()->where($where)->increment('num', $num);
     }
 
     /**
      * 增加在看次数.
      *
-     * @param  mixed  $id
-     * @param  int    $num
-     *
-     * @return int
+     * @param mixed $id
+     * @param int $num
      */
     public function IncImgCount($id, $num = 1): int
     {
@@ -228,15 +227,14 @@ class SucaiRepository extends BaseRepository
     /**
      * 增加下载次数.
      *
-     * @param  mixed  $id
-     * @param  int    $num
-     *
-     * @return int
+     * @param mixed $id
+     * @param int $num
      */
     public function incImgDownNum($id, $num = 1): int
     {
         return Img::query()->where('id', $id)->increment('downnum', $num);
     }
+
     /**
      * 统计作品个数.
      */
@@ -418,19 +416,20 @@ class SucaiRepository extends BaseRepository
 
     /**
      * 7天/周下载数量统计.
+     * @param mixed $sucaiInfo
      */
-    public function recodeWeekDownNum($sucaiInfo){
-
+    public function recodeWeekDownNum($sucaiInfo)
+    {
         //沿用旧版本计算周数
-        $week=$this->getweek();
+        $week = $this->getweek();
         //如果不是本周的话
-        if($week!=$sucaiInfo['week']){
-            $save=[];
-            $save['week']=$week;
-            $save['weekguanzhu']=1;
-            $ids=Img::query()->where(['id'=>$sucaiInfo['id']])->update($save);
-        }else{
-            $ids=Img::query()->where(['id'=>$sucaiInfo['id']])->increment('weekguanzhu');
+        if ($week != $sucaiInfo['week']) {
+            $save                = [];
+            $save['week']        = $week;
+            $save['weekguanzhu'] = 1;
+            $ids                 = Img::query()->where(['id' => $sucaiInfo['id']])->update($save);
+        } else {
+            $ids = Img::query()->where(['id' => $sucaiInfo['id']])->increment('weekguanzhu');
         }
         return $ids;
     }

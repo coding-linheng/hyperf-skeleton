@@ -193,18 +193,20 @@ class BaseRepository
     }
 
     //todo 方法待改进获取周数
-    public function getweek(){
-        $time=time();
-        $strtime=strtotime(date('2019-7-22'));
-        $i=1;
-        while(true){
-            $endtime=$strtime+7*86400;//周
-            if($time >= $strtime && $time<$endtime){
+    public function getweek()
+    {
+        $time    = time();
+        $strtime = strtotime(date('2019-7-22'));
+        $i       = 1;
+        while (true) {
+            $endtime = $strtime + 7 * 86400; //周
+
+            if ($time >= $strtime && $time < $endtime) {
                 return $i;
                 break;
             }
-            $strtime=$endtime;
-            $i++;
+            $strtime = $endtime;
+            ++$i;
         }
     }
 }

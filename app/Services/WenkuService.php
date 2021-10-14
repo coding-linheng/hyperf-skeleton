@@ -49,6 +49,7 @@ class WenkuService extends BaseService
         $uid = user()['id'];
         //判断图片是否存在
         $info =  $this->wenkuRepository->getDetailInfoById($id);
+
         if (empty($info)) {
             throw new BusinessException(ErrorCode::ERROR, '文库不存在！');
         }
@@ -60,11 +61,12 @@ class WenkuService extends BaseService
         if ($info['status'] != 3) {
             throw new BusinessException(ErrorCode::ERROR, '文库暂时不能下载！');
         }
-        $info = json_decode(json_encode($info), true);
-        $downLoadUrl=get_img_path_private($info['path']);
+        $info        = json_decode(json_encode($info), true);
+        $downLoadUrl = get_img_path_private($info['path']);
 
-        return ['downLoadUrl'=>$downLoadUrl];
+        return ['downLoadUrl' => $downLoadUrl];
     }
+
     /**
      * 详情页.
      * @param: id 文库的id

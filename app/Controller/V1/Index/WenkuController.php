@@ -91,5 +91,4 @@ class WenkuController extends AbstractController
         $list                     = $this->wenkuService->getListByAuthor(intval($id), $query);
         return $this->success($list);
     }
-
 }
