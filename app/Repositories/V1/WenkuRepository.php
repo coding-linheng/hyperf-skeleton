@@ -8,6 +8,7 @@ namespace App\Repositories\V1;
 
 use App\Constants\ImgSizeStyle;
 use App\Model\Advertising;
+use App\Model\Daydown;
 use App\Model\Shouwen;
 use App\Model\Wenku;
 use App\Repositories\BaseRepository;
@@ -94,6 +95,17 @@ class WenkuRepository extends BaseRepository
         return Wenku::query()->where('id', $id)->increment('looknum', $count);
     }
 
+
+    /**
+     * 增加下载次数.
+     * @param mixed $id
+     * @param mixed $count
+     */
+    public function incDownNum($id, $count = 1): int
+    {
+        return Wenku::query()->where('id', $id)->increment('downnum', $count);
+    }
+
     /**
      * 是否关收藏图片.
      * @param mixed $uid
@@ -174,4 +186,53 @@ class WenkuRepository extends BaseRepository
         }
         return ['count' => $count, 'list' => $list->toArray()];
     }
+
+    /**
+     * 7天/周下载数量统计.
+     * @param mixed $sucaiInfo
+     */
+    public function recodeWeekDownNum($info)
+    {
+        //沿用旧版本计算周数
+        $week = $this->getweek();
+        //如果不是本周的话
+        if ($week != $info['week']) {
+            $save                = [];
+            $save['week']        = $week;
+            $save['weekguanzhu'] = 1;
+            $ids                 = Wenku::query()->where(['id' => $info['id']])->update($save);
+        } else {
+            $ids = Wenku::query()->where(['id' => $info['id']])->increment('weekguanzhu');
+        }
+        return $ids;
+    }
+    /**
+     * 增加当天免费文库下载次数.
+     *
+     * @param int $num
+     */
+    public function incDayDown(array $where, $num = 1): int
+    {
+        return Daydown::query()->where($where)->increment('num', $num);
+    }
+
+    /**
+     * 增加当天免费文库下载次数.
+     *
+     * @param  array  $data
+     *
+     * @return int
+     */
+    public function addDayDown(array $data): int
+    {
+        return Daydown::query()->insertGetId($data);
+    }
+    /**
+     * 获取当天免费文库下载信息.
+     */
+    public function getDayDown(array $where, array $column = ['*']): Model|Builder|null
+    {
+        return Daydown::query()->where($where)->select($column)->first();
+    }
+
 }

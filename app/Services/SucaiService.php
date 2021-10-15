@@ -382,7 +382,7 @@ class SucaiService extends BaseService
             throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
         }
         //增加下载流水
-        if (!$this->waterDoRepository->addWaterDownSucai($sucaiInfo['id'], $sucaiInfo['uid'], $uid, $score)) {
+        if (!$this->waterDoRepository->addWaterDown($sucaiInfo['id'], $sucaiInfo['uid'], $uid, $score)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
         }
@@ -531,7 +531,7 @@ class SucaiService extends BaseService
         }
 
         //增加下载流水
-        if (!$this->waterDoRepository->addWaterDownSucai($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0, $sucaiInfo['price'])) {
+        if (!$this->waterDoRepository->addWaterDown($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0, $sucaiInfo['price'])) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
         }
@@ -592,7 +592,7 @@ class SucaiService extends BaseService
                 throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
             }
 
-            if (!$this->waterDoRepository->addWaterDownSucai($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0)) {
+            if (!$this->waterDoRepository->addWaterDown($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0)) {
                 Db::rollBack();
                 throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
             }
@@ -616,7 +616,7 @@ class SucaiService extends BaseService
                 throw new BusinessException(ErrorCode::ERROR, '暂时无法下载');
             }
             //增加下载流水
-            if ($this->waterDoRepository->addWaterDownSucai($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0)) {
+            if ($this->waterDoRepository->addWaterDown($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0)) {
                 Db::rollBack();
                 throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
             }

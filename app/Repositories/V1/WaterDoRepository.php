@@ -48,7 +48,7 @@ class WaterDoRepository extends BaseRepository
     }
 
     //添加下载素材流水
-    public function addWaterDownSucai($wid, $bid, $uid, $score = 0, $dc = 0)
+    public function addWaterDown($wid, $bid, $uid, $score = 0, $dc = 0)
     {
         $add          = [];
         $add['wid']   = $wid;
