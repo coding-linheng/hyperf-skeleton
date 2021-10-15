@@ -65,7 +65,7 @@ class WaterDoRepository extends BaseRepository
      * 添加下载素材流水.
      * @param mixed $data
      */
-    public function addWaterDownSucaiData($data): int
+    public function addWaterDownData($data): int
     {
         return Waterdown::insertGetId($data);
     }

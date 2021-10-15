@@ -192,119 +192,107 @@ class WenkuService extends BaseService
     /**
      * 下载共享.
      *
-     * @param $sucaiInfo
+     * @param $wenKuInfo
      * @param mixed $uid
      *
      * @return bool
      */
-    private function downShareWenKu($sucaiInfo, $uid)
+    private function downShareWenKu($wenKuInfo, $uid)
     {
         $time      = strtotime(date('Y-m-d'));
-        $sucaidown = $this->sucaiRepository->getSuCaiDown(['uid' => $this->uid, 'time' => $time]);
+        //当天第一次下载可以下载免费文库，后续没权限的则没法下载
+        $wenKudown = $this->wenkuRepository->getWenKuDown(['uid' => $uid, 'time' => $time]);
+        if (!empty($wenKudown)) {
+          //当天下载过的可以直接下载，不扣除分数也不增加下载次数
+          $arr = explode(',', $wenKudown['ids']);
 
-        if (!empty($sucaidown)) {
-            //当天下载过的可以直接下载，不扣除分数也不增加下载次数
-            $arr = explode(',', $sucaidown['ids']);
-
-            if (in_array($sucaiInfo['id'], $arr)) {
-                return true;
-            }
+          if (in_array($wenKuInfo['id'], $arr)) {
+            return true;
+          }
         }
 
-        //获取配置
-        $scorelist = $this->getscore($sucaiInfo['price']);
-        $score     = $scorelist['score'];
-        $postscore = $scorelist['postscore'];
-
         //判断是不是文库vip时间
-        $uservip = $this->userRepository->getUserVip(['uid' => $this->uid, 'type' => 3]);
+        $uservip = $this->userRepository->getUserVip(['uid' => $this->uid, 'type' => 5]);
         Db::beginTransaction();
 
         if (!empty($uservip) && $uservip->time >= time()) {
             $uservip = $uservip->toArray();
             //本人是文库vip直接下载
-            $time = strtotime(date('Y-m-d'));
-            //当天第一次下载可以下载免费文库，后续没权限的则没法下载
-            $sucaidown = $this->sucaiRepository->getSuCaiDown(['uid' => $uid, 'time' => $time]);
             //你下载了文库
-            $addWaterDownSucaiData = [
-                'wid'   => $sucaiInfo['id'],
-                'bid'   => $sucaiInfo['uid'],
+            $addWaterDownData = [
+                'wid'   => $wenKuInfo['id'],
+                'bid'   => $wenKuInfo['uid'],
                 'uid'   => $uid,
                 'score' => 0,
                 'dc'    => 0,
-                'type'  => 2,
+                'type'  => 1,
                 'vip'   => 1, //vip下载
                 'time'  => time(),
             ];
 
-            if (empty($sucaidown)) {
-                if (!$this->sucaiRepository->addSuCaiDown(['ids' => $sucaiInfo['id'], 'uid' => $uid, 'time' => $time])) {
+            if (empty($wenKudown)) {
+                if (!$this->wenkuRepository->addWenKuDown(['ids' => $wenKuInfo['id'], 'uid' => $uid, 'time' => $time])) {
                     Db::rollBack();
                     throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
                 }
                 //你下载了文库
-                if (!$this->waterDoRepository->addWaterDownSucaiData($addWaterDownSucaiData)) {
+                if (!$this->waterDoRepository->addWaterDownData($addWaterDownData)) {
                     Db::rollBack();
                     throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
                 }
 
-                if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
-                    Db::rollBack();
-                    throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
+                if (!$this->wenkuRepository->incDownNum($wenKuInfo['id'])) {
+                  Db::rollBack();
+                  throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
                 }
 
-                //增加共享分
-                if (!$this->waterDoRepository->addUserScore($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'])) {
-                    Db::rollBack();
-                    throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
-                }
+                //文库旧版本是没有增加共享分的
+//                if (!$this->waterDoRepository->addUserScore($wenKuInfo['uid'], $postscore, $wenKuInfo['id'], 1, 3, $uid, $wenKuInfo['title'])) {
+//                    Db::rollBack();
+//                    throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
+//                }
                 Db::commit();
                 return true;
             }
             $count = 0;
 
-            if ($uservip['vip'] == 3) {
-                $count = 5;
-            } elseif ($uservip['vip'] == 4) {
-                $count = 10;
-            } elseif ($uservip['vip'] == 5) {
-                $count = 20;
-            } elseif ($uservip['vip'] == 6) {
-                $count = 8;
-            } elseif ($uservip['vip'] == 7) {
-                $count = 10;
-            }
-            $arr = explode(',', $sucaidown['ids']);
+          if($uservip['vip']==1){
+            $count=5;
+          }elseif($uservip['vip']==2){
+            $count=8;
+          }elseif($uservip['vip']==3){
+            $count=10;
+          }
+            $arr = explode(',', $wenKudown['ids']);
             //当天下载过免费
-            if (in_array($sucaiInfo['id'], $arr)) {
+            if (in_array($wenKuInfo['id'], $arr)) {
                 Db::commit();
                 return true;
             }
 
             if (count($arr) < $count) {
-                $ids = $sucaidown['ids'] . ',' . $sucaiInfo['id'];
+                $ids = $wenKudown['ids'] . ',' . $wenKuInfo['id'];
 
-                if (!$this->sucaiRepository->updateSuCaiDown(['id' => $sucaidown['id']], ['ids' => $ids])) {
-                    Db::rollBack();
-                    throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
-                }
+              if (!$this->wenkuRepository->updateWenkuDown(['id' => $wenKudown['id']], ['ids' => $ids])) {
+                Db::rollBack();
+                throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
+              }
                 //下载日志
-                if (!$this->waterDoRepository->addWaterDownSucaiData($addWaterDownSucaiData)) {
+                if (!$this->waterDoRepository->addWaterDownData($addWaterDownData)) {
                     Db::rollBack();
                     throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
                 }
 
-                if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
-                    Db::rollBack();
-                    throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+                if (!$this->wenkuRepository->incDownNum($wenKuInfo['id'])) {
+                  Db::rollBack();
+                  throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
                 }
 
                 //增加共享分
-                if (!$this->waterDoRepository->addUserScore($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'])) {
-                    Db::rollBack();
-                    throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
-                }
+//                if (!$this->waterDoRepository->addUserScore($wenKuInfo['uid'], $postscore, $wenKuInfo['id'], 1, 3, $uid, $wenKuInfo['title'])) {
+//                    Db::rollBack();
+//                    throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
+//                }
 
                 Db::commit();
                 return true;
@@ -318,6 +306,28 @@ class WenkuService extends BaseService
             throw new BusinessException(ErrorCode::ERROR, '请重新登录后再重试！');
         }
 
+        switch($wenKuInfo['price']){
+          case 1:
+            $score=20;//10
+            $postscore=10;
+            break;
+          case 2:
+            $score=40;//20
+            $postscore=20;
+            break;
+          case 3:
+            $score=60;//30
+            $postscore=30;
+            break;
+          case 4:
+            $score=100;//40
+            $postscore=40;
+            break;
+          case 5:
+            $score=200;//80
+            $postscore=80;
+            break;
+        }
         if ($userinfo->score < $score) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '您的共享分不足！');
@@ -328,24 +338,24 @@ class WenkuService extends BaseService
             throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
         }
         //增加扣除积分流水
-        if (!$this->waterDoRepository->addWaterScore($uid, $score, $sucaiInfo['id'], 1, 4, $sucaiInfo['uid'], $sucaiInfo['title'])) {
+        if (!$this->waterDoRepository->addWaterScore($uid, $score, $wenKuInfo['id'], 2, 4, $wenKuInfo['uid'], $wenKuInfo['title'])) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
         }
         //增加下载流水
-        if (!$this->waterDoRepository->addWaterDown($sucaiInfo['id'], $sucaiInfo['uid'], $uid, $score)) {
+        if (!$this->waterDoRepository->addWaterDown($wenKuInfo['id'], $wenKuInfo['uid'], $uid, $score)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
         }
         //给主人增加积分
-        if (!$this->waterDoRepository->addUserScore($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'])) {
+        if (!$this->waterDoRepository->addUserScore($wenKuInfo['uid'], $postscore, $wenKuInfo['id'], 2, 3, $uid, $wenKuInfo['title'])) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
         }
         //增加下载量
-        if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
-            Db::rollBack();
-            throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+        if (!$this->wenkuRepository->incDownNum($wenKuInfo['id'])) {
+          Db::rollBack();
+          throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
         }
         Db::commit();
         return true;
@@ -354,67 +364,65 @@ class WenkuService extends BaseService
     /**
      * 下载原创.
      *
-     * @param $sucaiInfo
+     * @param $wenKuInfo
      * @param mixed $uid
      *
      * @return bool
      */
-    private function downDcWenKu($sucaiInfo, $uid)
+    private function downDcWenKu($wenKuInfo, $uid)
     {
         $time      = strtotime(date('Y-m-d'));
-        $sucaidown = $this->sucaiRepository->getSuCaiDown(['uid' => $this->uid, 'time' => $time]);
-
-        if (!empty($sucaidown)) {
+        //当天第一次下载可以下载免费文库，后续没权限的则没法下载
+        $wenKudown = $this->wenkuRepository->getWenKuDownDc(['uid' => $uid, 'time' => $time]);
+        if (!empty($wenKudown)) {
             //当天下载过的可以直接下载，不扣除分数也不增加下载次数
-            $arr = explode(',', $sucaidown['ids']);
+            $arr = explode(',', $wenKudown['ids']);
 
-            if (in_array($sucaiInfo['id'], $arr)) {
+            if (in_array($wenKuInfo['id'], $arr)) {
                 return true;
             }
         }
 
         //花的原创币
         //判断用户是不是在时间之内
-        $uservip = $this->userRepository->getUserVip(['uid' => $this->uid, 'type' => 4]);
+        $uservip = $this->userRepository->getUserVip(['uid' => $this->uid, 'type' => 6]);
         Db::beginTransaction();
 
         if (!empty($uservip) && $uservip->time >= time()) {
             $uservip = $uservip->toArray();
             //本人是文库vip直接下载
             $time = strtotime(date('Y-m-d'));
-            //当天第一次下载可以下载免费文库，后续没权限的则没法下载
-            $sucaidown = $this->sucaiRepository->getSuCaiDown(['uid' => $uid, 'time' => $time]);
+     
             //你下载了文库
-            $addWaterDownSucaiData = [
-                'wid'   => $sucaiInfo['id'],
-                'bid'   => $sucaiInfo['uid'],
+            $addWaterDownData = [
+                'wid'   => $wenKuInfo['id'],
+                'bid'   => $wenKuInfo['uid'],
                 'uid'   => $uid,
                 'score' => 0,
                 'dc'    => 0,
-                'type'  => 2,
+                'type'  => 1,
                 'vip'   => 1, //vip下载
                 'time'  => time(),
             ];
 
-            if (empty($sucaidown)) {
-                if (!$this->sucaiRepository->addSuCaiDown(['ids' => $sucaiInfo['id'], 'uid' => $uid, 'time' => $time])) {
+            if (empty($wenKudown)) {
+                if (!$this->wenkuRepository->addWenKuDownDc(['ids' => $wenKuInfo['id'], 'uid' => $uid, 'time' => $time])) {
                     Db::rollBack();
                     throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
                 }
                 //你下载了文库
-                if (!$this->waterDoRepository->addWaterDownSucaiData($addWaterDownSucaiData)) {
+                if (!$this->waterDoRepository->addWaterDownData($addWaterDownData)) {
                     Db::rollBack();
                     throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
                 }
 
-                if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
+                if (!$this->wenkuRepository->incDownNum($wenKuInfo['id'])) {
                     Db::rollBack();
                     throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
                 }
                 //给用户增加原创币流水
                 $postscore = 0.10; //给钱
-
-                if (!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'], 1)) {
+                if (!$this->waterDoRepository->addUserDc($wenKuInfo['uid'], $postscore, $wenKuInfo['id'], 1, 3, $uid, $wenKuInfo['title'], 1)) {
                     Db::rollBack();
                     throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
                 }
@@ -422,39 +430,42 @@ class WenkuService extends BaseService
                 return true;
             }
 
-            if ($uservip['vip'] == 6) {
-                $count = 8;
-            } elseif ($uservip['vip'] == 7) {
-                $count = 10;
+            if($uservip['vip']==2){
+              $count=8;
+            }elseif($uservip['vip']==3){
+              $count=10;
             }
-            $arr = explode(',', $sucaidown['ids']);
+            $arr = explode(',', $wenKudown['ids']);
 
-            if (in_array($sucaiInfo['id'], $arr)) {
+            if (in_array($wenKuInfo['id'], $arr)) {
+                if (!$this->wenkuRepository->incDownNum($wenKuInfo['id'])) {
+                  Db::rollBack();
+                  throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
+                }
                 Db::commit();
                 return true;
             }
 
             if (count($arr) < $count) {
-                $ids = $sucaidown['ids'] . ',' . $sucaiInfo['id'];
 
-                if (!$this->sucaiRepository->updateSuCaiDown(['id' => $sucaidown['id']], ['ids' => $ids])) {
+                $ids = $wenKudown['ids'] . ',' . $wenKuInfo['id'];
+                if (!$this->wenkuRepository->updateWenkuDownDc(['id' => $wenKudown['id']], ['ids' => $ids])) {
                     Db::rollBack();
                     throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
                 }
                 //下载日志
-                if (!$this->waterDoRepository->addWaterDownSucaiData($addWaterDownSucaiData)) {
+                if (!$this->waterDoRepository->addWaterDownData($addWaterDownData)) {
                     Db::rollBack();
                     throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
                 }
 
-                if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
-                    Db::rollBack();
-                    throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+                if (!$this->wenkuRepository->incDownNum($wenKuInfo['id'])) {
+                  Db::rollBack();
+                  throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
                 }
-
-                //给用户增加原创币流水
+              //给用户增加原创币流水
                 $postscore = 0.10; //给钱
-                if (!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'], 1)) {
+                if (!$this->waterDoRepository->addUserDc($wenKuInfo['uid'], $postscore, $wenKuInfo['id'], 1, 3, $uid, $wenKuInfo['title'], 1)) {
                     Db::rollBack();
                     throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
                 }
@@ -471,205 +482,61 @@ class WenkuService extends BaseService
             throw new BusinessException(ErrorCode::ERROR, '请重新登录后再重试！');
         }
 
-        if ($userinfo->dc < $sucaiInfo['price']) {
+        if ($userinfo->dc < $wenKuInfo['price']) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '您的原创币不够！');
         }
 
-        if (!$this->userRepository->decDc($uid, $sucaiInfo['price'])) {
+        if (!$this->userRepository->decDc($uid, $wenKuInfo['price'])) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
         }
 
         //增加下载流水
-        if (!$this->waterDoRepository->addWaterDown($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0, $sucaiInfo['price'])) {
+        if (!$this->waterDoRepository->addWaterDown($wenKuInfo['id'], $wenKuInfo['uid'], $uid, 0, $wenKuInfo['price'])) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
         }
 
         $add           = [];
         $add['uid']    = $uid;
-        $add['score']  = $sucaiInfo['price'];
+        $add['score']  = $wenKuInfo['price'];
         $add['type']   = 4;
-        $add['status'] = 1; //文库下载扣除
-        $add['wid']    = $sucaiInfo['id'];
-        $add['bid']    = $sucaiInfo['id'];
-        $add['name']   = $sucaiInfo['title'];
+        $add['status'] = 2; //文库原创币
+        $add['wid']    = $wenKuInfo['id'];
+        $add['bid']    = $wenKuInfo['id'];
+        $add['name']   = $wenKuInfo['title'];
         $add['time']   = time();
 
         if (!$this->waterDoRepository->addWaterDc($add)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
         }
-        //给用户增加原创币流水
-        $postscore = round($sucaiInfo['price'] * 0.9, 2); //给的原创币
 
-        if (!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'])) {
+        //给作者70%的原创币 //给主人增加积分
+        //给用户增加原创币流水
+        $postscore = round($wenKuInfo['price'] * 0.9, 2); //给的原创币
+
+        if (!$this->waterDoRepository->addUserDc($wenKuInfo['uid'], $postscore, $wenKuInfo['id'], 2, 3, $uid, $wenKuInfo['title'])) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
         }
 
-        if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
-            Db::rollBack();
-            throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+        if (!$this->wenkuRepository->incDownNum($wenKuInfo['id'])) {
+          Db::rollBack();
+          throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
         }
-        //
-        //判断用户是不是在时间之内
-//        $uservip=db("uservip")->where(['uid'=>$this->uid,'type'=>6])->find();
-//        if(!empty($uservip) && $uservip['time']>=time()){
-//            //本人是素材vip直接下载
-//            $time=strtotime(date("Y-m-d"));
-//            $sucaidown=db('wenkudowndc')->where(['uid'=>$this->uid,'time'=>$time])->find();
-//            if(empty($sucaidown)){
-//                $add=[];
-//                $add['uid']=$this->uid;
-//                $add['ids']=$id;
-//                $add['time']=$time;
-//                $ids=db('wenkudowndc')->insert($add);
-//                //你下载了素材
-//                $add=[];
-//                $add['wid']=$info['id'];//素材ID
-//                $add['bid']=$bid;
-//                $add['uid']=$this->uid;
-//                $add['score']=0;
-//                $add['dc']=0;
-//                $add['type']=1;
-//                $add['vip']=1;//vip下载
-//                $add['time']=time();
-//                db('waterdown')->insert($add);
-//                //给用户增加原创币流水
-//                $postscore=0.10;//给钱
-//                $ids=$this->addusersdc($info['uid'],$postscore,$id,1,3,$this->uid,$info['title'],1);
-//                if($ids!==true){
-//                    db()->rollback();
-//                    return json($ids);
-//                }
-//                $ids=db('wenku')->where(['id'=>$info['id']])->setInc('downnum');
-//                if(!$ids){
-//                    db()->rollback();
-//                    return json([RESULT_ERROR,'操作失败']);
-//                }
-//                db()->commit();
-//                $path=getimgurls($info['path']);
-//                return json([RESULT_SUCCESS,$path,$info['suffix'],$info['title']]);
-//            }else{
-//                if($uservip['vip']==2){
-//                    $count=8;
-//                }elseif($uservip['vip']==3){
-//                    $count=10;
-//                }
-//                $arr=explode(',', $sucaidown['ids']);
-//                if(in_array($id,$arr)){
-//                    $ids=db('wenku')->where(['id'=>$info['id']])->setInc('downnum');
-//                    if(!$ids){
-//                        db()->rollback();
-//                        return json([RESULT_ERROR,'操作失败']);
-//                    }
-//                    db()->commit();
-//                    $path=getimgurls($info['path']);
-//                    return json([RESULT_SUCCESS,$path,$info['suffix'],$info['title']]);
-//                }
-//                if(count($arr) < $count){
-//                    if(!in_array($id,$arr)){
-//                        $ids=$sucaidown['ids'].','.$id;
-//                        db('wenkudowndc')->where(['id'=>$sucaidown['id']])->update(['ids'=>$ids]);
-//                        //你下载了素材
-//                        $add=[];
-//                        $add['wid']=$info['id'];//素材ID
-//                        $add['bid']=$bid;
-//                        $add['uid']=$this->uid;
-//                        $add['score']=0;
-//                        $add['dc']=0;
-//                        $add['type']=1;
-//                        $add['vip']=1;//vip下载
-//                        $add['time']=time();
-//                        db('waterdown')->insert($add);
-//                        //给用户钱
-//                        $postscore=0.10;//给钱
-//                        $ids=$this->addusersdc($info['uid'],$postscore,$id,1,3,$this->uid,$info['title'],1);
-//                        if($ids!==true){
-//                            db()->rollback();
-//                            return json($ids);
-//                        }
-//                    }
-//                    $ids=db('wenku')->where(['id'=>$info['id']])->setInc('downnum');
-//                    if(!$ids){
-//                        db()->rollback();
-//                        return json([RESULT_ERROR,'操作失败']);
-//                    }
-//                    db()->commit();
-//                    $path=getimgurls($info['path']);
-//                    return json([RESULT_SUCCESS,$path,$info['suffix'],$info['title']]);
-//                }
-//            }
-//        }
-//        if($userinfo['dc'] < $info['price']){
-//            db()->rollback();
-//            return json(['nom',"您的原创币不足"]);//原创文档，需要通过充值原创币才可点击下载
-//        }
-//        $ids=db('user')->where(['id'=>$userinfo['id']])->setDec('dc',$info['price']);
-//        if(!$ids){
-//            db()->rollback();
-//            return json([RESULT_ERROR,'操作失败']);
-//        }
-//        $ids=$this->addwaterdown($id,$bid,$userinfo['id'],0,$info['price']);
-//        if($ids!==true){
-//            db()->rollback();
-//            return json($ids);
-//        }
-//        $add=[];
-//        $add['uid']=$this->uid;
-//        $add['score']=$info['price'];
-//        $add['type']=4;
-//        $add['status']=2;//文库原创币
-//        $add['wid']=$id;
-//        $add['bid']=$info['id'];
-//        $add['name']=$info['title'];
-//        $add['time']=time();
-//        $ids=db('waterdc')->insert($add);
-//        if(!$ids){
-//            db()->rollback();
-//            return json($ids);
-//        }
-//        //给作者70%的原创币
-//        //给主人增加积分
-//        $postscore=round($info['price']*0.9,2);//给的原创币
-//        $ids=$this->addusersdc($info['uid'],$postscore,$id,2,3,$this->uid,$info['title']);
-//        if($ids!==true){
-//            db()->rollback();
-//            return json($ids);
-//        }
-//        $ids=db('wenku')->where(['id'=>$info['id']])->setInc('downnum');
-//        if(!$ids){
-//            db()->rollback();
-//            return json([RESULT_ERROR,'操作失败']);
-//        }
-//        $ids=$this->weekcaozuo($id,'wenku');
-//        if(!$ids){
-//            db()->rollback();
-//            return json([RESULT_ERROR,'操作失败']);
-//        }
-//        $ids=db('wenku')->where(['id'=>$info['id']])->setInc('downnum');
-//        if(!$ids){
-//            db()->rollback();
-//            return json([RESULT_ERROR,'操作失败']);
-//        }
-//        db()->commit();
-//        cache($this->uid.$id.'wenku',true,604800);
-//        $path=getimgurls($info['path']);
-//        return json([RESULT_SUCCESS,$path,$info['suffix'],$info['title']]);
-
         Db::commit();
         return true;
     }
 
     /**
      * 下载免费.
-     * @param mixed $sucaiInfo
+     * @param mixed $wenKuInfo
      * @param mixed $uid
      * @return bool
      */
-    private function downFreeWenKu($sucaiInfo, $uid)
+    private function downFreeWenKu($wenKuInfo, $uid)
     {
         //判断是否有权限
         $time     = strtotime(date('Y-m-d'));
@@ -708,12 +575,12 @@ class WenkuService extends BaseService
         }
 
         //增加下载流水
-        if ($this->waterDoRepository->addWaterDown($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0)) {
+        if ($this->waterDoRepository->addWaterDown($wenKuInfo['id'], $wenKuInfo['uid'], $uid, 0)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
         }
 
-        if ($this->wenkuRepository->incDownNum($sucaiInfo['id'])) {
+        if ($this->wenkuRepository->incDownNum($wenKuInfo['id'])) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
         }

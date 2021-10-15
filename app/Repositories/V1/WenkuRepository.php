@@ -11,6 +11,8 @@ use App\Model\Advertising;
 use App\Model\Daydown;
 use App\Model\Shouwen;
 use App\Model\Wenku;
+use App\Model\Wenkudown;
+use App\Model\Wenkudowndc;
 use App\Repositories\BaseRepository;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
@@ -234,5 +236,55 @@ class WenkuRepository extends BaseRepository
     {
         return Daydown::query()->where($where)->select($column)->first();
     }
+
+  /**
+   * 获取原创文库下载信息.
+   */
+  public function getWenKuDownDc(array $where, array $column = ['*']): Model|Builder|null
+  {
+    return Wenkudowndc::query()->where($where)->select($column)->first();
+  }
+
+  /**
+   * 增加原创文库下载信息.
+   */
+  public function addWenKuDownDc(array $data): int {
+    return Wenkudowndc::query()->insertGetId($data);
+  }
+  /**
+   * 修改共享文库下载信息.
+   *
+   * @param array $column
+   */
+  public function updateWenkuDownDc(array $where, array $data): int
+  {
+    return Wenkudowndc::query()->where($where)->update($data);
+  }
+
+  /**
+   * 获取共享文库下载信息.
+   */
+  public function getWenKuDown(array $where, array $column = ['*']): Model|Builder|null
+  {
+    return Wenkudown::query()->where($where)->select($column)->first();
+  }
+
+  /**
+   * 增加共享文库下载信息.
+   */
+  public function addWenKuDown(array $data): int {
+    return Wenkudown::query()->insertGetId($data);
+  }
+  /**
+   * 修改共享文库下载信息.
+   *
+   * @param array $column
+   */
+  public function updateWenkuDown(array $where, array $data): int
+  {
+    return Wenkudown::query()->where($where)->update($data);
+  }
+
+
 
 }
