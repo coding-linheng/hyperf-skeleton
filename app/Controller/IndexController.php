@@ -17,6 +17,7 @@ use App\Middleware\JwtMiddleware;
 use App\Model\Albumlist;
 use App\Model\Member;
 use App\Model\Sms as SmsModel;
+use App\Services\CommonService;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -35,6 +36,9 @@ class IndexController extends AbstractController
     #[Inject]
     protected AuthManager $auth;
 
+    #[Inject]
+    protected CommonService $commonService;
+
     public function index(): array
     {
         $user   = $this->request->input('user', 'Hyperf111123123123');
@@ -46,9 +50,67 @@ class IndexController extends AbstractController
         ];
     }
 
+    /**
+     * 首页推荐用户列表
+     * @param: type 1 素材类 2 灵感类
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getRecommendUserList(){
+        $list=$this->commonService->getBannerIndex();
+        return $this->response->success($list);
+    }
+
+    /**
+     * 首页推荐作品列表
+     * @param: type 1 素材类 2 灵感类
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getRecommendZpList(){
+        $list=$this->commonService->getBannerIndex();
+        return $this->response->success($list);
+    }
+
+
+    /**
+     * 获取首页轮播图
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getIndexBanner(){
+        $list=$this->commonService->getBannerIndex();
+        return $this->response->success($list);
+    }
+
+    /**
+     * 获取首页广告位
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getAdvertisement(){
+        $list=$this->commonService->getAdvertisement();
+        return $this->response->success($list);
+    }
+
+    /**
+     * 获取首页顶部广告位
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getIndexTopAdvertisement(){
+        $list=$this->commonService->getIndexTopAdvertisement();
+        return $this->response->success($list);
+    }
+
+    /**
+     * 获取友情链接
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getBlogRoll(){
+        $list=$this->commonService->getBlogRoll();
+        return $this->response->success($list);
+    }
+
+
     public function add(\App\Request\Member $request)
     {
-//        $request->scene('edit')->validateResolved();
+        //$request->scene('edit')->validateResolved();
         $mobile = $request->post('mobile', 111);
         $name   = $request->post('name', 111);
         $member = new Member();
@@ -59,26 +121,6 @@ class IndexController extends AbstractController
         $member->password = md5('123456');
         $member->save();
         return $this->response->success();
-    }
-
-    public function elasticsearch()
-    {
-        $albumlist = new Albumlist();
-        $start     = time();
-        $count     = $albumlist->where('title', 'like', '%海报%')->count();
-        $list      = $albumlist->where('title', 'like', '%海报%')->limit(100)->get();
-        return $this->response->success(['count' => $count, 'list' => $list, 'start' => $start, 'end' => time()]);
-    }
-
-    public function demo()
-    {
-        $query     = $this->request->input('query', '海报');
-        $albumlist = new Albumlist();
-        $start     = time();
-        //自定义闭包搜索  可以改变搜索方式  demo如下
-        $callback = es_callback($query);
-        $count    = $albumlist::search('', $callback)->raw();
-        return $this->response->success(['list' => $count, 'start' => $start, 'end' => time()]);
     }
 
     #[Middleware(JwtMiddleware::class)]
@@ -109,21 +151,8 @@ class IndexController extends AbstractController
             ]);
             return true;
         } catch (InvalidArgumentException|NoGatewayAvailableException $e) {
-            var_dump($e->getResults());
             return $this->success($e->getResults());
         }
     }
 
-    public function test()
-    {
-        echo di()->get(Rcp::class)->get() . PHP_EOL;
-        echo di()->get(Rcp::class)->get() . PHP_EOL;
-        echo di()->get(Rcp::class)->get() . PHP_EOL;
-    }
-
-    public function getRcpStatics()
-    {
-        $res = di()->get(Rcp::class)->getDayRcpStatics();
-        return $this->success($res);
-    }
 }

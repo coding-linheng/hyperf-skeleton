@@ -128,6 +128,15 @@ class BaseRepository
     //根据id查询图片地址
     public function getPictureById($imgId, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC)
     {
+        $path=$this->getPictureUrlById($imgId);
+        if (empty($path)) {
+            return '';
+        }
+        return get_img_path($path, $suffix);
+    }
+
+    //根据id查询图片地址
+    public function getPictureUrlById($imgId){
         if (empty($imgId)) {
             return '';
         }
@@ -135,7 +144,7 @@ class BaseRepository
         $keyUrl = $redis->zRangeByScore($this->dbPictureCacheKey, $imgId, $imgId);
 
         if (!empty($keyUrl) && count($keyUrl) > 0) {
-            return get_img_path($keyUrl[0], $suffix);
+            return $keyUrl[0];
         }
         $path = Picture::query()->where(['id' => $imgId])->first();
 
@@ -143,7 +152,7 @@ class BaseRepository
             return '';
         }
         $redis->zAdd($this->dbPictureCacheKey, $imgId, $path->url);
-        return get_img_path($path->url, $suffix);
+        return  $path->url;
     }
 
     //查询json字符串 查询图片数据
