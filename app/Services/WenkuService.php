@@ -144,6 +144,7 @@ class WenkuService extends BaseService
         if (empty($info)) {
             throw new BusinessException(ErrorCode::ERROR, '文库不存在！');
         }
+        $info=json_decode(json_encode($info),true);
         //已删除
         if ($info['del'] == 1) {
             throw new BusinessException(ErrorCode::ERROR, '文库已删除！');
