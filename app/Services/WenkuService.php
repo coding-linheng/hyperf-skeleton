@@ -595,9 +595,10 @@ class WenkuService extends BaseService
                 Db::rollBack();
                 throw new BusinessException(ErrorCode::ERROR, '暂时无法下载');
             }
+            $dayinfo = $dayinfo->toArray();
         }
 
-        $dayinfo = $dayinfo->toArray();
+
         if ($quanxian['wenku'] != 0 && !empty($dayinfo)) {
             //1代表vip1  10个；2代表vip2 20个；3代表vip3 40个；4代表vip4 100个
             if (($quanxian['wenku']==1 && $dayinfo['num']>=10) || ($quanxian['wenku']==2 && $dayinfo['num']>=20) || ($quanxian['wenku']==3 && $dayinfo['num']>=40) || ($quanxian['wenku']==4 && $dayinfo['num']>=100)) {
@@ -607,12 +608,12 @@ class WenkuService extends BaseService
         }
 
         //增加下载流水
-        if ($this->waterDoRepository->addWaterDown($wenKuInfo['id'], $wenKuInfo['uid'], $uid, 0)) {
+        if (!$this->waterDoRepository->addWaterDown($wenKuInfo['id'], $wenKuInfo['uid'], $uid, 0)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
         }
 
-        if ($this->wenkuRepository->incDownNum($wenKuInfo['id'])) {
+        if (!$this->wenkuRepository->incDownNum($wenKuInfo['id'])) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
         }

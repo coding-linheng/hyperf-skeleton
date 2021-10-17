@@ -642,13 +642,12 @@ class SucaiService extends BaseService
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载');
         }
         //增加下载流水
-        if ($this->waterDoRepository->addWaterDown($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0)) {
+        if (!$this->waterDoRepository->addWaterDown($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0)) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
         }
 
-
-        if ($this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
+        if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
         }
