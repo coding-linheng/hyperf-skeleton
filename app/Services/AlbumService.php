@@ -43,6 +43,7 @@ class AlbumService extends BaseService
         return $this->albumRepository->searchAlbumList($queryData, $order);
     }
 
+
     /**
      * 模糊搜索灵感数据，包含标题和标签.
      */
@@ -289,5 +290,17 @@ class AlbumService extends BaseService
         }
 
         return true;
+    }
+
+    /**
+     * 模糊搜索灵感数据，包含标题和标签.
+     *
+     * @param $order
+     */
+    public function getOriginalWorkList(mixed $queryData, $order): mixed
+    {
+      $where=['isoriginal' => 2];
+      //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
+      return $this->albumRepository->searchAlbumList($queryData, $order,$where);
     }
 }

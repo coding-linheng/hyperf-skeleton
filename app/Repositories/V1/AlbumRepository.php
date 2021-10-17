@@ -69,7 +69,7 @@ class AlbumRepository extends BaseRepository
      *
      * @return mixed
      */
-    public function searchAlbumList($query, $order)
+    public function searchAlbumList($query, $order,$where=[])
     {
         //return Albumlist::search()->where("title",$query)->paginate(200);
         //return Albumlist::search($query)->paginate(200);
@@ -79,6 +79,9 @@ class AlbumRepository extends BaseRepository
 
         if (!empty($order)) {
             $orm = $orm->orderBy($order, 'desc');
+        }
+        if(!empty($where)){
+          $orm = $orm->where($where);
         }
         $list = $orm->paginateRaw(200)->toArray();
         $list = format_es_page_raw_data($list);

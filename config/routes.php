@@ -11,6 +11,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
+use App\Controller\IndexController;
 use App\Controller\Sms;
 use App\Controller\Utils;
 use App\Controller\V1\HelpCenter;
@@ -91,10 +92,24 @@ Router::addGroup($routerPath . '/', function () {
 //无需登录也可以访问的前端页面接口
 Router::addGroup($routerPath . '/', function () {
 
+
+    #首页
+    Router::addGroup('index/', function () {
+      Router::get('getIndexBanner', [IndexController::class, 'getIndexBanner']);
+      Router::get('getAdvertisement', [IndexController::class, 'getAdvertisement']);
+      Router::get('getIndexTopAdvertisement', [IndexController::class, 'getIndexTopAdvertisement']);
+      Router::get('getBlogRoll', [IndexController::class, 'getBlogRoll']);
+      Router::get('getRecommendUserList', [IndexController::class, 'getRecommendUserList']);
+      Router::get('getRecommendZpList', [IndexController::class, 'getRecommendZpList']);
+    });
+
     #灵感
     Router::addGroup('album/', function () {
         Router::get('getRandList', [AlbumController::class, 'getRandList']);
         Router::get('searchList', [AlbumController::class, 'searchList']);
+        Router::post('getOriginalWorkList', [AlbumController::class, 'getOriginalWorkList']);
+        Router::post('getBrandCollectionList', [AlbumController::class, 'getBrandCollectionList']);
+        Router::post('getLandedCollectionList', [AlbumController::class, 'getLandedCollectionList']);
     });
 
     #素材

@@ -89,4 +89,52 @@ class AlbumController extends AbstractController
         $list = $this->albumService->getOriginAlbumPic(intval($id));
         return $this->success($list);
     }
+
+
+  /**
+   * 搜索/获取原创作品列表.
+   * query 查询关键字选填，不填为全部
+   * order 排序字段：最新采集 dtime，最新更新 g_time，上周最高采集 caiji
+   */
+  public function getOriginalWorkList(): ResponseInterface
+  {
+    $queryString = $this->request->input('query', '');
+    $order = $this->request->input('order', '');
+    if (!empty($order) && !in_array($order, ['dtime', 'g_time', 'caiji'])) {
+      $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
+    }
+    $list = $this->albumService->getOriginalWorkList($queryString, $order);
+    return $this->response->success($list);
+  }
+
+  /**
+   * 藏馆--获取品牌馆.
+   * page 页数
+   */
+  public function getBrandCollectionList(): ResponseInterface
+  {
+    $queryString = $this->request->input('query', '');
+    $order = $this->request->input('order', '');
+    if (!empty($order) && !in_array($order, ['dtime', 'g_time', 'caiji'])) {
+      $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
+    }
+    $list = $this->albumService->getOriginalWorkList($queryString, $order);
+    return $this->response->success($list);
+  }
+
+  /**
+   * 藏馆--获取地产馆.
+   * page 页数
+   */
+  public function getLandedCollectionList(): ResponseInterface
+  {
+    $queryString = $this->request->input('query', '');
+    $order = $this->request->input('order', '');
+    if (!empty($order) && !in_array($order, ['dtime', 'g_time', 'caiji'])) {
+      $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
+    }
+    $list = $this->albumService->getOriginalWorkList($queryString, $order);
+    return $this->response->success($list);
+  }
+
 }
