@@ -52,17 +52,17 @@ class SucaiRepository extends BaseRepository
 
             foreach ($randListArr as $key => &$val) {
                 $tmp['id']          = $val->id ?? 0;
-               //$tmp['path']        = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                //$tmp['path']        = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
                 $tmp['img']           = $this->getPictureJson($val->img);
-                $tmp['title']       = $val->title    ?? '';
-                $tmp['shoucang']    = $val->shoucang ?? 0;
-                $tmp['price']       = $val->price    ?? 0;
-                $tmp['leixing']     = $val->leixing  ?? 0;
-                $tmp['downnum']     = $val->downnum  ?? 0;
-                $tmp['dtime']       = $val->dtime    ?? 0;
-                $tmp['mulu']        = isset($val->mulu_id) && isset($muluArr[$val->mulu_id]) ? $muluArr[$val->mulu_id] : '';
-                $randListArr[$key]  = $tmp;
-                $tmp                = [];
+                $tmp['title']         = $val->title    ?? '';
+                $tmp['shoucang']      = $val->shoucang ?? 0;
+                $tmp['price']         = $val->price    ?? 0;
+                $tmp['leixing']       = $val->leixing  ?? 0;
+                $tmp['downnum']       = $val->downnum  ?? 0;
+                $tmp['dtime']         = $val->dtime    ?? 0;
+                $tmp['mulu']          = isset($val->mulu_id) && isset($muluArr[$val->mulu_id]) ? $muluArr[$val->mulu_id] : '';
+                $randListArr[$key]    = $tmp;
+                $tmp                  = [];
             }
         }
         return $randListArr;

@@ -193,7 +193,7 @@ class SucaiService extends BaseService
     {
         $uid = user()['id'];
         //判断图片是否存在
-        $sucaiInfo = $this->sucaiRepository->getSucaiImgInfo(['id' => $id], ['id', 'del', 'status', 'img', 'path', 'path', 'uid', 'suffix', 'size', 'height', 'name','leixing','price',  'week', 'title', 'guanjianci',  'shoucang']);
+        $sucaiInfo = $this->sucaiRepository->getSucaiImgInfo(['id' => $id], ['id', 'del', 'status', 'img', 'path', 'path', 'uid', 'suffix', 'size', 'height', 'name', 'leixing', 'price',  'week', 'title', 'guanjianci',  'shoucang']);
 
         if (empty($sucaiInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '素材不存在！');
@@ -397,17 +397,18 @@ class SucaiService extends BaseService
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
         }
 
-        if(empty($sucaidown)){
-          if (!$this->sucaiRepository->addSuCaiDown(['ids' => $sucaiInfo['id'], 'uid' => $uid, 'time' => $time])) {
-            Db::rollBack();
-            throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
-          }
-        }else{
-          $ids = $sucaidown['ids'] . ',' . $sucaiInfo['id'];
-          if (!$this->sucaiRepository->updateSuCaiDown(['id' => $sucaidown['id']], ['ids' => $ids])) {
-            Db::rollBack();
-            throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
-          }
+        if (empty($sucaidown)) {
+            if (!$this->sucaiRepository->addSuCaiDown(['ids' => $sucaiInfo['id'], 'uid' => $uid, 'time' => $time])) {
+                Db::rollBack();
+                throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+            }
+        } else {
+            $ids = $sucaidown['ids'] . ',' . $sucaiInfo['id'];
+
+            if (!$this->sucaiRepository->updateSuCaiDown(['id' => $sucaidown['id']], ['ids' => $ids])) {
+                Db::rollBack();
+                throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+            }
         }
         Db::commit();
         return true;
@@ -577,18 +578,19 @@ class SucaiService extends BaseService
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
         }
 
-       if(empty($sucaidown)){
-         if (!$this->sucaiRepository->addSuCaiDown(['ids' => $sucaiInfo['id'], 'uid' => $uid, 'time' => $time])) {
-           Db::rollBack();
-           throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
-         }
-       }else{
-         $ids = $sucaidown['ids'] . ',' . $sucaiInfo['id'];
-         if (!$this->sucaiRepository->updateSuCaiDown(['id' => $sucaidown['id']], ['ids' => $ids])) {
-           Db::rollBack();
-           throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
-         }
-       }
+        if (empty($sucaidown)) {
+            if (!$this->sucaiRepository->addSuCaiDown(['ids' => $sucaiInfo['id'], 'uid' => $uid, 'time' => $time])) {
+                Db::rollBack();
+                throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+            }
+        } else {
+            $ids = $sucaidown['ids'] . ',' . $sucaiInfo['id'];
+
+            if (!$this->sucaiRepository->updateSuCaiDown(['id' => $sucaidown['id']], ['ids' => $ids])) {
+                Db::rollBack();
+                throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+            }
+        }
 
         Db::commit();
         return true;
@@ -630,7 +632,6 @@ class SucaiService extends BaseService
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '您暂无权限下载！');
         }
-
 
         //1代表vip1  5个；2代表vip2 8个；3代表vip3 10个；4代表vip4 20个
         if (($quanxian['sucai'] == 1 && $dayinfo['num'] >= 5) || ($quanxian['sucai'] == 2 && $dayinfo['num'] >= 8) || ($quanxian['sucai'] == 3 && $dayinfo['num'] >= 10) || ($quanxian['sucai'] == 4 && $dayinfo['num'] >= 20)) {
