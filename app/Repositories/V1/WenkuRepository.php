@@ -97,7 +97,6 @@ class WenkuRepository extends BaseRepository
         return Wenku::query()->where('id', $id)->increment('looknum', $count);
     }
 
-
     /**
      * 增加下载次数.
      * @param mixed $id
@@ -192,6 +191,7 @@ class WenkuRepository extends BaseRepository
     /**
      * 7天/周下载数量统计.
      * @param mixed $sucaiInfo
+     * @param mixed $info
      */
     public function recodeWeekDownNum($info)
     {
@@ -208,6 +208,7 @@ class WenkuRepository extends BaseRepository
         }
         return $ids;
     }
+
     /**
      * 增加当天免费文库下载次数.
      *
@@ -220,15 +221,12 @@ class WenkuRepository extends BaseRepository
 
     /**
      * 增加当天免费文库下载次数.
-     *
-     * @param  array  $data
-     *
-     * @return int
      */
     public function addDayDown(array $data): int
     {
         return Daydown::query()->insertGetId($data);
     }
+
     /**
      * 获取当天免费文库下载信息.
      */
@@ -237,54 +235,55 @@ class WenkuRepository extends BaseRepository
         return Daydown::query()->where($where)->select($column)->first();
     }
 
-  /**
-   * 获取原创文库下载信息.
-   */
-  public function getWenKuDownDc(array $where, array $column = ['*']): Model|Builder|null
-  {
-    return Wenkudowndc::query()->where($where)->select($column)->first();
-  }
+    /**
+     * 获取原创文库下载信息.
+     */
+    public function getWenKuDownDc(array $where, array $column = ['*']): Model|Builder|null
+    {
+        return Wenkudowndc::query()->where($where)->select($column)->first();
+    }
 
-  /**
-   * 增加原创文库下载信息.
-   */
-  public function addWenKuDownDc(array $data): int {
-    return Wenkudowndc::query()->insertGetId($data);
-  }
-  /**
-   * 修改共享文库下载信息.
-   *
-   * @param array $column
-   */
-  public function updateWenkuDownDc(array $where, array $data): int
-  {
-    return Wenkudowndc::query()->where($where)->update($data);
-  }
+    /**
+     * 增加原创文库下载信息.
+     */
+    public function addWenKuDownDc(array $data): int
+    {
+        return Wenkudowndc::query()->insertGetId($data);
+    }
 
-  /**
-   * 获取共享文库下载信息.
-   */
-  public function getWenKuDown(array $where, array $column = ['*']): Model|Builder|null
-  {
-    return Wenkudown::query()->where($where)->select($column)->first();
-  }
+    /**
+     * 修改共享文库下载信息.
+     *
+     * @param array $column
+     */
+    public function updateWenkuDownDc(array $where, array $data): int
+    {
+        return Wenkudowndc::query()->where($where)->update($data);
+    }
 
-  /**
-   * 增加共享文库下载信息.
-   */
-  public function addWenKuDown(array $data): int {
-    return Wenkudown::query()->insertGetId($data);
-  }
-  /**
-   * 修改共享文库下载信息.
-   *
-   * @param array $column
-   */
-  public function updateWenkuDown(array $where, array $data): int
-  {
-    return Wenkudown::query()->where($where)->update($data);
-  }
+    /**
+     * 获取共享文库下载信息.
+     */
+    public function getWenKuDown(array $where, array $column = ['*']): Model|Builder|null
+    {
+        return Wenkudown::query()->where($where)->select($column)->first();
+    }
 
+    /**
+     * 增加共享文库下载信息.
+     */
+    public function addWenKuDown(array $data): int
+    {
+        return Wenkudown::query()->insertGetId($data);
+    }
 
-
+    /**
+     * 修改共享文库下载信息.
+     *
+     * @param array $column
+     */
+    public function updateWenkuDown(array $where, array $data): int
+    {
+        return Wenkudown::query()->where($where)->update($data);
+    }
 }

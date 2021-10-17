@@ -12,9 +12,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Common\Rcp;
 use App\Middleware\JwtMiddleware;
-use App\Model\Albumlist;
 use App\Model\Member;
 use App\Model\Sms as SmsModel;
 use App\Services\CommonService;
@@ -51,62 +49,66 @@ class IndexController extends AbstractController
     }
 
     /**
-     * 首页推荐用户列表
+     * 首页推荐用户列表.
      * @param: type 1 素材类 2 灵感类
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function getRecommendUserList(){
-        $list=$this->commonService->getBannerIndex();
+    public function getRecommendUserList()
+    {
+        $list = $this->commonService->getBannerIndex();
         return $this->response->success($list);
     }
 
     /**
-     * 首页推荐作品列表
+     * 首页推荐作品列表.
      * @param: type 1 素材类 2 灵感类
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function getRecommendZpList(){
-        $list=$this->commonService->getBannerIndex();
-        return $this->response->success($list);
-    }
-
-
-    /**
-     * 获取首页轮播图
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function getIndexBanner(){
-        $list=$this->commonService->getBannerIndex();
+    public function getRecommendZpList()
+    {
+        $list = $this->commonService->getBannerIndex();
         return $this->response->success($list);
     }
 
     /**
-     * 获取首页广告位
+     * 获取首页轮播图.
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function getAdvertisement(){
-        $list=$this->commonService->getAdvertisement();
+    public function getIndexBanner()
+    {
+        $list = $this->commonService->getBannerIndex();
         return $this->response->success($list);
     }
 
     /**
-     * 获取首页顶部广告位
+     * 获取首页广告位.
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function getIndexTopAdvertisement(){
-        $list=$this->commonService->getIndexTopAdvertisement();
+    public function getAdvertisement()
+    {
+        $list = $this->commonService->getAdvertisement();
         return $this->response->success($list);
     }
 
     /**
-     * 获取友情链接
+     * 获取首页顶部广告位.
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function getBlogRoll(){
-        $list=$this->commonService->getBlogRoll();
+    public function getIndexTopAdvertisement()
+    {
+        $list = $this->commonService->getIndexTopAdvertisement();
         return $this->response->success($list);
     }
 
+    /**
+     * 获取友情链接.
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getBlogRoll()
+    {
+        $list = $this->commonService->getBlogRoll();
+        return $this->response->success($list);
+    }
 
     public function add(\App\Request\Member $request)
     {
@@ -154,5 +156,4 @@ class IndexController extends AbstractController
             return $this->success($e->getResults());
         }
     }
-
 }

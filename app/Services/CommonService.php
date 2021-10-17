@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Repositories\V1\CommonRepository;
-use App\Repositories\V1\RequestLogRepository;
 use Hyperf\Di\Annotation\Inject;
 
 /**
@@ -26,6 +25,7 @@ class CommonService extends BaseService
     {
         return $this->commonRepository->getAdvertisement();
     }
+
     public function getIndexTopAdvertisement(): array
     {
         return $this->commonRepository->getIndexTopAdvertisement();
@@ -35,5 +35,4 @@ class CommonService extends BaseService
     {
         return $this->commonRepository->getBlogRoll();
     }
-
 }

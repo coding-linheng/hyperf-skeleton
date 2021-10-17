@@ -45,13 +45,15 @@ class Utils
             }
             //保证数据唯一不重复上传
             $stream     = fopen($file->getRealPath(), 'r+');
-            $path       = 'public/uploads/' . md5_file($file->getRealPath());
+            $suffix     = $file->getextension();
+            $path       = 'public/uploads/' . md5_file($file->getRealPath()) . '.' . $suffix;
             $filesystem = make(Filesystem::class);
             $data       = [
-                'path'   => env('PUBLIC_DOMAIN') . '/' . $path,
-                'size'   => $file->getSize(),
-                'suffix' => $file->getextension(),
-                'name'   => $file->getClientFilename(),
+                'path'      => $path,
+                'size'      => $file->getSize(),
+                'suffix'    => $suffix,
+                'name'      => md5_file($file->getRealPath()) . '.' . $suffix,
+                'image_url' => env('PUBLIC_DOMAIN') . '/' . $path,
             ];
 
             if ($filesystem->has($path)) {

@@ -11,6 +11,7 @@ use App\Constants\ImgSizeStyle;
 use App\Exception\BusinessException;
 use App\Model\Daywaterdc;
 use App\Model\Guanzhuuser;
+use App\Model\Monthwaterdc;
 use App\Model\Notice;
 use App\Model\Picture;
 use App\Model\Tixian;
@@ -20,6 +21,7 @@ use App\Model\Uservip;
 use App\Model\Waterdc;
 use App\Model\Waterdo;
 use App\Model\Waterscore;
+use App\Model\Weekwaterdc;
 use App\Repositories\BaseRepository;
 use Hyperf\Database\Model\Model;
 use Hyperf\Redis\RedisProxy;
@@ -104,7 +106,7 @@ class UserRepository extends BaseRepository
     public function thisWeekIncome(int $userid): ?string
     {
         $time = strtotime('this week sunday');
-        return Daywaterdc::query()->where('uid', $userid)->where('time', $time)->value('dc');
+        return Weekwaterdc::query()->where('uid', $userid)->where('time', $time)->value('dc');
     }
 
     /*
@@ -113,7 +115,7 @@ class UserRepository extends BaseRepository
     public function lastWeekIncome(int $userid): ?string
     {
         $time = strtotime('last week sunday');
-        return Daywaterdc::query()->where('uid', $userid)->where('time', $time)->value('dc');
+        return Weekwaterdc::query()->where('uid', $userid)->where('time', $time)->value('dc');
     }
 
     /*
@@ -122,7 +124,7 @@ class UserRepository extends BaseRepository
     public function thisMonthIncome(int $userid): ?string
     {
         $time = strtotime(date('Y-m-d', strtotime('first day of this month')));
-        return Daywaterdc::query()->where('uid', $userid)->where('time', $time)->value('dc');
+        return Monthwaterdc::query()->where('uid', $userid)->where('time', $time)->value('dc');
     }
 
     /*
@@ -131,7 +133,7 @@ class UserRepository extends BaseRepository
     public function lastMonthIncome(int $userid): ?string
     {
         $time = strtotime(date('Y-m-d', strtotime('first day of last month')));
-        return Daywaterdc::query()->where('uid', $userid)->where('time', $time)->value('dc');
+        return Monthwaterdc::query()->where('uid', $userid)->where('time', $time)->value('dc');
     }
 
     /*

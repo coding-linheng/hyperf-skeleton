@@ -516,6 +516,7 @@ class SucaiService extends BaseService
 
                 //给用户增加原创币流水
                 $postscore = 0.10; //给钱
+
                 if (!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'], 1)) {
                     Db::rollBack();
                     throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');

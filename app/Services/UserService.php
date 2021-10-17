@@ -287,12 +287,17 @@ class UserService extends BaseService
     public function writeInformationForMaterial(array $params): bool
     {
         $params['status'] = UserCenterStatus::WORK_MANAGE_REVIEW;
+        $params['text']   = '';
         Db::beginTransaction();
         try {
             $material = $this->sucaiRepository->getSucaiImgInfo(['id' => $params['material_id']]);
+
+            if ($material['status'] != UserCenterStatus::WORK_MANAGE_PENDING) {
+                throw new Exception('素材已被处理,无需再次填写');
+            }
             //记录关联信息
-            Mulurelation::query()->updateOrCreate(['mid' => $params['mulu'], 'iid' => $params['material_id']]);
-            Geshirelation::query()->updateOrCreate(['mid' => $params['geshi'], 'iid' => $params['material_id']]);
+            Mulurelation::query()->updateOrCreate(['mid' => $params['mulu_id'], 'iid' => $params['material_id']]);
+            Geshirelation::query()->updateOrCreate(['mid' => $params['geshi_id'], 'iid' => $params['material_id']]);
             Db::commit();
             return $material->fill($params)->save();
         } catch (\Exception $exception) {
@@ -328,6 +333,24 @@ class UserService extends BaseService
     public function getMaterialFormat(): array
     {
         return Geshi::query()->select(['id', 'name'])->get()->toArray();
+    }
+
+    /**
+     * 删除素材.
+     */
+    public function deleteForMaterial(int $id): mixed
+    {
+        return $this->sucaiRepository->deleteImg($id);
+    }
+
+    /**
+     * 获取素材详情.
+     */
+    public function getDetailForMaterial(int $id, array $column): array
+    {
+        $where = ['id' => $id];
+        $info  = $this->sucaiRepository->getSucaiImgInfo($where, $column);
+        return array_merge($info->toArray(), ['preview' => $this->userRepository->getPictureJson($info['img'])]);
     }
 
     /**

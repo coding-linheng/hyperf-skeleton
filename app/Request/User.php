@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Request;
 
-use App\Constants\UserCenterStatus;
 use Hyperf\DbConnection\Db;
 use Hyperf\Validation\Request\FormRequest;
 use Hyperf\Validation\Rule;
@@ -23,6 +22,8 @@ class User extends FormRequest
         'upload_head'   => ['head_image'],
         'work'          => ['type', 'status'],
         'upload'        => ['upload', 'type'],
+        'del_material'  => ['material_id'],
+        'get_material'  => ['material_id'],
         'information'   => ['material_id', 'img', 'mulu_id', 'geshi_id', 'title', 'leixing', 'price', 'guanjianci'],
     ];
 
@@ -74,7 +75,7 @@ class User extends FormRequest
             'status'      => ['required', Rule::in([0, 1, 2, 3, 4])],
             'type'        => ['required', Rule::in([1, 2])],
             'upload'      => 'required|file',
-            'img'         => 'required|active_url',
+            'img'         => 'required|exists:picture,id',
             'mulu_id'     => 'required|exists:mulu,id',   //分类
             'fenlei'      => 'required|exists:fenlei,id', //类型
             'guanjianci'  => 'required|key_words', //类型
@@ -83,15 +84,13 @@ class User extends FormRequest
                     return Db::table('scthreefenlei')->where('mid', $this->post('fenlei'))->exists();
                 }), 'exists:scthreefenlei,id',
             ], //主题
-            'geshi_id'       => 'required|exists:geshi,id',  //格式
-            'title'          => 'required|alpha_dash|between:1,30',
-            'leixing'        => ['required', Rule::in([1, 2])],
-            'price'          => [Rule::requiredIf($this->post('leixing') == 2), 'integer', 'between:1,20'],
-            'material_id'    => [
+            'geshi_id'    => 'required|exists:geshi,id',  //格式
+            'title'       => 'required|alpha_dash|between:1,30',
+            'leixing'     => ['required', Rule::in([1, 2])],
+            'price'       => [Rule::requiredIf($this->post('leixing') == 2), 'integer', 'between:1,20'],
+            'material_id' => [
                 'required',
-                @Rule::exists('img', 'id')->where(
-                    fn ($query) => $query->where(['uid' => user()['id'], 'status' => UserCenterStatus::WORK_MANAGE_PENDING])
-                ),
+                @Rule::exists('img', 'id')->where(fn ($query) => $query->where(['uid' => user()['id']])),
             ],
         ];
     }
@@ -102,34 +101,35 @@ class User extends FormRequest
     public function attributes(): array
     {
         return [
-            'name'           => '真实姓名',
-            'cardnum'        => '身份证',
-            'zhi'            => '支付宝',
-            'cardimg'        => '身份证正面',
-            'cardimg1'       => '身份证反面',
-            'head_image'     => '头像',
-            'status'         => '状态',
-            'type'           => '类型',
-            'material_id'    => '素材',
-            'img'            => '封面图',
-            'mulu_id'        => '素材分类',
-            'fenlei'         => '素材类型',
-            'geshi_id'       => '素材格式',
-            'title'          => '标题',
-            'leixing'        => '类型',
-            'price'          => '价格',
-            'guanjianci'     => '关键词',
+            'name'        => '真实姓名',
+            'cardnum'     => '身份证',
+            'zhi'         => '支付宝',
+            'cardimg'     => '身份证正面',
+            'cardimg1'    => '身份证反面',
+            'head_image'  => '头像',
+            'status'      => '状态',
+            'type'        => '类型',
+            'material_id' => '素材',
+            'img'         => '图片',
+            'mulu_id'     => '素材分类',
+            'fenlei'      => '素材类型',
+            'geshi_id'    => '素材格式',
+            'title'       => '标题',
+            'leixing'     => '类型',
+            'price'       => '价格',
+            'guanjianci'  => '关键词',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'material_id.exists'      => '素材不存在或已提交审核',
-            'mulu_id.exists'          => ':attribute 不存在',
-            'fenlei.exists'           => ':attribute 不存在',
-            'geshi_id.exists'         => ':attribute 不存在',
-            'guanjianci.key_words'    => ':attribute 数量错误',
+            'material_id.exists'   => '素材不存在',
+            'img.exists'           => '图片不存在',
+            'mulu_id.exists'       => ':attribute 不存在',
+            'fenlei.exists'        => ':attribute 不存在',
+            'geshi_id.exists'      => ':attribute 不存在',
+            'guanjianci.key_words' => ':attribute 数量错误',
         ];
     }
 }

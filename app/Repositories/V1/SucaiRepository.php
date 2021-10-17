@@ -434,4 +434,12 @@ class SucaiRepository extends BaseRepository
         }
         return $ids;
     }
+
+    /**
+     * 删除素材.
+     */
+    public function deleteImg(int $id): mixed
+    {
+        return Img::query()->where('id', $id)->delete();
+    }
 }

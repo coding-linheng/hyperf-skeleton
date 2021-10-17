@@ -119,7 +119,7 @@ class BaseRepository
 
         if (is_array($pictures)) {
             foreach ($pictures as $pid) {
-                $pictureTmp[] =  $this->getPictureById($pid, $suffix);
+                $pictureTmp[] = $this->getPictureById($pid, $suffix);
             }
         }
         return $pictureTmp;
@@ -128,7 +128,8 @@ class BaseRepository
     //根据id查询图片地址
     public function getPictureById($imgId, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC)
     {
-        $path=$this->getPictureUrlById($imgId);
+        $path = $this->getPictureUrlById($imgId);
+
         if (empty($path)) {
             return '';
         }
@@ -136,12 +137,13 @@ class BaseRepository
     }
 
     //根据id查询图片地址
-    public function getPictureUrlById($imgId){
+    public function getPictureUrlById($imgId)
+    {
         if (empty($imgId)) {
             return '';
         }
         $redis  = redis('cache');
-        $keyUrl = $redis->zRangeByScore($this->dbPictureCacheKey, $imgId, $imgId);
+        $keyUrl = $redis->zRangeByScore($this->dbPictureCacheKey, (string)$imgId, (string)$imgId);
 
         if (!empty($keyUrl) && count($keyUrl) > 0) {
             return $keyUrl[0];
@@ -152,7 +154,7 @@ class BaseRepository
             return '';
         }
         $redis->zAdd($this->dbPictureCacheKey, $imgId, $path->url);
-        return  $path->url;
+        return $path->url;
     }
 
     //查询json字符串 查询图片数据
@@ -174,7 +176,7 @@ class BaseRepository
                 $this->rePushPicToRedis($redis);
             }
         }
-        $keyUrl = $redis->zRangeByScore($this->dbPictureCacheKey, $img[0], $img[0]);
+        $keyUrl = $redis->zRangeByScore($this->dbPictureCacheKey, (string)$img[0], (string)$img[0]);
 
         if (!empty($keyUrl) && count($keyUrl) > 0) {
             return get_img_path($keyUrl[0], $suffix);

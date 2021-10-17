@@ -146,8 +146,8 @@ class UserController extends AbstractController
      */
     public function getCashLog(): ResponseInterface
     {
-        $page     = $this->request->post('page', 1) ?: 1;
-        $pageSize = $this->request->post('page_size', 10);
+        $page     = (int)$this->request->input('page', 1) ?: 1;
+        $pageSize = (int)$this->request->input('page_size', 10);
         $field    = ['id', 'name', 'zhi', 'money', 'status', 'time'];
         $data     = $this->userService->getCashLog(user()['id'], $page, $pageSize, $field);
         return $this->success($data);
@@ -215,7 +215,7 @@ class UserController extends AbstractController
     {
         $request->scene('work')->validateResolved();
         $query  = $request->all();
-        $column = ['id', 'name', 'size', 'img', 'time', 'status'];
+        $column = ['id', 'name', 'size', 'img', 'time', 'status', 'text'];
         $data   = $this->userService->worksManage(user()['id'], $query, $column);
         return $this->success($data);
     }
@@ -227,6 +227,27 @@ class UserController extends AbstractController
     {
         $request->scene('information')->validateResolved();
         return $this->success($this->userService->writeInformationForMaterial($request->all()));
+    }
+
+    /**
+     * 获取素材详情.
+     */
+    public function getDetailForMaterial(User $request): ResponseInterface
+    {
+        $request->scene('get_material')->validateResolved();
+        $id     = $request->input('material_id');
+        $column = ['id', 'name', 'size', 'mulu_id', 'geshi_id', 'title', 'guanjianci', 'leixing', 'price', 'img', 'status'];
+        return $this->success($this->userService->getDetailForMaterial((int)$id, $column));
+    }
+
+    /**
+     * 删除素材管理.
+     */
+    public function deleteForMaterial(User $request): ResponseInterface
+    {
+        $request->scene('del_material')->validateResolved();
+        $id = $request->input('material_id');
+        return $this->success($this->userService->deleteForMaterial((int)$id));
     }
 
     /**
