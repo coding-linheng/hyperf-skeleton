@@ -45,6 +45,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('worksManage', [UserController::class, 'worksManage']);
         Router::get('getMaterialCategory', [UserController::class, 'getMaterialCategory']);
         Router::get('getMaterialFormat', [UserController::class, 'getMaterialFormat']);
+        Router::get('getDetailForMaterial', [UserController::class, 'getDetailForMaterial']);
         Router::put('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
         Router::put('bindMobile', [UserController::class, 'bindMobile']);
         Router::put('profile', [UserController::class, 'profile']);
@@ -52,6 +53,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::put('writeInformationForMaterial', [UserController::class, 'writeInformationForMaterial']);
         Router::post('cash', [UserController::class, 'cash']);
         Router::post('uploadWork', [UserController::class, 'uploadWork']);
+        Router::delete('deleteForMaterial', [UserController::class, 'deleteForMaterial']);
     });
 
     #灵感
