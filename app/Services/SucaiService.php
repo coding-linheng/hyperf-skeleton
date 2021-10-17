@@ -193,7 +193,7 @@ class SucaiService extends BaseService
     {
         $uid = user()['id'];
         //判断图片是否存在
-        $sucaiInfo = $this->sucaiRepository->getSucaiImgInfo(['id' => $id], ['id', 'del', 'status', 'img', 'path', 'path', 'uid', 'suffix', 'size', 'height', 'name',  'week', 'title', 'guanjianci',  'shoucang']);
+        $sucaiInfo = $this->sucaiRepository->getSucaiImgInfo(['id' => $id], ['id', 'del', 'status', 'img', 'path', 'path', 'uid', 'suffix', 'size', 'height', 'name', 'leixing', 'price',  'week', 'title', 'guanjianci',  'shoucang']);
 
         if (empty($sucaiInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '素材不存在！');
@@ -233,7 +233,7 @@ class SucaiService extends BaseService
         $this->sucaiRepository->recodeWeekDownNum($sucaiInfo);
 
         //缓存七天，七天之内下载过的可以免费下载，新版忽略
-        //cache($this->uid.$id.'sucai',true,604800);
+        //cache($uid.$id.'sucai',true,604800);
         $downLoadUrl = get_img_path_private($sucaiInfo['path']);
         return ['suffix' => $sucaiInfo['suffix'], 'title' => $sucaiInfo['title'], 'downLoadUrl' => $downLoadUrl];
     }
@@ -249,7 +249,7 @@ class SucaiService extends BaseService
     private function downShareSucai($sucaiInfo, $uid)
     {
         $time      = strtotime(date('Y-m-d'));
-        $sucaidown = $this->sucaiRepository->getSuCaiDown(['uid' => $this->uid, 'time' => $time]);
+        $sucaidown = $this->sucaiRepository->getSuCaiDown(['uid' => $uid, 'time' => $time]);
 
         if (!empty($sucaidown)) {
             //当天下载过的可以直接下载，不扣除分数也不增加下载次数
@@ -266,7 +266,7 @@ class SucaiService extends BaseService
         $postscore = $scorelist['postscore'];
 
         //判断是不是素材vip时间
-        $uservip = $this->userRepository->getUserVip(['uid' => $this->uid, 'type' => 3]);
+        $uservip = $this->userRepository->getUserVip(['uid' => $uid, 'type' => 3]);
         Db::beginTransaction();
 
         if (!empty($uservip) && $uservip->time >= time()) {
@@ -396,6 +396,20 @@ class SucaiService extends BaseService
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
         }
+
+        if (empty($sucaidown)) {
+            if (!$this->sucaiRepository->addSuCaiDown(['ids' => $sucaiInfo['id'], 'uid' => $uid, 'time' => $time])) {
+                Db::rollBack();
+                throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+            }
+        } else {
+            $ids = $sucaidown['ids'] . ',' . $sucaiInfo['id'];
+
+            if (!$this->sucaiRepository->updateSuCaiDown(['id' => $sucaidown['id']], ['ids' => $ids])) {
+                Db::rollBack();
+                throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+            }
+        }
         Db::commit();
         return true;
     }
@@ -411,7 +425,7 @@ class SucaiService extends BaseService
     private function downDcSucai($sucaiInfo, $uid)
     {
         $time      = strtotime(date('Y-m-d'));
-        $sucaidown = $this->sucaiRepository->getSuCaiDown(['uid' => $this->uid, 'time' => $time]);
+        $sucaidown = $this->sucaiRepository->getSuCaiDown(['uid' => $uid, 'time' => $time]);
 
         if (!empty($sucaidown)) {
             //当天下载过的可以直接下载，不扣除分数也不增加下载次数
@@ -424,7 +438,7 @@ class SucaiService extends BaseService
 
         //花的原创币
         //判断用户是不是在时间之内
-        $uservip = $this->userRepository->getUserVip(['uid' => $this->uid, 'type' => 4]);
+        $uservip = $this->userRepository->getUserVip(['uid' => $uid, 'type' => 4]);
         Db::beginTransaction();
 
         if (!empty($uservip) && $uservip->time >= time()) {
@@ -552,16 +566,30 @@ class SucaiService extends BaseService
             throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
         }
         //给用户增加原创币流水
-      $postscore = round($sucaiInfo['price'] * 0.9, 2); //给的原创币
+       $postscore = round($sucaiInfo['price'] * 0.9, 2); //给的原创币
 
-      if (!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'])) {
-          Db::rollBack();
-          throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
-      }
+        if (!$this->waterDoRepository->addUserDc($sucaiInfo['uid'], $postscore, $sucaiInfo['id'], 1, 3, $uid, $sucaiInfo['title'])) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+        }
 
         if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+        }
+
+        if (empty($sucaidown)) {
+            if (!$this->sucaiRepository->addSuCaiDown(['ids' => $sucaiInfo['id'], 'uid' => $uid, 'time' => $time])) {
+                Db::rollBack();
+                throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+            }
+        } else {
+            $ids = $sucaidown['ids'] . ',' . $sucaiInfo['id'];
+
+            if (!$this->sucaiRepository->updateSuCaiDown(['id' => $sucaidown['id']], ['ids' => $ids])) {
+                Db::rollBack();
+                throw new BusinessException(ErrorCode::ERROR, '该素材暂时无法下载！');
+            }
         }
 
         Db::commit();
@@ -605,25 +633,23 @@ class SucaiService extends BaseService
             throw new BusinessException(ErrorCode::ERROR, '您暂无权限下载！');
         }
 
-        if ($quanxian['sucai'] != 0) {
-            //1代表vip1  5个；2代表vip2 8个；3代表vip3 10个；4代表vip4 20个
-            if (($quanxian['sucai'] == 1 && $dayinfo['num'] >= 5) || ($quanxian['sucai'] == 2 && $dayinfo['num'] >= 8) || ($quanxian['sucai'] == 3 && $dayinfo['num'] >= 10) || ($quanxian['sucai'] == 4 && $dayinfo['num'] >= 20)) {
-                Db::rollBack();
-                throw new BusinessException(ErrorCode::ERROR, '您每天只能下载' . $quanxian['sucai'] . '个素材！');
-            }
-
-            if (!$this->sucaiRepository->incDayDownSuCai(['uid' => $this->uid, 'time' => $time])) {
-                Db::rollBack();
-                throw new BusinessException(ErrorCode::ERROR, '暂时无法下载');
-            }
-            //增加下载流水
-            if ($this->waterDoRepository->addWaterDown($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0)) {
-                Db::rollBack();
-                throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
-            }
+        //1代表vip1  5个；2代表vip2 8个；3代表vip3 10个；4代表vip4 20个
+        if (($quanxian['sucai'] == 1 && $dayinfo['num'] >= 5) || ($quanxian['sucai'] == 2 && $dayinfo['num'] >= 8) || ($quanxian['sucai'] == 3 && $dayinfo['num'] >= 10) || ($quanxian['sucai'] == 4 && $dayinfo['num'] >= 20)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '您每天只能下载' . $quanxian['sucai'] . '个素材！');
         }
 
-        if ($this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
+        if (!$this->sucaiRepository->incDayDownSuCai(['uid' => $uid, 'time' => $time])) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '暂时无法下载');
+        }
+        //增加下载流水
+        if (!$this->waterDoRepository->addWaterDown($sucaiInfo['id'], $sucaiInfo['uid'], $uid, 0)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
+        }
+
+        if (!$this->sucaiRepository->incImgDownNum($sucaiInfo['id'])) {
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '暂时无法下载！');
         }

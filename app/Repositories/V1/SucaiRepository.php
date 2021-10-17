@@ -51,17 +51,18 @@ class SucaiRepository extends BaseRepository
             $muluArr = $this->getMulu();
 
             foreach ($randListArr as $key => &$val) {
-                $tmp['id']         = $val->id ?? 0;
-                $tmp['path']       = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
-                $tmp['title']      = $val->title    ?? '';
-                $tmp['shoucang']   = $val->shoucang ?? 0;
-                $tmp['price']      = $val->price    ?? 0;
-                $tmp['leixing']    = $val->leixing  ?? 0;
-                $tmp['downnum']    = $val->downnum  ?? 0;
-                $tmp['dtime']      = $val->dtime    ?? 0;
-                $tmp['mulu']       = isset($val->mulu_id) && isset($muluArr[$val->mulu_id]) ? $muluArr[$val->mulu_id] : '';
-                $randListArr[$key] = $tmp;
-                $tmp               = [];
+                $tmp['id']          = $val->id ?? 0;
+                //$tmp['path']        = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['img']           = $this->getPictureJson($val->img);
+                $tmp['title']         = $val->title    ?? '';
+                $tmp['shoucang']      = $val->shoucang ?? 0;
+                $tmp['price']         = $val->price    ?? 0;
+                $tmp['leixing']       = $val->leixing  ?? 0;
+                $tmp['downnum']       = $val->downnum  ?? 0;
+                $tmp['dtime']         = $val->dtime    ?? 0;
+                $tmp['mulu']          = isset($val->mulu_id) && isset($muluArr[$val->mulu_id]) ? $muluArr[$val->mulu_id] : '';
+                $randListArr[$key]    = $tmp;
+                $tmp                  = [];
             }
         }
         return $randListArr;
@@ -104,18 +105,18 @@ class SucaiRepository extends BaseRepository
                     unset($list['data'][$key]);
                     continue;
                 }
-                $tmp['id'] = $val['id'] ?? 0;
+                $tmp['id']            = $val['id'] ?? 0;
                 //$tmp['path']          = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
-                $tmp['img']         = $this->getPictureJson($val['img'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
-                $tmp['title']       = $val['title']    ?? '';
-                $tmp['shoucang']    = $val['shoucang'] ?? 0;
-                $tmp['downnum']     = $val['downnum']  ?? 0;
-                $tmp['dtime']       = $val['dtime']    ?? 0;
-                $tmp['price']       = $val['price']    ?? 0;
-                $tmp['leixing']     = $val['leixing']  ?? 0;
-                $tmp['mulu']        = isset($val['mulu_id']) && isset($muluArr[$val['mulu_id']]) ? $muluArr[$val['mulu_id']] : '';
-                $list['data'][$key] = $tmp;
-                $tmp                = [];
+                $tmp['img']           = $this->getPictureJson($val['img'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['title']         = $val['title']     ?? '';
+                $tmp['shoucang']      = $val['shoucang']  ?? 0;
+                $tmp['downnum']       = $val['downnum']   ?? 0;
+                $tmp['dtime']         = $val['dtime']     ?? 0;
+                $tmp['price']         = $val['price']     ?? 0;
+                $tmp['leixing']       = $val['leixing']   ?? 0;
+                $tmp['mulu']          = isset($val['mulu_id']) && isset($muluArr[$val['mulu_id']]) ? $muluArr[$val['mulu_id']] : '';
+                $list['data'][$key]   = $tmp;
+                $tmp                  = [];
             }
         }
         return $list;
