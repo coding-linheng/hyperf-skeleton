@@ -267,15 +267,16 @@ class UserService extends BaseService
             default:
                 throw new BusinessException(ErrorCode::VALIDATE_FAIL);
         }
-        //预览图处理
+        //预览图处理  共享分处理
         foreach ($list['list'] as $k => $v) {
-//            if (!empty($v['img']) && !is_null($data = json_decode($v['img'], true))) {
-//                $preview = $this->userRepository->getPreview((int)$data['0']) ?? '';
-//            }
-            //todo 预览图后缀
+            if ($v['leixing'] == 1) {
+                $list['list'][$k]['star']  = (int)$v['price'];
+                $list['list'][$k]['price'] = $this->getscore((int)$v['price'])['score'];
+            }
             $preview = $this->userRepository->getPictureJson($v['img']);
 
             $list['list'][$k]['preview'] = $preview ?? '';
+            $list['list'][$k]['time']    = date('Y-m-d H:i:s', $v['time']);
             $list['list'][$k]['size']    = sprintf('%.2f', $list['list'][$k]['size'] / 1024 / 1024);
         }
         return array_merge($list, ['count_arr' => $countArr]);
