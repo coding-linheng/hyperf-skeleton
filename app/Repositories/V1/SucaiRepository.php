@@ -52,7 +52,8 @@ class SucaiRepository extends BaseRepository
 
             foreach ($randListArr as $key => &$val) {
                 $tmp['id']          = $val->id ?? 0;
-                $tmp['path']        = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+               //$tmp['path']        = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['img']           = $this->getPictureJson($val->img);
                 $tmp['title']       = $val->title    ?? '';
                 $tmp['shoucang']    = $val->shoucang ?? 0;
                 $tmp['price']       = $val->price    ?? 0;

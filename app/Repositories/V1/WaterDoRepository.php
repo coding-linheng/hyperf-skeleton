@@ -215,7 +215,7 @@ class WaterDoRepository extends BaseRepository
         }
         //增加月统计
         //先算出来本月一号
-        $beginThismonth = mktime(0, 0, 0, date('m'), 1, date('Y'));
+        $beginThismonth = mktime(0, 0, 0, (int)date('m'), 1, (int)date('Y'));
         $monthInfo      = Monthwaterdc::query()->where(['uid' => $uid, 'time' => $beginThismonth])->first();
 
         if (empty($monthInfo)) {
@@ -225,7 +225,7 @@ class WaterDoRepository extends BaseRepository
             $add['dc']   = $score;
             $ids         = Monthwaterdc::query()->insertGetId($add);
         } else {
-            $ids = Monthwaterdc::query()->where(['id' => $monthInfo['id']])->setInc('dc', $score);
+            $ids = Monthwaterdc::query()->where(['id' => $monthInfo['id']])->increment('dc', $score);
         }
 
         if (!$ids) {
