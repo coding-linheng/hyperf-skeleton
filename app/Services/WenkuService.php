@@ -147,6 +147,7 @@ class WenkuService extends BaseService
         if (empty($info)) {
             throw new BusinessException(ErrorCode::ERROR, '文库不存在！');
         }
+        $info=json_decode(json_encode($info),true);
         //已删除
         if ($info['del'] == 1) {
             throw new BusinessException(ErrorCode::ERROR, '文库已删除！');
@@ -183,7 +184,7 @@ class WenkuService extends BaseService
         $this->wenkuRepository->recodeWeekDownNum($info);
 
         //缓存七天，七天之内下载过的可以免费下载，新版忽略
-        //cache($this->uid.$id.'sucai',true,604800);
+        //cache($uid.$id.'sucai',true,604800);
         $downLoadUrl = get_img_path_private($info['path']);
         return ['suffix' => $info['suffix'], 'title' => $info['title'], 'downLoadUrl' => $downLoadUrl];
 
@@ -212,7 +213,7 @@ class WenkuService extends BaseService
         }
 
         //判断是不是文库vip时间
-        $uservip = $this->userRepository->getUserVip(['uid' => $this->uid, 'type' => 5]);
+        $uservip = $this->userRepository->getUserVip(['uid' => $uid, 'type' => 5]);
         Db::beginTransaction();
 
         if (!empty($uservip) && $uservip->time >= time()) {
@@ -357,6 +358,20 @@ class WenkuService extends BaseService
           Db::rollBack();
           throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
         }
+
+        if (empty($wenKudown)) {
+          if (!$this->wenkuRepository->addWenKuDown(['ids' => $wenKuInfo['id'], 'uid' => $uid, 'time' => $time])) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
+          }
+        }else{
+          $ids = $wenKudown['ids'] . ',' . $wenKuInfo['id'];
+
+          if (!$this->wenkuRepository->updateWenkuDown(['id' => $wenKudown['id']], ['ids' => $ids])) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
+          }
+        }
         Db::commit();
         return true;
     }
@@ -385,7 +400,7 @@ class WenkuService extends BaseService
 
         //花的原创币
         //判断用户是不是在时间之内
-        $uservip = $this->userRepository->getUserVip(['uid' => $this->uid, 'type' => 6]);
+        $uservip = $this->userRepository->getUserVip(['uid' => $uid, 'type' => 6]);
         Db::beginTransaction();
 
         if (!empty($uservip) && $uservip->time >= time()) {
@@ -525,6 +540,23 @@ class WenkuService extends BaseService
         if (!$this->wenkuRepository->incDownNum($wenKuInfo['id'])) {
           Db::rollBack();
           throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
+        }
+
+        if (empty($wenKudown)) {
+          if (!$this->wenkuRepository->addWenKuDownDc([
+            'ids' => $wenKuInfo['id'],
+            'uid' => $uid,
+            'time' => $time
+          ])) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
+          }
+        }else{
+          $ids = $wenKudown['ids'] . ',' . $wenKuInfo['id'];
+          if (!$this->wenkuRepository->updateWenkuDownDc(['id' => $wenKudown['id']], ['ids' => $ids])) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '该文库暂时无法下载！');
+          }
         }
         Db::commit();
         return true;
