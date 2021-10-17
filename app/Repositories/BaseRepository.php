@@ -129,6 +129,7 @@ class BaseRepository
     public function getPictureById($imgId, $suffix = ImgSizeStyle::ALBUM_LIST_SMALL_PIC)
     {
         $path = $this->getPictureUrlById($imgId);
+
         if (empty($path)) {
             return '';
         }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Request;
 
-use App\Constants\UserCenterStatus;
 use Hyperf\DbConnection\Db;
 use Hyperf\Validation\Request\FormRequest;
 use Hyperf\Validation\Rule;
@@ -76,7 +75,7 @@ class User extends FormRequest
             'status'      => ['required', Rule::in([0, 1, 2, 3, 4])],
             'type'        => ['required', Rule::in([1, 2])],
             'upload'      => 'required|file',
-            'img'         => 'required|active_url',
+            'img'         => 'required|exists:picture,id',
             'mulu_id'     => 'required|exists:mulu,id',   //分类
             'fenlei'      => 'required|exists:fenlei,id', //类型
             'guanjianci'  => 'required|key_words', //类型
@@ -91,7 +90,7 @@ class User extends FormRequest
             'price'       => [Rule::requiredIf($this->post('leixing') == 2), 'integer', 'between:1,20'],
             'material_id' => [
                 'required',
-                @Rule::exists('img', 'id')->where(fn($query) => $query->where(['uid' => user()['id']])),
+                @Rule::exists('img', 'id')->where(fn ($query) => $query->where(['uid' => user()['id']])),
             ],
         ];
     }
@@ -111,7 +110,7 @@ class User extends FormRequest
             'status'      => '状态',
             'type'        => '类型',
             'material_id' => '素材',
-            'img'         => '封面图',
+            'img'         => '图片',
             'mulu_id'     => '素材分类',
             'fenlei'      => '素材类型',
             'geshi_id'    => '素材格式',
@@ -126,6 +125,7 @@ class User extends FormRequest
     {
         return [
             'material_id.exists'   => '素材不存在',
+            'img.exists'           => '图片不存在',
             'mulu_id.exists'       => ':attribute 不存在',
             'fenlei.exists'        => ':attribute 不存在',
             'geshi_id.exists'      => ':attribute 不存在',

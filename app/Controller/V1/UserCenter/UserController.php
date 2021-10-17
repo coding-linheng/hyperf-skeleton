@@ -230,18 +230,18 @@ class UserController extends AbstractController
     }
 
     /**
-     * 获取素材详情
+     * 获取素材详情.
      */
     public function getDetailForMaterial(User $request): ResponseInterface
     {
         $request->scene('get_material')->validateResolved();
         $id     = $request->input('material_id');
-        $column = ['id', 'name', 'size', 'mulu_id', 'geshi_id', 'title', 'guanjianci', 'leixing', 'price', 'img','status'];
+        $column = ['id', 'name', 'size', 'mulu_id', 'geshi_id', 'title', 'guanjianci', 'leixing', 'price', 'img', 'status'];
         return $this->success($this->userService->getDetailForMaterial((int)$id, $column));
     }
 
     /**
-     * 删除素材管理
+     * 删除素材管理.
      */
     public function deleteForMaterial(User $request): ResponseInterface
     {

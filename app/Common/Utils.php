@@ -53,7 +53,7 @@ class Utils
                 'size'      => $file->getSize(),
                 'suffix'    => $suffix,
                 'name'      => md5_file($file->getRealPath()) . '.' . $suffix,
-                'image_url' => env('PUBLIC_DOMAIN') . '/' . $path
+                'image_url' => env('PUBLIC_DOMAIN') . '/' . $path,
             ];
 
             if ($filesystem->has($path)) {

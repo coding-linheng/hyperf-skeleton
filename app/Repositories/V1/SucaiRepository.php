@@ -53,12 +53,12 @@ class SucaiRepository extends BaseRepository
             foreach ($randListArr as $key => &$val) {
                 $tmp['id']         = $val->id ?? 0;
                 $tmp['path']       = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
-                $tmp['title']      = $val->title ?? '';
+                $tmp['title']      = $val->title    ?? '';
                 $tmp['shoucang']   = $val->shoucang ?? 0;
-                $tmp['price']      = $val->price ?? 0;
-                $tmp['leixing']    = $val->leixing ?? 0;
-                $tmp['downnum']    = $val->downnum ?? 0;
-                $tmp['dtime']      = $val->dtime ?? 0;
+                $tmp['price']      = $val->price    ?? 0;
+                $tmp['leixing']    = $val->leixing  ?? 0;
+                $tmp['downnum']    = $val->downnum  ?? 0;
+                $tmp['dtime']      = $val->dtime    ?? 0;
                 $tmp['mulu']       = isset($val->mulu_id) && isset($muluArr[$val->mulu_id]) ? $muluArr[$val->mulu_id] : '';
                 $randListArr[$key] = $tmp;
                 $tmp               = [];
@@ -107,12 +107,12 @@ class SucaiRepository extends BaseRepository
                 $tmp['id'] = $val['id'] ?? 0;
                 //$tmp['path']          = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
                 $tmp['img']         = $this->getPictureJson($val['img'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
-                $tmp['title']       = $val['title'] ?? '';
+                $tmp['title']       = $val['title']    ?? '';
                 $tmp['shoucang']    = $val['shoucang'] ?? 0;
-                $tmp['downnum']     = $val['downnum'] ?? 0;
-                $tmp['dtime']       = $val['dtime'] ?? 0;
-                $tmp['price']       = $val['price'] ?? 0;
-                $tmp['leixing']     = $val['leixing'] ?? 0;
+                $tmp['downnum']     = $val['downnum']  ?? 0;
+                $tmp['dtime']       = $val['dtime']    ?? 0;
+                $tmp['price']       = $val['price']    ?? 0;
+                $tmp['leixing']     = $val['leixing']  ?? 0;
                 $tmp['mulu']        = isset($val['mulu_id']) && isset($muluArr[$val['mulu_id']]) ? $muluArr[$val['mulu_id']] : '';
                 $list['data'][$key] = $tmp;
                 $tmp                = [];
@@ -435,9 +435,7 @@ class SucaiRepository extends BaseRepository
     }
 
     /**
-     * 删除素材
-     * @param int $id
-     * @return mixed
+     * 删除素材.
      */
     public function deleteImg(int $id): mixed
     {
