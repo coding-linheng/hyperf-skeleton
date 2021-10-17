@@ -311,20 +311,21 @@ class UserService extends BaseService
      */
     public function getMaterialCategory(): array
     {
-        $category = Mulu::query()->pluck('name', 'id')->toArray();
-
-        if (empty($category)) {
-            return [];
-        }
-        $children = Fenlei::query()->whereIn('mid', array_keys($category))->select(['id', 'name', 'mid'])->get()->toArray();
-        $data     = [];
-
-        foreach ($children as $v) {
-            $data[$v['mid']]['id']         = $v['mid'];
-            $data[$v['mid']]['name']       = $category[$v['mid']];
-            $data[$v['mid']]['children'][] = $v;
-        }
-        return array_values($data);
+        return Mulu::query()->get(['id', 'name'])->toArray();
+//        $category = Mulu::query()->pluck('name', 'id')->toArray();
+//
+//        if (empty($category)) {
+//            return [];
+//        }
+//        $children = Fenlei::query()->whereIn('mid', array_keys($category))->select(['id', 'name', 'mid'])->get()->toArray();
+//        $data     = [];
+//
+//        foreach ($children as $v) {
+//            $data[$v['mid']]['id']         = $v['mid'];
+//            $data[$v['mid']]['name']       = $category[$v['mid']];
+//            $data[$v['mid']]['children'][] = $v;
+//        }
+//        return array_values($data);
     }
 
     /**
@@ -338,9 +339,9 @@ class UserService extends BaseService
     /**
      * 删除素材.
      */
-    public function deleteForMaterial(int $id): mixed
+    public function deleteForMaterial(array $ids): mixed
     {
-        return $this->sucaiRepository->deleteImg($id);
+        return $this->sucaiRepository->deleteImg($ids);
     }
 
     /**
@@ -348,8 +349,11 @@ class UserService extends BaseService
      */
     public function getDetailForMaterial(int $id, array $column): array
     {
-        $where = ['id' => $id];
-        $info  = $this->sucaiRepository->getSucaiImgInfo($where, $column);
+        $where              = ['id' => $id];
+        $info               = $this->sucaiRepository->getSucaiImgInfo($where, $column);
+        $info['size']       = $info['size'] / 1024 / 1024;
+        $info['mulu_name']  = Mulu::query()->where('id', $info['mulu_id'])->value('name')   ?? '';
+        $info['geshi_name'] = Geshi::query()->where('id', $info['geshi_id'])->value('name') ?? '';
         return array_merge($info->toArray(), ['preview' => $this->userRepository->getPictureJson($info['img'])]);
     }
 

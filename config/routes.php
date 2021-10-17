@@ -54,6 +54,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::post('cash', [UserController::class, 'cash']);
         Router::post('uploadWork', [UserController::class, 'uploadWork']);
         Router::delete('deleteForMaterial', [UserController::class, 'deleteForMaterial']);
+        Router::delete('batchDeleteMaterial', [UserController::class, 'batchDeleteMaterial']);
     });
 
     #灵感

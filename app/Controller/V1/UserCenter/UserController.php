@@ -247,7 +247,15 @@ class UserController extends AbstractController
     {
         $request->scene('del_material')->validateResolved();
         $id = $request->input('material_id');
-        return $this->success($this->userService->deleteForMaterial((int)$id));
+        return $this->success($this->userService->deleteForMaterial([$id]));
+    }
+
+    public function batchDeleteMaterial(User $request): ResponseInterface
+    {
+        $request->scene('batch_del_material')->validateResolved();
+        $ids   = $this->request->input('material_ids');
+        $idArr = explode(',', $ids);
+        return $this->success($this->userService->deleteForMaterial($idArr));
     }
 
     /**
