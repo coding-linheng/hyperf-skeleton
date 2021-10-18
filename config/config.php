@@ -15,6 +15,21 @@ use Psr\Log\LogLevel;
 return [
     'app_name' => env('APP_NAME', 'skeleton'),
     'app_env' => env('APP_ENV', 'dev'),
+    // 是否允许跨域资源访问
+    'cors_access' => env('CORS_ACCESS', true),
+    // 应用域名(静态资源访问使用)
+    'app_domain' => env('APP_DOMAIN', ''),
+    // 允许跨域的域名
+    'allow_origins' => [
+        'http://127.0.0.1',
+        'http://119.23.59.3',
+        'http://localhost',
+        'http://www.yoctometer.com',
+        'http://www.yinmengkeji.com',
+        'http://www.hyperfcms.com',
+        'http://demo.hyperfcms.com',
+        'http://cors-demo.hyperfcms.com',
+    ],
     'scan_cacheable' => env('scan_cacheable', false),
     StdoutLoggerInterface::class => [
         'log_level' => [
