@@ -377,4 +377,24 @@ class AlbumRepository extends BaseRepository
         //更新字段
         return Album::where('id', $aid)->update(['preview_imgs' => json_encode($previewImgs)]);
     }
+
+    /**
+     * 搜索album表中展示专辑.
+     *
+     * @param  string  $where
+     * @param  string  $order
+     *
+     * @return LengthAwarePaginatorInterface
+     */
+    public function getAlbum(string $where="", string $order="daytime desc,id desc"): LengthAwarePaginatorInterface
+    {
+        $where='del=1 and status=2 and (brandscenes>0 OR brandname>0 OR branduse>0) '.$where;
+        //获取过滤禁用展示的用户id
+        $blockIds=$this->getBlockAlbumIdsByUser();
+        if(!empty($blockIds)){
+            $blockIdsStr=implode(',',$blockIds);
+            $where=$where." id not in (".$blockIdsStr.")";
+        }
+        return Album::whereRaw($where)->orderByRaw($order)->paginate();
+    }
 }

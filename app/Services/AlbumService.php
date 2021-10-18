@@ -303,4 +303,49 @@ class AlbumService extends BaseService
       //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
       return $this->albumRepository->searchAlbumList($queryData, $order,$where);
     }
+
+    /**
+     * 藏馆--获取品牌馆.
+     *
+     * @param  mixed  $queryData
+     * @param $order
+     */
+    public function getBrandCollectionList(mixed $queryData, $order): mixed
+    {
+        $where='';
+        //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
+        if(isset($queryData['brandscenes']) && !empty($queryData['brandscenes'])){
+            $where.=" AND brandscenes={$queryData['brandscenes']}";
+        }
+        if(isset($queryData['brandname']) && !empty($queryData['brandname'])){
+            $where.=" AND brandname={$queryData['brandname']}";
+        }
+        if(isset($queryData['branduse']) && !empty($queryData['branduse'])){
+            $where.=" AND branduse={$queryData['branduse']}";
+        }
+
+        return $this->albumRepository->getAlbum($where, $order);
+    }
+
+    /**
+     *  藏馆--获取地产馆.
+     * @param  mixed  $queryData
+     * @param $order
+     */
+    public function getLandedCollectionList(mixed $queryData, $order): mixed
+    {
+        $where='';
+        //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
+        if(isset($queryData['brandscenes']) && !empty($queryData['brandscenes'])){
+            $where.=" AND brandscenes={$queryData['brandscenes']}";
+        }
+        if(isset($queryData['brandname']) && !empty($queryData['brandname'])){
+            $where.=" AND brandname={$queryData['brandname']}";
+        }
+        if(isset($queryData['branduse']) && !empty($queryData['branduse'])){
+            $where.=" AND branduse={$queryData['branduse']}";
+        }
+        return $this->albumRepository->getAlbum($where, $order);
+    }
+
 }
