@@ -47,8 +47,6 @@ class BaseRepository
 
     protected $dbPictureCacheKey = 'db_picture';
 
-    #[Inject]
-    protected UserRepository $userRepository;
     /**
      * __get
      * 隐式注入服务类
