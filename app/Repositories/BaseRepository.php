@@ -19,7 +19,6 @@ use App\Constants\ImgSizeStyle;
 use App\Constants\StatusCode;
 use App\Model\Album;
 use App\Model\Picture;
-use App\Repositories\V1\UserRepository;
 use App\Task\Producer\CachePlanProducer;
 use http\Client\Curl\User;
 use Hyperf\Di\Annotation\Inject;
@@ -223,28 +222,34 @@ class BaseRepository
             ++$i;
         }
     }
-    public function getBlockAlbumIdsByUser(){
-          $blockUserList=$this->userRepository->blockAlbumUser();
-          $returnIds = $zjList=$ycZjList=[];
-          if(!empty($blockUserList)){
-              foreach ($blockUserList as $val){
-                  if($val['iszj']==2){
-                      $zjList = Album::query()->where(['uid'=>$val['id'],'isoriginal'=>1])->pluck('id');
-                      if(!empty($zjList)){
-                          $returnIds=$zjList;
-                      }
-                  }
-                  if($val['isyczj']==2){
-                      $ycZjList = Album::query()->where(['uid'=>$val['id'],'isoriginal'=>2])->pluck('id');
-                  }
-              }
-          }
 
-        if(!empty($ycZjList) && !empty($returnIds)){
-            $returnIds=array_merge($ycZjList,$returnIds);
+    public function getBlockAlbumIdsByUser()
+    {
+        $blockUserList = $this->userRepository->blockAlbumUser();
+        $returnIds     = $zjList     = $ycZjList     = [];
+
+        if (!empty($blockUserList)) {
+            foreach ($blockUserList as $val) {
+                if ($val['iszj'] == 2) {
+                    $zjList = Album::query()->where(['uid' => $val['id'], 'isoriginal' => 1])->pluck('id');
+
+                    if (!empty($zjList)) {
+                        $returnIds = $zjList;
+                    }
+                }
+
+                if ($val['isyczj'] == 2) {
+                    $ycZjList = Album::query()->where(['uid' => $val['id'], 'isoriginal' => 2])->pluck('id');
+                }
+            }
         }
-        if(!empty($ycZjList) && empty($returnIds)){
-            $returnIds=$ycZjList;
+
+        if (!empty($ycZjList) && !empty($returnIds)) {
+            $returnIds = array_merge($ycZjList, $returnIds);
+        }
+
+        if (!empty($ycZjList) && empty($returnIds)) {
+            $returnIds = $ycZjList;
         }
         return $returnIds;
     }

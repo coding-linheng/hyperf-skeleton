@@ -221,12 +221,21 @@ class UserController extends AbstractController
     }
 
     /**
-     * 填写信息.
+     * 填写信息-素材.
      */
     public function writeInformationForMaterial(User $request): ResponseInterface
     {
         $request->scene('information')->validateResolved();
         return $this->success($this->userService->writeInformationForMaterial($request->all()));
+    }
+
+    /**
+     * 填写信息-文库.
+     */
+    public function writeInformationForLibrary(User $request): ResponseInterface
+    {
+        $request->scene('information_library')->validateResolved();
+        return $this->success($this->userService->writeInformationForLibrary($request->all()));
     }
 
     /**

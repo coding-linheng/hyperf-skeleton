@@ -66,10 +66,11 @@ class AlbumRepository extends BaseRepository
      * @param $query
      *
      * @param $order
+     * @param mixed $where
      *
      * @return mixed
      */
-    public function searchAlbumList($query, $order,$where=[])
+    public function searchAlbumList($query, $order, $where = [])
     {
         //return Albumlist::search()->where("title",$query)->paginate(200);
         //return Albumlist::search($query)->paginate(200);
@@ -80,8 +81,9 @@ class AlbumRepository extends BaseRepository
         if (!empty($order)) {
             $orm = $orm->orderBy($order, 'desc');
         }
-        if(!empty($where)){
-          $orm = $orm->where($where);
+
+        if (!empty($where)) {
+            $orm = $orm->where($where);
         }
         $list = $orm->paginateRaw(200)->toArray();
         $list = format_es_page_raw_data($list);
@@ -380,20 +382,16 @@ class AlbumRepository extends BaseRepository
 
     /**
      * 搜索album表中展示专辑.
-     *
-     * @param  string  $where
-     * @param  string  $order
-     *
-     * @return LengthAwarePaginatorInterface
      */
-    public function getAlbum(string $where="", string $order="daytime desc,id desc"): LengthAwarePaginatorInterface
+    public function getAlbum(string $where = '', string $order = 'daytime desc,id desc'): LengthAwarePaginatorInterface
     {
-        $where='del=1 and status=2 and (brandscenes>0 OR brandname>0 OR branduse>0) '.$where;
+        $where = 'del=1 and status=2 and (brandscenes>0 OR brandname>0 OR branduse>0) ' . $where;
         //获取过滤禁用展示的用户id
-        $blockIds=$this->getBlockAlbumIdsByUser();
-        if(!empty($blockIds)){
-            $blockIdsStr=implode(',',$blockIds);
-            $where=$where." id not in (".$blockIdsStr.")";
+        $blockIds = $this->getBlockAlbumIdsByUser();
+
+        if (!empty($blockIds)) {
+            $blockIdsStr = implode(',', $blockIds);
+            $where       = $where . ' id not in (' . $blockIdsStr . ')';
         }
         return Album::whereRaw($where)->orderByRaw($order)->paginate();
     }

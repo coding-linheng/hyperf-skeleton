@@ -8,6 +8,7 @@ use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Model\Keyword;
 use App\Model\KeywordsType;
+use App\Model\Picture;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
@@ -45,6 +46,20 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
 
             if (KeywordsType::query()->where('must', 1)->count() > count($intersect)) {
                 throw new BusinessException(ErrorCode::VALIDATE_FAIL, '关键词必选项不足');
+            }
+            return true;
+        });
+        //注册图片组验证器
+        $validatorFactory->extend('images', function ($attribute, $value, $parameters, $validator) {
+            $ids = explode(',', $value);
+
+            if (count($ids) < 1 || count($ids) > 9) {
+                throw new BusinessException(ErrorCode::VALIDATE_FAIL, '预览图上传1-9张');
+            }
+            $count = Picture::query()->whereIn('id', $ids)->count();
+
+            if ($count != count($ids)) {
+                throw new BusinessException(ErrorCode::VALIDATE_FAIL, '请上传正确的封面图');
             }
             return true;
         });

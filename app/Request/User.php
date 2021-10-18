@@ -14,18 +14,19 @@ class User extends FormRequest
      * Set scene values.
      */
     public $scenes = [
-        'login'              => ['username', 'password'], //登录
-        'bind_mobile'        => ['mobile', 'captcha'], //绑定手机
-        'profile'            => ['nickname', 'sex', 'wx', 'address', 'qq', 'content'], //个人资料
-        'certification'      => ['name', 'tel', 'cardnum', 'zhi', 'qq', 'email', 'cardimg', 'cardimg1'],
-        'notice'             => ['notice_id'],
-        'upload_head'        => ['head_image'],
-        'work'               => ['type', 'status'],
-        'upload'             => ['upload', 'type'],
-        'del_material'       => ['material_id'],
-        'batch_del_material' => ['material_ids'],
-        'get_material'       => ['material_id'],
-        'information'        => ['material_id', 'img', 'mulu_id', 'geshi_id', 'title', 'leixing', 'price', 'guanjianci'],
+        'login'               => ['username', 'password'], //登录
+        'bind_mobile'         => ['mobile', 'captcha'], //绑定手机
+        'profile'             => ['nickname', 'sex', 'wx', 'address', 'qq', 'content'], //个人资料
+        'certification'       => ['name', 'tel', 'cardnum', 'zhi', 'qq', 'email', 'cardimg', 'cardimg1'],
+        'notice'              => ['notice_id'],
+        'upload_head'         => ['head_image'],
+        'work'                => ['type', 'status'],
+        'upload'              => ['upload', 'type'],
+        'del_material'        => ['material_id'],
+        'batch_del_material'  => ['material_ids'],
+        'get_material'        => ['material_id'],
+        'information'         => ['material_id', 'img', 'mulu_id', 'geshi_id', 'title', 'leixing', 'price', 'guanjianci'],
+        'information_library' => ['library_id', 'img', 'free_num', 'title', 'guanjianci', 'leixing', 'price'],
     ];
 
     /**
@@ -76,10 +77,11 @@ class User extends FormRequest
             'status'       => ['required', Rule::in([0, 1, 2, 3, 4])],
             'type'         => ['required', Rule::in([1, 2])],
             'upload'       => 'required|file',
-            'img'          => 'required|exists:picture,id',
+            'img'          => ['required', 'images'],
             'mulu_id'      => 'required|exists:mulu,id',   //分类
             'fenlei'       => 'required|exists:fenlei,id', //类型
             'guanjianci'   => 'required|key_words', //类型
+            'free_num'     => 'required|integer', //免费页数
             'theme'        => [
                 @Rule::requiredIf(function () {
                     return Db::table('scthreefenlei')->where('mid', $this->post('fenlei'))->exists();
@@ -92,6 +94,10 @@ class User extends FormRequest
             'material_id'  => [
                 'required',
                 @Rule::exists('img', 'id')->where(fn ($query) => $query->where(['uid' => user()['id']])),
+            ],
+            'library_id'   => [
+                'required',
+                @Rule::exists('wenku', 'id')->where(fn ($query) => $query->where(['uid' => user()['id']])),
             ],
             'material_ids' => 'required',
         ];
@@ -112,6 +118,7 @@ class User extends FormRequest
             'status'       => '状态',
             'type'         => '类型',
             'material_id'  => '素材',
+            'library_id'   => '文库',
             'material_ids' => '素材',
             'img'          => '图片',
             'mulu_id'      => '素材分类',
@@ -121,6 +128,7 @@ class User extends FormRequest
             'leixing'      => '类型',
             'price'        => '价格',
             'guanjianci'   => '关键词',
+            'free_num'     => '免费页数',
         ];
     }
 
@@ -128,6 +136,7 @@ class User extends FormRequest
     {
         return [
             'material_id.exists'   => '素材不存在或不属于你',
+            'library_id.exists'    => '文库不存在或不属于你',
             'img.exists'           => '图片不存在',
             'mulu_id.exists'       => ':attribute 不存在',
             'fenlei.exists'        => ':attribute 不存在',

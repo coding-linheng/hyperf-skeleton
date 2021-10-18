@@ -289,12 +289,13 @@ class UserService extends BaseService
     {
         $params['status'] = UserCenterStatus::WORK_MANAGE_REVIEW;
         $params['text']   = '';
+        $params['img']    = json_encode(explode(',', $params['img']));
         Db::beginTransaction();
         try {
             $material = $this->sucaiRepository->getSucaiImgInfo(['id' => $params['material_id']]);
 
-            if ($material['status'] != UserCenterStatus::WORK_MANAGE_PENDING) {
-                throw new Exception('素材已被处理,无需再次填写');
+            if (!in_array($material['status'], [UserCenterStatus::WORK_MANAGE_PENDING, UserCenterStatus::WORK_MANAGE_REVISION])) {
+                throw new Exception('文库已被处理,无需再次填写');
             }
             //记录关联信息
             Mulurelation::query()->updateOrCreate(['mid' => $params['mulu_id'], 'iid' => $params['material_id']]);
@@ -356,6 +357,26 @@ class UserService extends BaseService
         $info['mulu_name']  = Mulu::query()->where('id', $info['mulu_id'])->value('name')   ?? '';
         $info['geshi_name'] = Geshi::query()->where('id', $info['geshi_id'])->value('name') ?? '';
         return array_merge($info->toArray(), ['preview' => $this->userRepository->getPictureJson($info['img'])]);
+    }
+
+    public function writeInformationForLibrary(array $params): bool
+    {
+        $params['status'] = UserCenterStatus::WORK_MANAGE_REVIEW;
+        $params['text']   = '';
+        $params['img']    = json_encode(explode(',', $params['img']));
+        Db::beginTransaction();
+        try {
+            $material = $this->wenkuRepository->getLibraryDetail(['id' => $params['library_id']]);
+
+            if (!in_array($material['status'], [UserCenterStatus::WORK_MANAGE_PENDING, UserCenterStatus::WORK_MANAGE_REVISION])) {
+                throw new Exception('文库已被处理,无需再次填写');
+            }
+            Db::commit();
+            return $material->fill($params)->save();
+        } catch (\Exception $exception) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '填写失败' . $exception->getMessage());
+        }
     }
 
     /**

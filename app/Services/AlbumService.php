@@ -43,7 +43,6 @@ class AlbumService extends BaseService
         return $this->albumRepository->searchAlbumList($queryData, $order);
     }
 
-
     /**
      * 模糊搜索灵感数据，包含标题和标签.
      */
@@ -256,6 +255,64 @@ class AlbumService extends BaseService
         return $this->albumRepository->captureAlbumImg($albumlistInfoNew, $albumInfo, $albumlistInfo);
     }
 
+    /**
+     * 模糊搜索灵感数据，包含标题和标签.
+     *
+     * @param $order
+     */
+    public function getOriginalWorkList(mixed $queryData, $order): mixed
+    {
+        $where = ['isoriginal' => 2];
+        //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
+        return $this->albumRepository->searchAlbumList($queryData, $order, $where);
+    }
+
+    /**
+     * 藏馆--获取品牌馆.
+     *
+     * @param $order
+     */
+    public function getBrandCollectionList(mixed $queryData, $order): mixed
+    {
+        $where = '';
+        //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
+        if (isset($queryData['brandscenes']) && !empty($queryData['brandscenes'])) {
+            $where .= " AND brandscenes={$queryData['brandscenes']}";
+        }
+
+        if (isset($queryData['brandname']) && !empty($queryData['brandname'])) {
+            $where .= " AND brandname={$queryData['brandname']}";
+        }
+
+        if (isset($queryData['branduse']) && !empty($queryData['branduse'])) {
+            $where .= " AND branduse={$queryData['branduse']}";
+        }
+
+        return $this->albumRepository->getAlbum($where, $order);
+    }
+
+    /**
+     *  藏馆--获取地产馆.
+     * @param $order
+     */
+    public function getLandedCollectionList(mixed $queryData, $order): mixed
+    {
+        $where = '';
+        //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
+        if (isset($queryData['brandscenes']) && !empty($queryData['brandscenes'])) {
+            $where .= " AND brandscenes={$queryData['brandscenes']}";
+        }
+
+        if (isset($queryData['brandname']) && !empty($queryData['brandname'])) {
+            $where .= " AND brandname={$queryData['brandname']}";
+        }
+
+        if (isset($queryData['branduse']) && !empty($queryData['branduse'])) {
+            $where .= " AND branduse={$queryData['branduse']}";
+        }
+        return $this->albumRepository->getAlbum($where, $order);
+    }
+
     private function captureAlbumImgCheck($albumInfo, $albumlistInfo)
     {
         $uid = user()['id'] ?? 0;
@@ -291,61 +348,4 @@ class AlbumService extends BaseService
 
         return true;
     }
-
-    /**
-     * 模糊搜索灵感数据，包含标题和标签.
-     *
-     * @param $order
-     */
-    public function getOriginalWorkList(mixed $queryData, $order): mixed
-    {
-      $where=['isoriginal' => 2];
-      //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
-      return $this->albumRepository->searchAlbumList($queryData, $order,$where);
-    }
-
-    /**
-     * 藏馆--获取品牌馆.
-     *
-     * @param  mixed  $queryData
-     * @param $order
-     */
-    public function getBrandCollectionList(mixed $queryData, $order): mixed
-    {
-        $where='';
-        //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
-        if(isset($queryData['brandscenes']) && !empty($queryData['brandscenes'])){
-            $where.=" AND brandscenes={$queryData['brandscenes']}";
-        }
-        if(isset($queryData['brandname']) && !empty($queryData['brandname'])){
-            $where.=" AND brandname={$queryData['brandname']}";
-        }
-        if(isset($queryData['branduse']) && !empty($queryData['branduse'])){
-            $where.=" AND branduse={$queryData['branduse']}";
-        }
-
-        return $this->albumRepository->getAlbum($where, $order);
-    }
-
-    /**
-     *  藏馆--获取地产馆.
-     * @param  mixed  $queryData
-     * @param $order
-     */
-    public function getLandedCollectionList(mixed $queryData, $order): mixed
-    {
-        $where='';
-        //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
-        if(isset($queryData['brandscenes']) && !empty($queryData['brandscenes'])){
-            $where.=" AND brandscenes={$queryData['brandscenes']}";
-        }
-        if(isset($queryData['brandname']) && !empty($queryData['brandname'])){
-            $where.=" AND brandname={$queryData['brandname']}";
-        }
-        if(isset($queryData['branduse']) && !empty($queryData['branduse'])){
-            $where.=" AND branduse={$queryData['branduse']}";
-        }
-        return $this->albumRepository->getAlbum($where, $order);
-    }
-
 }

@@ -366,13 +366,12 @@ class UserRepository extends BaseRepository
     {
         return User::query()->where(['id' => $uid])->decrement('dc', $dc);
     }
+
     /**
      * 获取禁止展示专辑的用户.
      */
     public function blockAlbumUser(): array
     {
-        return User::query()->whereRaw("iszj=2 or isyczj=2")->select(['id','iszj','isyczj'])->get()->toArray();
+        return User::query()->whereRaw('iszj=2 or isyczj=2')->select(['id', 'iszj', 'isyczj'])->get()->toArray();
     }
-
-
 }

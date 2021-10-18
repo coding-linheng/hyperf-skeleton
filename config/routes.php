@@ -52,6 +52,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::put('profile', [UserController::class, 'profile']);
         Router::put('certification', [UserController::class, 'certification']);
         Router::put('writeInformationForMaterial', [UserController::class, 'writeInformationForMaterial']);
+        Router::put('writeInformationForLibrary', [UserController::class, 'writeInformationForLibrary']);
         Router::post('cash', [UserController::class, 'cash']);
         Router::post('uploadWork', [UserController::class, 'uploadWork']);
         Router::delete('deleteForMaterial', [UserController::class, 'deleteForMaterial']);
@@ -95,12 +96,12 @@ Router::addGroup($routerPath . '/', function () {
 
     #首页
     Router::addGroup('index/', function () {
-      Router::get('getIndexBanner', [IndexController::class, 'getIndexBanner']);
-      Router::get('getAdvertisement', [IndexController::class, 'getAdvertisement']);
-      Router::get('getIndexTopAdvertisement', [IndexController::class, 'getIndexTopAdvertisement']);
-      Router::get('getBlogRoll', [IndexController::class, 'getBlogRoll']);
-      Router::get('getRecommendUserList', [IndexController::class, 'getRecommendUserList']);
-      Router::get('getRecommendZpList', [IndexController::class, 'getRecommendZpList']);
+        Router::get('getIndexBanner', [IndexController::class, 'getIndexBanner']);
+        Router::get('getAdvertisement', [IndexController::class, 'getAdvertisement']);
+        Router::get('getIndexTopAdvertisement', [IndexController::class, 'getIndexTopAdvertisement']);
+        Router::get('getBlogRoll', [IndexController::class, 'getBlogRoll']);
+        Router::get('getRecommendUserList', [IndexController::class, 'getRecommendUserList']);
+        Router::get('getRecommendZpList', [IndexController::class, 'getRecommendZpList']);
     });
 
     #灵感

@@ -21,6 +21,11 @@ ALTER TABLE dczg_shouimg ADD COLUMN `c_time` int unsigned NOT NULL DEFAULT '0' C
 ALTER TABLE dczg_img ADD COLUMN `mulu_id` int NOT NULL COMMENT '分类目录id';
 ALTER TABLE dczg_img ADD COLUMN `geshi_id` int NOT NULL COMMENT '分类目录id';
 ```
+
+```sql
+ALTER TABLE dczg_wenku ADD COLUMN `free_num` int NOT NULL DEFAULT '0' COMMENT '免费页数';
+ALTER TABLE dczg_wenku ADD COLUMN `guanjianci` varchar(255) NOT NULL DEFAULT '' COMMENT '关键词';
+```
 ---
 - 新增数据表
 ```sql
