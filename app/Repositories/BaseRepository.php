@@ -19,8 +19,8 @@ use App\Constants\ImgSizeStyle;
 use App\Constants\StatusCode;
 use App\Model\Album;
 use App\Model\Picture;
+use App\Model\User;
 use App\Task\Producer\CachePlanProducer;
-use http\Client\Curl\User;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Container\ContainerInterface;
 
@@ -225,21 +225,28 @@ class BaseRepository
 
     public function getBlockAlbumIdsByUser()
     {
-        $blockUserList = $this->userRepository->blockAlbumUser();
-        $returnIds     = $zjList     = $ycZjList     = [];
-
+        $blockUserList = User::query()->whereRaw('iszj=2 or isyczj=2')->select(['id', 'iszj', 'isyczj'])->get()->toArray();
+        $returnIds  = $ycZjList     = [];
         if (!empty($blockUserList)) {
             foreach ($blockUserList as $val) {
                 if ($val['iszj'] == 2) {
                     $zjList = Album::query()->where(['uid' => $val['id'], 'isoriginal' => 1])->pluck('id');
-
                     if (!empty($zjList)) {
                         $returnIds = $zjList;
+                        foreach($zjList as $v){
+                          $returnIds[]=$v['id'];
+                        }
                     }
                 }
 
                 if ($val['isyczj'] == 2) {
                     $ycZjList = Album::query()->where(['uid' => $val['id'], 'isoriginal' => 2])->pluck('id');
+                    if (!empty($ycZjList)) {
+                      $returnIds = $ycZjList;
+                      foreach($ycZjList as $v){
+                        $ycZjList[]=$v['id'];
+                      }
+                    }
                 }
             }
         }

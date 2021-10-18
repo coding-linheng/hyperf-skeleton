@@ -385,7 +385,6 @@ class AlbumRepository extends BaseRepository
      */
     public function getAlbum(string $where = '', string $order = 'daytime desc,id desc'): LengthAwarePaginatorInterface
     {
-        $where = 'del=1 and status=2 and (brandscenes>0 OR brandname>0 OR branduse>0) ' . $where;
         //获取过滤禁用展示的用户id
         $blockIds = $this->getBlockAlbumIdsByUser();
 
@@ -393,6 +392,12 @@ class AlbumRepository extends BaseRepository
             $blockIdsStr = implode(',', $blockIds);
             $where       = $where . ' id not in (' . $blockIdsStr . ')';
         }
+        //循环判断是否有封面图
+        //if($fid['fengmian']!=''){
+        //		return IMG.$fid['fengmian'].'-'.$houzhui;
+        //	}
+        //有预览图
+        // $data['albumlist'][$k]['imgurl']=getqiniuimg($v['path'],64);
         return Album::whereRaw($where)->orderByRaw($order)->paginate();
     }
 }
