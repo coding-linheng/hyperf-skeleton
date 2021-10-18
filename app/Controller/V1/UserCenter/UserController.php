@@ -215,7 +215,7 @@ class UserController extends AbstractController
     {
         $request->scene('work')->validateResolved();
         $query  = $request->all();
-        $column = ['id', 'name', 'size', 'img', 'time', 'status', 'text', 'price', 'downnum', 'leixing'];
+        $column = ['id', 'name', 'size', 'img', 'time', 'status', 'text', 'price', 'downnum', 'leixing', 'unnum'];
         $data   = $this->userService->worksManage(user()['id'], $query, $column);
         return $this->success($data);
     }
