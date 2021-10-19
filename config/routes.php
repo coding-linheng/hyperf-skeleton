@@ -47,16 +47,16 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getMaterialCategory', [UserController::class, 'getMaterialCategory']);
         Router::get('getMaterialFormat', [UserController::class, 'getMaterialFormat']);
         Router::get('getDetailForMaterial', [UserController::class, 'getDetailForMaterial']);
-        Router::put('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
-        Router::put('bindMobile', [UserController::class, 'bindMobile']);
-        Router::put('profile', [UserController::class, 'profile']);
-        Router::put('certification', [UserController::class, 'certification']);
-        Router::put('writeInformationForMaterial', [UserController::class, 'writeInformationForMaterial']);
-        Router::put('writeInformationForLibrary', [UserController::class, 'writeInformationForLibrary']);
+        Router::post('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
+        Router::post('bindMobile', [UserController::class, 'bindMobile']);
+        Router::post('profile', [UserController::class, 'profile']);
+        Router::post('certification', [UserController::class, 'certification']);
+        Router::post('writeInformationForMaterial', [UserController::class, 'writeInformationForMaterial']);
+        Router::post('writeInformationForLibrary', [UserController::class, 'writeInformationForLibrary']);
         Router::post('cash', [UserController::class, 'cash']);
         Router::post('uploadWork', [UserController::class, 'uploadWork']);
-        Router::delete('deleteForMaterial', [UserController::class, 'deleteForMaterial']);
-        Router::delete('batchDeleteMaterial', [UserController::class, 'batchDeleteMaterial']);
+        Router::post('deleteForMaterial', [UserController::class, 'deleteForMaterial']);
+        Router::post('batchDeleteMaterial', [UserController::class, 'batchDeleteMaterial']);
     });
 
     #灵感
