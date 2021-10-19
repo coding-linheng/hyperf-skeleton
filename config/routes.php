@@ -113,9 +113,9 @@ Router::addGroup($routerPath . '/', function () {
     Router::addGroup('album/', function () {
         Router::get('getRandList', [AlbumController::class, 'getRandList']);
         Router::get('searchList', [AlbumController::class, 'searchList']);
-        Router::post('getOriginalWorkList', [AlbumController::class, 'getOriginalWorkList']);
-        Router::post('getBrandCollectionList', [AlbumController::class, 'getBrandCollectionList']);
-        Router::post('getLandedCollectionList', [AlbumController::class, 'getLandedCollectionList']);
+        Router::get('getOriginalWorkList', [AlbumController::class, 'getOriginalWorkList']);
+        Router::get('getBrandCollectionList', [AlbumController::class, 'getBrandCollectionList']);
+        Router::get('getLandedCollectionList', [AlbumController::class, 'getLandedCollectionList']);
     });
 
     #素材

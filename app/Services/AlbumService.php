@@ -320,6 +320,7 @@ class AlbumService extends BaseService
         return $this->albumRepository->getAlbum($where, $order);
     }
 
+    //采集
     private function captureAlbumImgCheck($albumInfo, $albumlistInfo)
     {
         $uid = user()['id'] ?? 0;

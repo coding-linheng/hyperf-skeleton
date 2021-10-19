@@ -9,6 +9,9 @@ class ImgSizeStyle
     //灵感列表展示/搜索列表展示中图样式标签
     public const ALBUM_LIST_SMALL_PIC = 'xiaoyulantu';
 
+    //原创，藏馆中显示的4个小图，尺寸64
+    public const ALBUM_LIST_PREVIEW_PIC = '64';
+
     //灵感详情展示中图样式标签
     public const ALBUM_LIST_DETAIL_MID_PIC = 'lingzhongyulan660';
 
