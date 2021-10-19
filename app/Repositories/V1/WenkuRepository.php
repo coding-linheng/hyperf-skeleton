@@ -39,17 +39,17 @@ class WenkuRepository extends BaseRepository
             $muluArr = $this->getMulu();
 
             foreach ($randListArr as $key => &$val) {
-                $tmp['id']          = $val->id ?? 0;
-                $tmp['path']        = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
-                $tmp['title']       = $val->title    ?? '';
-                $tmp['shoucang']    = $val->shoucang ?? 0;
-                $tmp['price']       = $val->price    ?? 0;
-                $tmp['leixing']     = $val->leixing  ?? 0;
-                $tmp['downnum']     = $val->downnum  ?? 0;
-                $tmp['dtime']       = $val->dtime    ?? 0;
-                $tmp['mulu']        = isset($val->mulu_id) && isset($muluArr[$val->mulu_id]) ? $muluArr[$val->mulu_id] : '';
-                $randListArr[$key]  = $tmp;
-                $tmp                = [];
+                $tmp['id']         = $val->id ?? 0;
+                $tmp['path']       = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['title']      = $val->title    ?? '';
+                $tmp['shoucang']   = $val->shoucang ?? 0;
+                $tmp['price']      = $val->price    ?? 0;
+                $tmp['leixing']    = $val->leixing  ?? 0;
+                $tmp['downnum']    = $val->downnum  ?? 0;
+                $tmp['dtime']      = $val->dtime    ?? 0;
+                $tmp['mulu']       = isset($val->mulu_id) && isset($muluArr[$val->mulu_id]) ? $muluArr[$val->mulu_id] : '';
+                $randListArr[$key] = $tmp;
+                $tmp               = [];
             }
         }
         return $randListArr;
@@ -131,7 +131,9 @@ class WenkuRepository extends BaseRepository
      */
     public function getDetailInfoById($id)
     {
-        return Db::table('wenku as w')->leftJoin('user as u', 'u.id', '=', 'w.uid')->where('w.id', $id)->select(['w.*', 'u.nickname as username', 'u.imghead'])->first();
+        return Db::table('wenku as w')->leftJoin('user as u', 'u.id', '=', 'w.uid')->where('w.id', $id)->select([
+            'w.*', 'u.nickname as username', 'u.imghead',
+        ])->first();
     }
 
     /**
@@ -139,7 +141,7 @@ class WenkuRepository extends BaseRepository
      */
     public function getSearchWenkuList(array $query): array
     {
-        $where    = ['status' => 3, 'del' => 0];
+        $where = ['status' => 3, 'del' => 0];
         //排序
         if (empty($query['order'])) {
             $order = 'w.dtime';
@@ -170,8 +172,11 @@ class WenkuRepository extends BaseRepository
             $orm = $orm->orderBy($order, 'desc');
         }
 
-        $count    = $orm->count();
-        $list     = $orm->select(['w.id', 'w.img', 'w.title', 'w.price', 'w.shoucang', 'w.downnum', 'w.looknum', 'w.pdfimg', 'w.leixing', 'u.nickname as username', 'u.imghead'])->orderBy('w.id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
+        $count = $orm->count();
+        $list  = $orm->select([
+            'w.id', 'w.img', 'w.title', 'w.price', 'w.shoucang', 'w.downnum', 'w.looknum', 'w.pdfimg', 'w.leixing',
+            'u.nickname as username', 'u.imghead',
+        ])->orderBy('w.id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
 
         if (empty($list)) {
             return ['count' => 0, 'list' => []];
@@ -285,5 +290,13 @@ class WenkuRepository extends BaseRepository
     public function updateWenkuDown(array $where, array $data): int
     {
         return Wenkudown::query()->where($where)->update($data);
+    }
+
+    /**
+     * 删除文库.
+     */
+    public function deleteLibrary(array $ids): int
+    {
+        return Wenku::query()->whereIn('id', $ids)->delete();
     }
 }

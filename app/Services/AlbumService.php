@@ -274,7 +274,7 @@ class AlbumService extends BaseService
      */
     public function getBrandCollectionList(mixed $queryData, $order): mixed
     {
-        $where = 'del=1 and status=2 and (brandscenes>0 OR brandname>0 OR branduse>0) ' ;
+        $where = 'del=1 and status=2 and (brandscenes>0 OR brandname>0 OR branduse>0) ';
         //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
         if (isset($queryData['brandscenes']) && !empty($queryData['brandscenes'])) {
             $where .= " AND brandscenes={$queryData['brandscenes']}";
@@ -287,8 +287,9 @@ class AlbumService extends BaseService
         if (isset($queryData['branduse']) && !empty($queryData['branduse'])) {
             $where .= " AND branduse={$queryData['branduse']}";
         }
-        if(!empty($order)){
-          $order=$order.' desc ,id desc';
+
+        if (!empty($order)) {
+            $order = $order . ' desc ,id desc';
         }
         return $this->albumRepository->getAlbum($where, $order);
     }
@@ -299,7 +300,7 @@ class AlbumService extends BaseService
      */
     public function getLandedCollectionList(mixed $queryData, $order): mixed
     {
-        $where='del=1 and status=2 and (paintcountry>0 OR paintname>0 OR paintstyle>0)';
+        $where = 'del=1 and status=2 and (paintcountry>0 OR paintname>0 OR paintstyle>0)';
         //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
         if (isset($queryData['paintstyle']) && !empty($queryData['paintstyle'])) {
             $where .= " AND paintstyle={$queryData['paintstyle']}";
@@ -313,8 +314,8 @@ class AlbumService extends BaseService
             $where .= " AND paintcountry={$queryData['paintcountry']}";
         }
 
-        if(!empty($order)){
-          $order=$order.' desc ,id desc';
+        if (!empty($order)) {
+            $order = $order . ' desc ,id desc';
         }
         return $this->albumRepository->getAlbum($where, $order);
     }

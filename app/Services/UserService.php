@@ -250,23 +250,11 @@ class UserService extends BaseService
     /**
      * 作品管理.
      */
-    public function worksManage(int $userid, array $query, array $column = ['*']): array
+    public function worksManageForMaterial(int $userid, array $query, array $column = ['*']): array
     {
-        //type:1-素材 2-文库
-        switch ($query['type']) {
-            case 1:
-                $countArr = $this->sucaiRepository->getMaterialStatistics(['uid' => $userid, 'del' => 0]);
-                $where    = ['uid' => $userid, 'status' => $query['status'], 'del' => 0];
-                $list     = $this->sucaiRepository->getMaterialList($where, $query, $column);
-                break;
-            case 2:
-                $countArr = $this->wenkuRepository->getLibraryStatistics(['uid' => $userid, 'del' => 0]);
-                $where    = ['uid' => $userid, 'status' => $query['status'], 'del' => 0];
-                $list     = $this->wenkuRepository->getLibraryList($where, $query, $column);
-                break;
-            default:
-                throw new BusinessException(ErrorCode::VALIDATE_FAIL);
-        }
+        $countArr = $this->sucaiRepository->getMaterialStatistics(['uid' => $userid, 'del' => 0]);
+        $where    = ['uid' => $userid, 'status' => $query['status'], 'del' => 0];
+        $list     = $this->sucaiRepository->getMaterialList($where, $query, $column);
         //预览图处理  共享分处理
         foreach ($list['list'] as $k => $v) {
             if ($v['leixing'] == 1) {
@@ -276,7 +264,22 @@ class UserService extends BaseService
             $preview = $this->userRepository->getPictureJson($v['img']);
 
             $list['list'][$k]['preview'] = $preview ?? '';
-            $list['list'][$k]['time']    = date('Y-m-d H:i:s', $v['time']);
+            $list['list'][$k]['time']    = date('Y-m-d H:i:s', (int)$v['time']);
+            $list['list'][$k]['size']    = sprintf('%.2f', $list['list'][$k]['size'] / 1024 / 1024);
+        }
+        return array_merge($list, ['count_arr' => $countArr]);
+    }
+
+    public function worksManageForLibrary(int $userid, array $query, array $column = ['*']): array
+    {
+        $countArr = $this->wenkuRepository->getLibraryStatistics(['uid' => $userid, 'del' => 0]);
+        $where    = ['uid' => $userid, 'status' => $query['status'], 'del' => 0];
+        $list     = $this->wenkuRepository->getLibraryList($where, $query, $column);
+        //预览图处理  共享分处理
+        foreach ($list['list'] as $k => $v) {
+            $preview = $this->userRepository->getPictureJson($v['img']);
+
+            $list['list'][$k]['preview'] = $preview ?? '';
             $list['list'][$k]['size']    = sprintf('%.2f', $list['list'][$k]['size'] / 1024 / 1024);
         }
         return array_merge($list, ['count_arr' => $countArr]);
@@ -359,6 +362,17 @@ class UserService extends BaseService
         return array_merge($info->toArray(), ['preview' => $this->userRepository->getPictureJson($info['img'])]);
     }
 
+    /**
+     * 获取文库详情.
+     */
+    public function getDetailForLibrary(int $id, array $column): array
+    {
+        $where        = ['id' => $id];
+        $info         = $this->wenkuRepository->getLibraryDetail($where, $column);
+        $info['size'] = $info['size'] / 1024 / 1024;
+        return array_merge($info->toArray(), ['preview' => $this->userRepository->getPictureJson($info['img'])]);
+    }
+
     public function writeInformationForLibrary(array $params): bool
     {
         $params['status'] = UserCenterStatus::WORK_MANAGE_REVIEW;
@@ -377,6 +391,14 @@ class UserService extends BaseService
             Db::rollBack();
             throw new BusinessException(ErrorCode::ERROR, '填写失败' . $exception->getMessage());
         }
+    }
+
+    /**
+     * 删除文库.
+     */
+    public function deleteForLibrary(array $ids): int
+    {
+        return $this->wenkuRepository->deleteLibrary($ids);
     }
 
     /**

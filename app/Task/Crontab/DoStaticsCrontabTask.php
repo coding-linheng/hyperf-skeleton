@@ -32,8 +32,9 @@ class DoStaticsCrontabTask
     }
 
     //统计专辑每周热门等,在原创藏馆等筛选的时候用得到
-    public function albumStatic(){
-      //昨日最新
+    public function albumStatic()
+    {
+        //昨日最新
 //      $data = db('waterdo')->distinct(true)->where("DateDiff(CURDATE(),from_unixtime(time,'%Y-%m-%d'))=1 AND aid<>0 AND type=1")->field('aid')->select();
 //      $arr=[0];
 //      foreach($data as $v){

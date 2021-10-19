@@ -26,8 +26,8 @@ class ApiController extends AbstractController
     public function Login(User $request): ResponseInterface
     {
         $request->scene('login')->validateResolved();
-        $username = $this->request->post('username');
-        $password = $this->request->post('password');
+        $username = $this->request->input('username');
+        $password = $this->request->input('password');
         $user     = di()->get(UserService::class)->login($username, $password);
         $token    = $this->auth->guard('jwt')->login($user);
         return $this->response->success(['token' => $token]);

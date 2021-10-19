@@ -44,8 +44,8 @@ class UserController extends AbstractController
     public function bindMobile(User $request): ResponseInterface
     {
         $request->scene('bind_mobile')->validateResolved();
-        $mobile  = $request->post('mobile');
-        $captcha = $request->post('captcha');
+        $mobile  = $request->input('mobile');
+        $captcha = $request->input('captcha');
         $this->smsService->check($mobile, $captcha);
 
         $user         = $this->userService->getUser(user()['id']);
@@ -82,6 +82,22 @@ class UserController extends AbstractController
         $params['status'] = UserCenterStatus::USER_CERT_IS_SUBMIT;
         $userData->fill($params)->save();
         return $this->success();
+    }
+
+    /**
+     * 获取认证信息.
+     */
+    public function getCertification(): ResponseInterface
+    {
+        $hidden   = [
+            'status', 'text', 'shoucang', 'shoucolor', 'shouling', 'shouwen', 'shousucai', 'zhuanji', 'zuopin', 'sucainum', 'wenkunum',
+            'tui', 'tuitime', 'total', 'time',
+        ];
+        $userData = $this->userService->getUserData(user()['id'])->makeHidden($hidden);
+
+        $userData['cardimg']  = get_img_path($userData['cardimg']);
+        $userData['cardimg1'] = get_img_path($userData['cardimg1']);
+        return $this->success($userData);
     }
 
     /**
@@ -190,7 +206,7 @@ class UserController extends AbstractController
      */
     public function cash(): ResponseInterface
     {
-        $money = $this->request->post('money');
+        $money = $this->request->input('money');
         $this->userService->cash(user()['id'], $money);
         return $this->success();
     }
@@ -202,21 +218,33 @@ class UserController extends AbstractController
     {
         $request->scene('upload')->validateResolved();
         $file = $this->request->file('upload');
-        $type = (int)$this->request->post('type');
+        $type = (int)$this->request->input('type');
         $data = Utils::upload($file, ['rar', 'zip']);
         $this->userService->uploadWork(user()['id'], $data, $type);
         return $this->success();
     }
 
     /**
-     * 作品管理.
+     * 作品管理-素材.
      */
-    public function worksManage(User $request): ResponseInterface
+    public function worksManageForMaterial(User $request): ResponseInterface
     {
         $request->scene('work')->validateResolved();
         $query  = $request->all();
         $column = ['id', 'name', 'size', 'img', 'time', 'status', 'text', 'price', 'downnum', 'leixing', 'unnum'];
-        $data   = $this->userService->worksManage(user()['id'], $query, $column);
+        $data   = $this->userService->worksManageForMaterial(user()['id'], $query, $column);
+        return $this->success($data);
+    }
+
+    /**
+     * 作品管理-文库.
+     */
+    public function worksManageForLibrary(User $request): ResponseInterface
+    {
+        $request->scene('work')->validateResolved();
+        $query  = $request->all();
+        $column = ['id', 'name', 'size', 'img', 'time', 'status', 'text', 'price', 'downnum', 'leixing', 'unnum'];
+        $data   = $this->userService->worksManageForLibrary(user()['id'], $query, $column);
         return $this->success($data);
     }
 
@@ -227,15 +255,6 @@ class UserController extends AbstractController
     {
         $request->scene('information')->validateResolved();
         return $this->success($this->userService->writeInformationForMaterial($request->all()));
-    }
-
-    /**
-     * 填写信息-文库.
-     */
-    public function writeInformationForLibrary(User $request): ResponseInterface
-    {
-        $request->scene('information_library')->validateResolved();
-        return $this->success($this->userService->writeInformationForLibrary($request->all()));
     }
 
     /**
@@ -250,6 +269,26 @@ class UserController extends AbstractController
     }
 
     /**
+     * 填写信息-文库.
+     */
+    public function writeInformationForLibrary(User $request): ResponseInterface
+    {
+        $request->scene('information_library')->validateResolved();
+        return $this->success($this->userService->writeInformationForLibrary($request->all()));
+    }
+
+    /**
+     * 获取文库详情.
+     */
+    public function getDetailForLibrary(User $request): ResponseInterface
+    {
+        $request->scene('get_library')->validateResolved();
+        $id     = $request->input('library_id');
+        $column = ['id', 'name', 'size', 'title', 'guanjianci', 'leixing', 'price', 'img', 'status', 'free_num'];
+        return $this->success($this->userService->getDetailForLibrary((int)$id, $column));
+    }
+
+    /**
      * 删除素材管理.
      */
     public function deleteForMaterial(User $request): ResponseInterface
@@ -259,12 +298,27 @@ class UserController extends AbstractController
         return $this->success($this->userService->deleteForMaterial([$id]));
     }
 
+    public function deleteForLibrary(User $request): ResponseInterface
+    {
+        $request->scene('get_library')->validateResolved();
+        $id = $request->input('library_id');
+        return $this->success($this->userService->deleteForLibrary([$id]));
+    }
+
     public function batchDeleteMaterial(User $request): ResponseInterface
     {
         $request->scene('batch_del_material')->validateResolved();
-        $ids   = $this->request->input('material_ids');
+        $ids   = $request->input('material_ids');
         $idArr = explode(',', $ids);
         return $this->success($this->userService->deleteForMaterial($idArr));
+    }
+
+    public function batchDeleteLibrary(User $request): ResponseInterface
+    {
+        $request->scene('batch_del_library')->validateResolved();
+        $ids   = $request->input('library_ids');
+        $idArr = explode(',', $ids);
+        return $this->success($this->userService->deleteForLibrary($idArr));
     }
 
     /**

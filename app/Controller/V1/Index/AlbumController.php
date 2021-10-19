@@ -118,6 +118,7 @@ class AlbumController extends AbstractController
         $queryData['brandname']   = $this->request->input('brandname', 0);
         $queryData['branduse']    = $this->request->input('branduse', 0);
         $order                    = $this->request->input('order', '');
+
         if (!empty($order) && !in_array($order, ['daytime', 'looknum', 'guanzhu'])) {
             $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
         }
@@ -135,14 +136,14 @@ class AlbumController extends AbstractController
      */
     public function getLandedCollectionList(): ResponseInterface
     {
-        $queryData['paintcountry'] = $this->request->input('paintcountry', 0);
-        $queryData['paintname']   = $this->request->input('paintname', 0);
+        $queryData['paintcountry']  = $this->request->input('paintcountry', 0);
+        $queryData['paintname']     = $this->request->input('paintname', 0);
         $queryData['paintstyle']    = $this->request->input('paintstyle', 0);
-        $order                    = $this->request->input('order', '');
+        $order                      = $this->request->input('order', '');
 
-      if (!empty($order) && !in_array($order, ['daytime', 'looknum', 'guanzhu'])) {
-        $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
-      }
+        if (!empty($order) && !in_array($order, ['daytime', 'looknum', 'guanzhu'])) {
+            $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
+        }
         $list = $this->albumService->getLandedCollectionList($queryData, $order);
         return $this->response->success($list);
     }

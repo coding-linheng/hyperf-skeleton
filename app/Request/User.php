@@ -20,10 +20,12 @@ class User extends FormRequest
         'certification'       => ['name', 'tel', 'cardnum', 'zhi', 'qq', 'email', 'cardimg', 'cardimg1'],
         'notice'              => ['notice_id'],
         'upload_head'         => ['head_image'],
-        'work'                => ['type', 'status'],
+        'work'                => ['status'],
         'upload'              => ['upload', 'type'],
         'del_material'        => ['material_id'],
+        'get_library'         => ['library_id'],
         'batch_del_material'  => ['material_ids'],
+        'batch_del_library'   => ['library_ids'],
         'get_material'        => ['material_id'],
         'information'         => ['material_id', 'img', 'mulu_id', 'geshi_id', 'title', 'leixing', 'price', 'guanjianci'],
         'information_library' => ['library_id', 'img', 'free_num', 'title', 'guanjianci', 'leixing', 'price'],
@@ -100,6 +102,7 @@ class User extends FormRequest
                 @Rule::exists('wenku', 'id')->where(fn ($query) => $query->where(['uid' => user()['id']])),
             ],
             'material_ids' => 'required',
+            'library_ids'  => 'required',
         ];
     }
 
@@ -120,6 +123,7 @@ class User extends FormRequest
             'material_id'  => '素材',
             'library_id'   => '文库',
             'material_ids' => '素材',
+            'library_ids'  => '文库',
             'img'          => '图片',
             'mulu_id'      => '素材分类',
             'fenlei'       => '素材类型',

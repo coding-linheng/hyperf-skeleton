@@ -21,8 +21,8 @@ class Sms extends AbstractController
     public function send(Utils $request): ResponseInterface
     {
         $request->scene('sms')->validateResolved();
-        $mobile      = $request->post('mobile');
-        $event       = $request->post('event', 'verify');
+        $mobile      = $request->input('mobile');
+        $event       = $request->input('event', 'verify');
         $time        = strtotime('-1 hour');
         $ipSendTotal = SmsModel::where(['ip' => get_client_ip()])->where('create_time', '>=', $time)->count();
 

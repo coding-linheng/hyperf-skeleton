@@ -226,26 +226,31 @@ class BaseRepository
     public function getBlockAlbumIdsByUser()
     {
         $blockUserList = User::query()->whereRaw('iszj=2 or isyczj=2')->select(['id', 'iszj', 'isyczj'])->get()->toArray();
-        $returnIds  = $ycZjList     = [];
+        $returnIds     = $ycZjList        = [];
+
         if (!empty($blockUserList)) {
             foreach ($blockUserList as $val) {
                 if ($val['iszj'] == 2) {
                     $zjList = Album::query()->where(['uid' => $val['id'], 'isoriginal' => 1])->pluck('id');
+
                     if (!empty($zjList)) {
                         $returnIds = $zjList;
-                        foreach($zjList as $v){
-                          $returnIds[]=$v['id'];
+
+                        foreach ($zjList as $v) {
+                            $returnIds[] = $v['id'];
                         }
                     }
                 }
 
                 if ($val['isyczj'] == 2) {
                     $ycZjList = Album::query()->where(['uid' => $val['id'], 'isoriginal' => 2])->pluck('id');
+
                     if (!empty($ycZjList)) {
-                      $returnIds = $ycZjList;
-                      foreach($ycZjList as $v){
-                        $ycZjList[]=$v['id'];
-                      }
+                        $returnIds = $ycZjList;
+
+                        foreach ($ycZjList as $v) {
+                            $ycZjList[] = $v['id'];
+                        }
                     }
                 }
             }

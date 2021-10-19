@@ -43,10 +43,13 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getSystemMessage', [UserController::class, 'getSystemMessage']);
         Router::get('getMessageDetail', [UserController::class, 'getMessageDetail']);
         Router::get('getMoving', [UserController::class, 'getMoving']);
-        Router::get('worksManage', [UserController::class, 'worksManage']);
+        Router::get('worksManageForMaterial', [UserController::class, 'worksManageForMaterial']);
+        Router::get('worksManageForLibrary', [UserController::class, 'worksManageForLibrary']);
         Router::get('getMaterialCategory', [UserController::class, 'getMaterialCategory']);
         Router::get('getMaterialFormat', [UserController::class, 'getMaterialFormat']);
         Router::get('getDetailForMaterial', [UserController::class, 'getDetailForMaterial']);
+        Router::get('getDetailForLibrary', [UserController::class, 'getDetailForLibrary']);
+        Router::get('getCertification', [UserController::class, 'getCertification']);
         Router::post('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
         Router::post('bindMobile', [UserController::class, 'bindMobile']);
         Router::post('profile', [UserController::class, 'profile']);
@@ -56,7 +59,9 @@ Router::addGroup($routerPath . '/', function () {
         Router::post('cash', [UserController::class, 'cash']);
         Router::post('uploadWork', [UserController::class, 'uploadWork']);
         Router::post('deleteForMaterial', [UserController::class, 'deleteForMaterial']);
+        Router::post('deleteForLibrary', [UserController::class, 'deleteForLibrary']);
         Router::post('batchDeleteMaterial', [UserController::class, 'batchDeleteMaterial']);
+        Router::post('batchDeleteLibrary', [UserController::class, 'batchDeleteLibrary']);
     });
 
     #灵感
