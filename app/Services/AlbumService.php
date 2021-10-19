@@ -260,11 +260,14 @@ class AlbumService extends BaseService
      *
      * @param $order
      */
-    public function getOriginalWorkList(mixed $queryData, $order): mixed
+    public function getOriginalWorkList($order): mixed
     {
-        $where = ['isoriginal' => 2];
-        //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
-        return $this->albumRepository->searchAlbumList($queryData, $order, $where);
+      //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
+      $where = 'del=1 and status=2 and isoriginal=2 ';
+      if (!empty($order)) {
+        $order = $order . ' desc ,id desc';
+      }
+      return $this->albumRepository->getAlbum($where, $order);
     }
 
     /**

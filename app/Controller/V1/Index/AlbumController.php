@@ -91,19 +91,16 @@ class AlbumController extends AbstractController
     }
 
     /**
-     * 搜索/获取原创作品列表.
-     * query 查询关键字选填，不填为全部
-     * order 排序字段：最新采集 dtime，最新更新 g_time，上周最高采集 caiji.
+     * 获取原创作品列表.
+     * order 排序字段： daytime最新，，looknum 热门浏览，guanzhu本周热门
      */
     public function getOriginalWorkList(): ResponseInterface
     {
-        $queryString = $this->request->input('query', '');
         $order       = $this->request->input('order', '');
-
-        if (!empty($order) && !in_array($order, ['dtime', 'g_time', 'caiji'])) {
-            $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
-        }
-        $list = $this->albumService->getOriginalWorkList($queryString, $order);
+      if (!empty($order) && !in_array($order, ['daytime', 'looknum', 'guanzhu'])) {
+        $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
+      }
+        $list = $this->albumService->getOriginalWorkList($order);
         return $this->response->success($list);
     }
 
