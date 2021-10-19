@@ -55,18 +55,19 @@ class IndexController extends AbstractController
      */
     public function getRecommendUserList()
     {
-        $list = $this->commonService->getBannerIndex();
+        $list = $this->commonService->getRecommendUserList();
         return $this->response->success($list);
     }
 
     /**
      * 首页推荐作品列表.
-     * @param: type 1 素材类 2 灵感类
+     * @param: type 1 素材类 2 灵感类,默认素材类
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function getRecommendZpList()
     {
-        $list = $this->commonService->getBannerIndex();
+        $type=$this->request->input('type',1);
+        $list = $this->commonService->getRecommendZpList($type);
         return $this->response->success($list);
     }
 
