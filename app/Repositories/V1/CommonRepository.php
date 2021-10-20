@@ -35,24 +35,24 @@ class CommonRepository extends BaseRepository
         return $bannerIndex;
     }
 
-   /**
-   * 推荐用户
-   * @return array
-   */
-    public function getRecommendUserList(): array
+    /**
+     * 推荐用户
+     *
+     * @param $type
+     *
+     * @return array
+     */
+    public function getRecommendUserList($type): array
     {
-      $bannerIndex = Bannerindex::query()->orderByDesc('id')->get()->toArray();
-      //做个判断从数据库中查询出图片的具体路径然后缓存
-      if (!empty($bannerIndex)) {
-        foreach ($bannerIndex as $key => &$val) {
-          $url = $this->getPictureUrlById($val['img']);
-
-          if (!empty($url)) {
-            $bannerIndex[$key]['img'] = get_img_path_private($url);
-          }
+        if($type==2){
+            $where='ud.album_tui=1';
+        }else{
+            $where='ud.sucai_tui=1';
         }
-      }
-      return $bannerIndex;
+        $sql         = 'SELECT u.username, u.nickname,u.imghead,ud.* FROM dczg_user as u inner join dczg_userdata as ud on u.id=ud.uid where '.$where;
+        $sql         .= ' and ud.id >= (SELECT floor( RAND() * ((SELECT MAX(id) FROM dczg_userdata)-(SELECT MIN(id) FROM dczg_userdata)) + (SELECT MIN(id) FROM dczg_userdata))) limit 0,10';
+        $returnArr = Db::select($sql, []);
+        return $returnArr;
     }
 
    /**

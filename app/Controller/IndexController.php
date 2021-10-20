@@ -55,7 +55,8 @@ class IndexController extends AbstractController
      */
     public function getRecommendUserList()
     {
-        $list = $this->commonService->getRecommendUserList();
+        $type=$this->request->input('type',1);
+        $list = $this->commonService->getRecommendUserList($type);
         return $this->response->success($list);
     }
 

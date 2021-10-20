@@ -34,13 +34,16 @@ class CommonService extends BaseService
       return $this->commonRepository->getRecommendZpList($type);
     }
 
-   /**
-   * 推荐用户
-   * @return array
-   */
-    public function getRecommendUserList(): array
+    /**
+     * 推荐用户
+     *
+     * @param $type
+     *
+     * @return array
+     */
+    public function getRecommendUserList($type): array
     {
-      return $this->commonRepository->getRecommendUserList();
+      return $this->commonRepository->getRecommendUserList($type);
     }
 
   /**
