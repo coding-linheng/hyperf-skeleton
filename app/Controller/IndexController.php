@@ -164,4 +164,15 @@ class IndexController extends AbstractController
             return $this->success($e->getResults());
         }
     }
+
+    //pdf转png图片
+    public function test(){
+        $res='';
+        try{
+          $res=  \App\Common\Utils::pdfToOnePng(BASE_PATH.'/public/pdf/aa.pdf',BASE_PATH.'/public/pdf/');
+        }catch (\Exception $e){
+            echo $e->getMessage();
+        }
+        var_dump($res);
+    }
 }
