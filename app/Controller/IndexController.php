@@ -50,7 +50,13 @@ class IndexController extends AbstractController
 
     /**
      * 首页推荐用户列表.
+     *
      * @param: type 1 素材类 2 灵感类
+     * {"code":0,"msg":"success","data":[
+     * {"username":"test","nickname":"啊实打实","imghead":"https:\/\/image.codelin.ink\/public\/uploads\/5195ca1a3342bdce549382dcf2b89879.jpg","shoucang":25,"zhuanji":132,"zuopin":153,"sucainum":0,"wenkunum":0},
+     * {"username":"Johnny","nickname":"Johnny","imghead":"http:\/\/thirdwx.qlogo.cn\/mmopen\/VvN4UQJFx7zmbQwaic4JPHHliaCnmicjibstIrw1L1j0QVErsUuzL466VNR1N3G9Ow36Uia8d7n4SayHAPcxhIWBVg614znjmvB6p\/132","shoucang":0,"zhuanji":0,"zuopin":0,"sucainum":0,"wenkunum":0},
+     * ]}
+     *
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function getRecommendUserList()

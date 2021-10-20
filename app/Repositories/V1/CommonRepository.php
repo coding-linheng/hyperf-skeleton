@@ -49,8 +49,8 @@ class CommonRepository extends BaseRepository
         }else{
             $where='ud.sucai_tui=1';
         }
-        $sql         = 'SELECT u.username, u.nickname,u.imghead,ud.* FROM dczg_user as u inner join dczg_userdata as ud on u.id=ud.uid where '.$where;
-        $sql         .= ' and ud.id >= (SELECT floor( RAND() * ((SELECT MAX(id) FROM dczg_userdata)-(SELECT MIN(id) FROM dczg_userdata)) + (SELECT MIN(id) FROM dczg_userdata))) limit 0,10';
+        $sql         = 'SELECT u.username, u.nickname,u.imghead,ud.shoucang,zhuanji,zuopin,sucainum,wenkunum FROM dczg_user as u inner join dczg_userdata as ud on u.id=ud.uid where '.$where;
+        $sql         .= ' order by rand()  limit 0,10';
         $returnArr = Db::select($sql, []);
         return $returnArr;
     }
