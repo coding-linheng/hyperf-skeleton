@@ -439,4 +439,29 @@ class AlbumRepository extends BaseRepository
         }
       return $list;
     }
+    /**
+     * 搜索album表中展示专辑.
+     */
+    public function getAlbumListById(int $id): array
+    {
+        $list = Albumlist::where('aid',$id)->where('del','<=','1')->select(['id','title','path','looknum','downnum','dtime'])->paginate(20)->toArray();
+        //处理数据
+        if (!empty($list) && isset($list['data']) && !empty($list['data'])) {
+            foreach ($list['data'] as $key => &$val) {
+                if (!isset($val['id']) || empty($val['title'])) {
+                    unset($list['data'][$key]);
+                    continue;
+                }
+                $tmp['id']          = $val['id'] ?? 0;
+                $tmp['path']        = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['title']       = $val['title']   ?? '';
+                $tmp['looknum']     = $val['looknum'] ?? 0;
+                $tmp['downnum']     = $val['downnum'] ?? 0;
+                $tmp['dtime']       = $val['dtime']   ?? 0;
+                $list['data'][$key] = $tmp;
+                $tmp                = [];
+            }
+        }
+        return $list;
+    }
 }

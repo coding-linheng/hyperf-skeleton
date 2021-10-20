@@ -144,4 +144,30 @@ class AlbumController extends AbstractController
         $list = $this->albumService->getLandedCollectionList($queryData, $order);
         return $this->response->success($list);
     }
+
+    /**
+     * 根据专辑id获取对应专辑里面的所有图片信息
+     * id ：专辑id
+     * page 页数.
+     * {"code":0,"msg":"success","data":{"current_page":1,"data":[
+     * {"id":1765,"path":"qzdj3z3qz.hn-bkt.clouddn.com20190730\/3v0g8ljh7f2.png\/xiaoyulantu","title":"高端中式奢华题案房地产豪宅别墅地产广告宣传设计","looknum":38,"downnum":0,"dtime":0},
+     * {"id":1778,"path":"qzdj3z3qz.hn-bkt.clouddn.com20190730\/3hh9v758x9k.jpg\/xiaoyulantu","title":"高端中式奢华题案房地产豪宅别墅地产广告宣传设计","looknum":43,"downnum":0,"dtime":0},
+     * {"id":1792,"path":"qzdj3z3qz.hn-bkt.clouddn.com20190730\/30332a06nsdp9.jpg\/xiaoyulantu","title":"高端中式奢华题案房地产豪宅别墅地产广告宣传设计","looknum":50,"downnum":0,"dtime":0}
+     * ],"first_page_url":"http:\/\/192.168.10.8:9701\/v1\/album\/getAlbumListById?page=1","from":1,
+     * "last_page":16,"last_page_url":"http:\/\/192.168.10.8:9701\/v1\/album\/getAlbumListById?page=16",
+     * "next_page_url":"http:\/\/192.168.10.8:9701\/v1\/album\/getAlbumListById?page=2",
+     * "path":"http:\/\/192.168.10.8:9701\/v1\/album\/getAlbumListById",
+     * "per_page":20,"prev_page_url":null,"to":20,"total":319
+     * }}
+     */
+    public function getAlbumListById(): ResponseInterface
+    {
+        $id  = $this->request->input('id', 0);
+        if(empty($id)){
+            $this->response->error(ErrorCode::VALIDATE_FAIL, '专辑id 不能为空！');
+        }
+        $list = $this->albumService->getAlbumListById((int)$id);
+        return $this->response->success($list);
+    }
+
 }

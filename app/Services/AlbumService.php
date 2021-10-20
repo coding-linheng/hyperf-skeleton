@@ -359,4 +359,10 @@ class AlbumService extends BaseService
 
         return true;
     }
+
+    //查看专辑详情
+    public function getAlbumListById($id): array
+    {
+        return $this->albumRepository->getAlbumListById($id);
+    }
 }
