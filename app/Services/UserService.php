@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Constants\ErrorCode;
 use App\Constants\UserCenterStatus;
 use App\Exception\BusinessException;
-use App\Model\Fenlei;
 use App\Model\Geshi;
 use App\Model\Geshirelation;
 use App\Model\Img;
@@ -19,8 +18,10 @@ use App\Model\User;
 use App\Model\Userdata;
 use App\Model\Wenku;
 use App\Repositories\V1\AlbumRepository;
+use App\Repositories\V1\MessageRepository;
 use App\Repositories\V1\SucaiRepository;
 use App\Repositories\V1\UserRepository;
+use App\Repositories\V1\WaterDoRepository;
 use App\Repositories\V1\WenkuRepository;
 use Exception;
 use Hyperf\Database\Model\Model;
@@ -44,6 +45,12 @@ class UserService extends BaseService
 
     #[Inject]
     protected SucaiRepository $sucaiRepository;
+
+    #[Inject]
+    protected MessageRepository $messageRepository;
+
+    #[Inject]
+    protected WaterDoRepository $waterDoRepository;
 
     public function __call($name, $arguments)
     {
@@ -76,7 +83,7 @@ class UserService extends BaseService
      */
     public function getMoving(int $userid, array $query, array $column = ['*']): array
     {
-        $data = $this->userRepository->getMoving($userid, $query, $column);
+        $data = $this->waterDoRepository->getMoving($userid, $query, $column);
 
         if (empty($data['list'])) {
             return $data;
@@ -91,7 +98,7 @@ class UserService extends BaseService
                 default => null,
             };
             $v['name'] = $detail ? $detail->toArray()['name'] : '';
-            $v['path'] = $detail ? $detail->toArray()['path'] : '';
+            $v['path'] = $detail ? get_img_path_private($detail->toArray()['path']) : '';
         }
         unset($v);
         return $data;
@@ -103,7 +110,7 @@ class UserService extends BaseService
      */
     public function getPrivateMessage(int $userid, array $query, array $column = ['*']): array
     {
-        $data = $this->userRepository->getPrivateMessage($userid, $query, $column);
+        $data = $this->messageRepository->getPrivateMessage($userid, $query, $column);
 
         if (empty($data['list'])) {
             return $data;
@@ -117,7 +124,7 @@ class UserService extends BaseService
      */
     public function getSystemMessage(int $userid, array $query, array $column = ['*']): array
     {
-        $data = $this->userRepository->getSystemMessage($query, $column);
+        $data = $this->messageRepository->getSystemMessage($query, $column);
 
         if (empty($data['list'])) {
             return $data;
@@ -130,7 +137,7 @@ class UserService extends BaseService
      */
     public function getMessageDetail(int $noticeId): array
     {
-        return $this->userRepository->getMessageDetail($noticeId);
+        return $this->messageRepository->getMessageDetail($noticeId);
     }
 
     /**
@@ -402,6 +409,34 @@ class UserService extends BaseService
     }
 
     /**
+     * 消息盒.
+     */
+    public function getMessageBox(int $userid): array
+    {
+        $where  = ['pid' => $userid];
+        $list   = $this->messageRepository->getPrivateMessageList($where);
+        $count  = Noticelook::query()->where(['uid' => $userid])->whereIn('nid', array_column($list['list'], 'id'))->count();
+        $where  = ['uid' => $userid];
+        $field  = ['w.id', 'w.cid', 'w.time', 'w.type', 'w.uid', 'u.nickname', 'u.imghead'];
+        $moving = $this->waterDoRepository->getMovingLimit($where, 4, $field);
+
+        foreach ($moving as &$v) {
+            $detail    = match ($v['type']) {
+                1, 2 => $this->albumRepository->getAlbumDetail(['a.id' => $v['cid']], ['a.name', 'l.path']),
+                4, 6, 10 => $this->albumRepository->getAlbumListDetail(['id' => $v['cid']], ['name', 'path']),
+                5, 9 => $this->wenkuRepository->getLibraryDetail(['id' => $v['cid']], ['name', 'pdfimg as path']),
+                7, 8 => $this->sucaiRepository->getSucaiImgInfo(['id' => $v['cid']], ['title as name', 'path']),
+                default => null,
+            };
+            $v['name'] = $detail ? $detail->toArray()['name'] : '';
+            $v['path'] = $detail ? get_img_path_private($detail->toArray()['path']) : '';
+        }
+        unset($v);
+        return ['no_read_count' => $list['count'] - $count, 'message_list' => array_slice($list['list'], 0, 5), 'moving_list' => $moving];
+        //获取五条最新动态
+    }
+
+    /**
      * 检查消息是否已读.
      */
     private function checkRead(int $userid, array $data): array
@@ -409,11 +444,14 @@ class UserService extends BaseService
         $ids = array_column($data['list'], 'id');
         $nid = Noticelook::query()->where('uid', $userid)->whereIn('nid', $ids)->pluck('nid')->toArray();
 
-        foreach ($data['list'] as &$v) {
-            $v['read'] = 0;
+        $data['no_read_count'] = 0;
 
-            if (in_array($v['id'], $nid)) {
-                $v['read'] = 1;
+        foreach ($data['list'] as &$v) {
+            $v['read'] = 1;
+
+            if (!in_array($v['id'], $nid)) {
+                $v['read'] = 0;
+                ++$data['no_read_count'];
             }
         }
         unset($v);

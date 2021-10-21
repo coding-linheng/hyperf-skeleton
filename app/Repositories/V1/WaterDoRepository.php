@@ -234,4 +234,26 @@ class WaterDoRepository extends BaseRepository
         //增加月统计
         return true;
     }
+
+    /**
+     * 获取动态
+     * @param array|string[] $column
+     */
+    public function getMoving(int $userid, array $query, array $column = ['*']): array
+    {
+        $page     = ($query['page'] ?? 1) ?: 1;
+        $pageSize = $query['page_size'] ?? 10;
+        $where    = [['uid', '=', $userid]];
+
+        $orm   = Waterdo::from('waterdo as w')->join('user as u', 'u.id', 'w.doid')->where($where);
+        $count = $orm->count();
+        $list  = $orm->select($column)->orderBy('id', 'desc')
+            ->offset(($page - 1) * $pageSize)->limit($pageSize)->get()->toArray();
+        return ['count' => $count, 'list' => $list];
+    }
+
+    public function getMovingLimit(array $where, int $limit, array $column = ['*'])
+    {
+        return Waterdo::from('waterdo as w')->join('user as u', 'u.id', 'w.doid')->where($where)->select($column)->orderBy('id', 'desc')->limit($limit)->get();
+    }
 }

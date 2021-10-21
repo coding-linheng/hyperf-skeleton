@@ -12,14 +12,12 @@ use App\Exception\BusinessException;
 use App\Model\Daywaterdc;
 use App\Model\Guanzhuuser;
 use App\Model\Monthwaterdc;
-use App\Model\Notice;
 use App\Model\Picture;
 use App\Model\Tixian;
 use App\Model\User;
 use App\Model\Userdata;
 use App\Model\Uservip;
 use App\Model\Waterdc;
-use App\Model\Waterdo;
 use App\Model\Waterscore;
 use App\Model\Weekwaterdc;
 use App\Repositories\BaseRepository;
@@ -198,61 +196,6 @@ class UserRepository extends BaseRepository
         $orm   = Tixian::query()->where('uid', $userid);
         $count = $orm->count();
         $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
-        return ['count' => $count, 'list' => $list];
-    }
-
-    /*
-     * 获取私信
-     */
-    public function getPrivateMessage(int $userid, array $query, array $column = ['*']): array
-    {
-        $page     = ($query['page'] ?? 1) ?: 1;
-        $pageSize = $query['page_size'] ?? 10;
-        $where    = [['pid', '=', $userid]];
-
-        $orm   = Notice::query()->where($where);
-        $count = $orm->count();
-        $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
-        return ['count' => $count, 'list' => $list->toArray()];
-    }
-
-    /*
-     * 获取系统公告
-     */
-    public function getSystemMessage(array $query, array $column = ['*']): array
-    {
-        $page     = ($query['page'] ?? 1) ?: 1;
-        $pageSize = $query['page_size'] ?? 10;
-        $where    = [['pid', '=', 0]];
-
-        $orm   = Notice::query()->where($where);
-        $count = $orm->count();
-        $list  = $orm->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
-        return ['count' => $count, 'list' => $list->toArray()];
-    }
-
-    /**
-     * 获取消息内容.
-     */
-    public function getMessageDetail(int $noticeId): array
-    {
-        return Notice::query()->where('id', $noticeId)->first()->toArray();
-    }
-
-    /**
-     * 获取动态
-     * @param array|string[] $column
-     */
-    public function getMoving(int $userid, array $query, array $column = ['*']): array
-    {
-        $page     = ($query['page'] ?? 1) ?: 1;
-        $pageSize = $query['page_size'] ?? 10;
-        $where    = [['uid', '=', $userid]];
-
-        $orm   = Waterdo::from('waterdo as w')->join('user as u', 'u.id', 'w.doid')->where($where);
-        $count = $orm->count();
-        $list  = $orm->select($column)->orderBy('id', 'desc')
-            ->offset(($page - 1) * $pageSize)->limit($pageSize)->get()->toArray();
         return ['count' => $count, 'list' => $list];
     }
 
