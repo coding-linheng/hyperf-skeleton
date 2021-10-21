@@ -72,13 +72,12 @@ class PersonalHomePageService extends BaseService {
         if($val['sucainum']>1){
           //循环从素材中获取图片
           $where      = ['uid' => $val['id']];
-          $tmp['sucai_list']  = $this->sucaiRepository->searchImgList('', '', $where,  '');
+          $tmp['sucai_list']  = $this->sucaiRepository->searchImgList('', [], $where,  '');
         }
         $fansList['data'][$key]  = $tmp;
       }
     }
     return $fansList;
   }
-
 
 }
