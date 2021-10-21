@@ -77,11 +77,21 @@ class UserRepository extends BaseRepository
 
     public function getUserMerge(int $userid, $column = ['*']): Model
     {
-        return User::from('user as u')->join('userdata as d', 'u.id', '=', 'd.uid')
+        return User::from('user as u')->leftJoin('userdata as d', 'u.id', '=', 'd.uid')
             ->where('u.id', $userid)
             ->select($column)->first();
     }
 
+  /**
+   * 获取粉丝列表.
+   */
+  public function getFansList(int $userid, $column = ['*']): array {
+    return User::from('guanzhuuser as g')
+      ->leftJoin('user as u', 'u.id', '=', 'g.uid')
+      ->leftJoin('userdata as d', 'u.id', '=', 'd.uid')
+      ->where('g.bid', $userid)
+      ->select($column)->paginate()->toArray();
+  }
     /**
      * 获取今日收益.
      */
