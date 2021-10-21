@@ -92,14 +92,15 @@ class AlbumController extends AbstractController
 
     /**
      * 获取原创作品列表.
-     * order 排序字段： daytime最新，，looknum 热门浏览，guanzhu本周热门
+     * order 排序字段： daytime最新，，looknum 热门浏览，guanzhu本周热门.
      */
     public function getOriginalWorkList(): ResponseInterface
     {
         $order       = $this->request->input('order', '');
-      if (!empty($order) && !in_array($order, ['daytime', 'looknum', 'guanzhu'])) {
-        $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
-      }
+
+        if (!empty($order) && !in_array($order, ['daytime', 'looknum', 'guanzhu'])) {
+            $this->response->error(ErrorCode::VALIDATE_FAIL, '暂不支持的排序筛选');
+        }
         $list = $this->albumService->getOriginalWorkList($order);
         return $this->response->success($list);
     }
@@ -158,16 +159,16 @@ class AlbumController extends AbstractController
      * "next_page_url":"http:\/\/192.168.10.8:9701\/v1\/album\/getAlbumListById?page=2",
      * "path":"http:\/\/192.168.10.8:9701\/v1\/album\/getAlbumListById",
      * "per_page":20,"prev_page_url":null,"to":20,"total":319
-     * }}
+     * }}.
      */
     public function getAlbumListById(): ResponseInterface
     {
         $id  = $this->request->input('id', 0);
-        if(empty($id)){
+
+        if (empty($id)) {
             $this->response->error(ErrorCode::VALIDATE_FAIL, '专辑id 不能为空！');
         }
         $list = $this->albumService->getAlbumListById((int)$id);
         return $this->response->success($list);
     }
-
 }

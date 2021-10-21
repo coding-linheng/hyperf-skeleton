@@ -61,7 +61,7 @@ class IndexController extends AbstractController
      */
     public function getRecommendUserList()
     {
-        $type=$this->request->input('type',1);
+        $type = $this->request->input('type', 1);
         $list = $this->commonService->getRecommendUserList($type);
         return $this->response->success($list);
     }
@@ -73,7 +73,7 @@ class IndexController extends AbstractController
      */
     public function getRecommendZpList()
     {
-        $type=$this->request->input('type',1);
+        $type = $this->request->input('type', 1);
         $list = $this->commonService->getRecommendZpList($type);
         return $this->response->success($list);
     }
@@ -166,11 +166,12 @@ class IndexController extends AbstractController
     }
 
     //pdf转png图片
-    public function test(){
-        $res='';
-        try{
-          $res=  \App\Common\Utils::pdfToOnePng(BASE_PATH.'/public/pdf/aa.pdf',BASE_PATH.'/public/pdf/');
-        }catch (\Exception $e){
+    public function test()
+    {
+        $res = '';
+        try {
+            $res =  \App\Common\Utils::pdfToOnePng(BASE_PATH . '/public/pdf/aa.pdf', BASE_PATH . '/public/pdf/');
+        } catch (\Exception $e) {
             echo $e->getMessage();
         }
         var_dump($res);

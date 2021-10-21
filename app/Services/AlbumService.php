@@ -262,12 +262,13 @@ class AlbumService extends BaseService
      */
     public function getOriginalWorkList($order): mixed
     {
-      //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
-      $where = 'del=1 and status=2 and isoriginal=2 ';
-      if (!empty($order)) {
-        $order = $order . ' desc ,id desc';
-      }
-      return $this->albumRepository->getAlbum($where, $order);
+        //此处可能会搜索专辑展示 isoriginal 是否原创 1否2是
+        $where = 'del=1 and status=2 and isoriginal=2 ';
+
+        if (!empty($order)) {
+            $order = $order . ' desc ,id desc';
+        }
+        return $this->albumRepository->getAlbum($where, $order);
     }
 
     /**
@@ -323,6 +324,12 @@ class AlbumService extends BaseService
         return $this->albumRepository->getAlbum($where, $order);
     }
 
+    //查看专辑详情
+    public function getAlbumListById($id): array
+    {
+        return $this->albumRepository->getAlbumListById($id);
+    }
+
     //采集
     private function captureAlbumImgCheck($albumInfo, $albumlistInfo)
     {
@@ -358,11 +365,5 @@ class AlbumService extends BaseService
         }
 
         return true;
-    }
-
-    //查看专辑详情
-    public function getAlbumListById($id): array
-    {
-        return $this->albumRepository->getAlbumListById($id);
     }
 }

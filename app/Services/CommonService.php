@@ -16,58 +16,52 @@ class CommonService extends BaseService
     #[Inject]
     protected CommonRepository $commonRepository;
 
-  /**
-   * 首页轮播图
-   * @return array
-   */
+    /**
+     * 首页轮播图.
+     */
     public function getBannerIndex(): array
     {
         return $this->commonRepository->getBannerIndex();
     }
 
-  /**
-   * 推荐作品
-   * @return array
-   */
+    /**
+     * 推荐作品
+     * @param mixed $type
+     */
     public function getRecommendZpList($type): array
     {
-      return $this->commonRepository->getRecommendZpList($type);
+        return $this->commonRepository->getRecommendZpList($type);
     }
 
     /**
-     * 推荐用户
+     * 推荐用户.
      *
      * @param $type
-     *
-     * @return array
      */
     public function getRecommendUserList($type): array
     {
-      return $this->commonRepository->getRecommendUserList($type);
+        return $this->commonRepository->getRecommendUserList($type);
     }
 
-  /**
-   * 首页广告
-   * @return array
-   */
+    /**
+     * 首页广告.
+     */
     public function getAdvertisement(): array
     {
         return $this->commonRepository->getAdvertisement();
     }
 
-  /**
-   * 首页顶部广告
-   * @return array
-   */
+    /**
+     * 首页顶部广告.
+     */
     public function getIndexTopAdvertisement(): array
     {
         return $this->commonRepository->getIndexTopAdvertisement();
     }
 
-  /**
-   * 友情链接
-   * @return array
-   */
+    /**
+     * 友情链接.
+     */
     public function getBlogRoll(): array
     {
         return $this->commonRepository->getBlogRoll();
