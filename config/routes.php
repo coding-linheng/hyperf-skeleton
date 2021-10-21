@@ -16,6 +16,7 @@ use App\Controller\Sms;
 use App\Controller\Utils;
 use App\Controller\V1\HelpCenter;
 use App\Controller\V1\Index\AlbumCollectController;
+use App\Controller\V1\Index\PersonalHomePageController;
 use App\Controller\V1\Index\SucaiController;
 use App\Controller\V1\Index\WenkuController;
 use App\Controller\V1\UserCenter\UserController;
@@ -89,7 +90,13 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getListByAuthor', [WenkuController::class, 'getListByAuthor']);
     });
 
-    #工具类
+    #个人主页
+    Router::addGroup('personal/', function () {
+      Router::get('homePage', [PersonalHomePageController::class, 'homePage']);
+      Router::get('fansListByUid', [PersonalHomePageController::class, 'fansListByUid']);
+    });
+
+  #工具类
     Router::addGroup('utils/', function () {
         Router::post('upload', [Utils::class, 'upload']);
     });
@@ -98,7 +105,6 @@ Router::addGroup($routerPath . '/', function () {
 
 //无需登录也可以访问的前端页面接口
 Router::addGroup($routerPath . '/', function () {
-
 
     #首页
     Router::addGroup('index/', function () {
