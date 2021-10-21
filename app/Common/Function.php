@@ -284,7 +284,7 @@ if (!function_exists('get_img_path_private')) {
      */
     function get_img_path_private(string $path, int $expires = 3600): string
     {
-        $filesystem = make(Filesystem::class);
+        $filesystem = di()->get(Filesystem::class);
         //获取私有地址,默认过期一个小时
         return $filesystem->getAdapter()->privateDownloadUrl($path, $expires);
     }

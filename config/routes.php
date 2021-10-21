@@ -40,6 +40,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getCashLog', [UserController::class, 'getCashLog']);
         Router::get('getScoreLog', [UserController::class, 'getScoreLog']);
         Router::get('getPrivateMessage', [UserController::class, 'getPrivateMessage']);
+        Router::get('messageBox', [UserController::class, 'messageBox']);
         Router::get('getSystemMessage', [UserController::class, 'getSystemMessage']);
         Router::get('getMessageDetail', [UserController::class, 'getMessageDetail']);
         Router::get('getMoving', [UserController::class, 'getMoving']);

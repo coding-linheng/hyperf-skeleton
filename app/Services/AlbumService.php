@@ -109,19 +109,22 @@ class AlbumService extends BaseService
      */
     public function getOriginAlbumPic(int $id): array
     {
-        $albumListArr         = $this->albumRepository->getAlbumListDetail(['id' => $id], ['id', 'yid', 'aid', 'name', 'path', 'title']);
+        $albumListArr = $this->albumRepository->getAlbumListDetail(['id' => $id], ['id', 'yid', 'aid', 'name', 'path', 'title']);
 
         if (empty($albumListArr)) {
             throw new BusinessException(ErrorCode::ERROR, '图片不存在！');
         }
-        $albumListArr         = is_array($albumListArr) ?: $albumListArr->toArray();
+        $albumListArr = is_array($albumListArr) ?: $albumListArr->toArray();
         // 查询该专辑是否为自己上传的，
-        $albumInfo  = $this->albumRepository->getAlbumDetailInfo(['id' => $albumListArr['aid']], ['id', 'yid', 'uid', 'ltui', 'tui', 'isoriginal', 'name']);
+        $albumInfo = $this->albumRepository->getAlbumDetailInfo(
+            ['id' => $albumListArr['aid']],
+            ['id', 'yid', 'uid', 'ltui', 'tui', 'isoriginal', 'name']
+        );
 
         if (empty($albumInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '图片专辑不存在！');
         }
-        $albumInfo         = is_array($albumInfo) ?: $albumInfo->toArray();
+        $albumInfo = is_array($albumInfo) ?: $albumInfo->toArray();
 
         //如果没登录则不能看
         if (!isset(user()['id'])) {
@@ -201,13 +204,19 @@ class AlbumService extends BaseService
     public function collectAlbumImg(int $id, $type, $remark): int|null
     {
         //判断图片是否存在
-        $albumlistInfo = $this->albumRepository->getAlbumListDetail(['id' => $id], ['id', 'aid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'shoucang']);
+        $albumlistInfo = $this->albumRepository->getAlbumListDetail(
+            ['id' => $id],
+            ['id', 'aid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'shoucang']
+        );
 
         if (empty($albumlistInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '图片不存在！');
         }
 
-        $albumInfo     = $this->albumRepository->getAlbumDetailInfo(['id' => $albumlistInfo['aid']], ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name']);
+        $albumInfo = $this->albumRepository->getAlbumDetailInfo(
+            ['id' => $albumlistInfo['aid']],
+            ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name']
+        );
 
         if ($albumInfo['uid'] == user()['id']) {
             throw new BusinessException(ErrorCode::ERROR, '请勿操作自己的作品！');
@@ -231,8 +240,14 @@ class AlbumService extends BaseService
      */
     public function captureAlbumImg(int $cid, $aid, string $title): array
     {
-        $albumInfo     = $this->albumRepository->getAlbumDetailInfo(['id' => $aid], ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name', 'num']);
-        $albumlistInfo = $this->albumRepository->getAlbumListDetail(['id' => $cid], ['id', 'aid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'caiji']);
+        $albumInfo     = $this->albumRepository->getAlbumDetailInfo(
+            ['id' => $aid],
+            ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name', 'num']
+        );
+        $albumlistInfo = $this->albumRepository->getAlbumListDetail(
+            ['id' => $cid],
+            ['id', 'aid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'caiji']
+        );
 
         if (empty($albumInfo) || empty($albumlistInfo)) {
             throw new BusinessException(ErrorCode::ERROR, '图片或者专辑不存在！');

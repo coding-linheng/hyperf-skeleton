@@ -77,8 +77,8 @@ class Utils
      * @param string $pdf pdf所在路径 （/public/pdf/abc.pdf pdf所在的绝对路径）
      * @param string $path 新生成图片所在路径 (/public/pdf/)
      *
-     * @return array|bool
      * @throws Exception
+     * @return array|bool
      */
     public static function pdfToMultiPng(string $pdf, string $path): bool|array
     {
@@ -89,7 +89,7 @@ class Utils
         if (!file_exists($pdf)) {
             return false;
         }
-        $im = new Imagick;
+        $im = new Imagick();
         $im->setResolution(120, 120); //设置分辨率 值越大分辨率越高
         $im->setCompressionQuality(100);
         $im->readImage($pdf);
@@ -121,12 +121,12 @@ class Utils
     public static function pdfToOnePng(string $pdf, string $path): string
     {
         try {
-            $im = new Imagick;
+            $im = new Imagick();
             $im->setCompressionQuality(100);
             $im->setResolution(120, 120); //设置分辨率 值越大分辨率越高
             $im->readImage($pdf);
 
-            $canvas = new Imagick;
+            $canvas = new Imagick();
             $imgNum = $im->getNumberImages();
             //$canvas->setResolution(120, 120);
             foreach ($im as $k => $sub) {
@@ -134,7 +134,7 @@ class Utils
                 //$sub->setResolution(120, 120);
                 $sub->stripImage();
                 $sub->trimImage(0);
-                $width  = $sub->getImageWidth() + 10;
+                $width  = $sub->getImageWidth()  + 10;
                 $height = $sub->getImageHeight() + 10;
 
                 if ($k + 1 == $imgNum) {

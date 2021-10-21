@@ -170,6 +170,15 @@ class UserController extends AbstractController
     }
 
     /**
+     * 消息盒.
+     */
+    public function messageBox(): ResponseInterface
+    {
+        //获取前最新的5条私信通知
+        return $this->success($this->userService->getMessageBox(user()['id']));
+    }
+
+    /**
      * 获取私信
      */
     public function getPrivateMessage(): ResponseInterface
