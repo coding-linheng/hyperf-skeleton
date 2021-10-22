@@ -71,6 +71,24 @@ class WaterDoRepository extends BaseRepository
     }
 
     /**
+     * 获取素材/文库下载记录.
+     */
+    public function getWaterDownList(array $query, array $where, int $type, array $column = ['*']): array
+    {
+        $page     = ($query['page'] ?? 1) ?: 1;
+        $pageSize = $query['page_size'] ?? 10;
+
+        if ($type == 2) {
+            $orm = Waterdown::from('waterdown as w')->join('img as m', 'w.wid', 'm.id');
+        } else {
+            $orm = Waterdown::from('waterdown as w')->join('wenku as k', 'w.wid', 'k.id');
+        }
+        $count = $orm->where($where)->count();
+        $list  = $orm->where($where)->select($column)->orderBy('id', 'desc')->offset(($page - 1) * $pageSize)->limit($pageSize)->get();
+        return ['count' => $count, 'list' => $list->toArray()];
+    }
+
+    /**
      * 添加下载原创素材流水.
      * @param mixed $data
      */
@@ -254,6 +272,7 @@ class WaterDoRepository extends BaseRepository
 
     public function getMovingLimit(array $where, int $limit, array $column = ['*'])
     {
-        return Waterdo::from('waterdo as w')->join('user as u', 'u.id', 'w.doid')->where($where)->select($column)->orderBy('id', 'desc')->limit($limit)->get();
+        return Waterdo::from('waterdo as w')->join('user as u', 'u.id', 'w.doid')->where($where)->select($column)
+            ->orderBy('id', 'desc')->limit($limit)->get();
     }
 }

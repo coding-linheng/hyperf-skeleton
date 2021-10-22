@@ -432,8 +432,47 @@ class UserService extends BaseService
             $v['path'] = $detail ? get_img_path_private($detail->toArray()['path']) : '';
         }
         unset($v);
-        return ['no_read_count' => $list['count'] - $count, 'message_list' => array_slice($list['list'], 0, 5), 'moving_list' => $moving];
+        return [
+            'no_read_count' => $list['count'] - $count, 'message_list' => array_slice($list['list'], 0, 5), 'moving_list' => $moving,
+        ];
         //获取五条最新动态
+    }
+
+    /**
+     * 素材下载日志.
+     */
+    public function getMaterialDownLog(int $userid, array $query): array
+    {
+        $where  = [['w.uid', '=', $userid]];
+        $column = ['w.id', 'w.wid', 'w.vip', 'w.score', 'm.title', 'm.price', 'm.path', 'm.leixing', 'w.time'];
+        $data   = $this->waterDoRepository->getWaterDownList($query, $where, 2, $column);
+
+        foreach ($data['list'] as &$v) {
+            if ($v['leixing'] == 1) {
+                $v['star']  = (int)$v['price'];
+                $v['price'] = $this->getscore((int)$v['price'])['score'];
+            }
+            $v['path'] = get_img_path_private($v['path']);
+            $v['time'] = date('Y-m-d H:i:s', (int)$v['time']);
+        }
+        unset($v);
+        return $data;
+    }
+
+    public function getLibraryDownLog(int $userid, array $query): array
+    {
+        $where  = [['w.uid', '=', $userid]];
+        $column = ['w.id', 'w.wid', 'w.vip', 'w.score', 'k.title', 'k.price', 'k.path', 'k.leixing'];
+        $data   = $this->waterDoRepository->getWaterDownList($query, $where, 1, $column);
+
+        foreach ($data['list'] as &$v) {
+            if ($v['leixing'] == 1) {
+                $v['price'] = $this->getscore((int)$v['price'])['score'];
+            }
+            $v['path'] = get_img_path_private($v['path']);
+        }
+        unset($v);
+        return $data;
     }
 
     /**

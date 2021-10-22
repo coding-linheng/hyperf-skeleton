@@ -52,6 +52,8 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getDetailForMaterial', [UserController::class, 'getDetailForMaterial']);
         Router::get('getDetailForLibrary', [UserController::class, 'getDetailForLibrary']);
         Router::get('getCertification', [UserController::class, 'getCertification']);
+        Router::get('getMaterialDownLog', [UserController::class, 'getMaterialDownLog']);
+        Router::get('getLibraryDownLog', [UserController::class, 'getLibraryDownLog']);
         Router::post('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
         Router::post('bindMobile', [UserController::class, 'bindMobile']);
         Router::post('profile', [UserController::class, 'profile']);
@@ -92,11 +94,11 @@ Router::addGroup($routerPath . '/', function () {
 
     #个人主页
     Router::addGroup('personal/', function () {
-      Router::get('homePage', [PersonalHomePageController::class, 'homePage']);
-      Router::get('fansListByUid', [PersonalHomePageController::class, 'fansListByUid']);
+        Router::get('homePage', [PersonalHomePageController::class, 'homePage']);
+        Router::get('fansListByUid', [PersonalHomePageController::class, 'fansListByUid']);
     });
 
-  #工具类
+    #工具类
     Router::addGroup('utils/', function () {
         Router::post('upload', [Utils::class, 'upload']);
     });

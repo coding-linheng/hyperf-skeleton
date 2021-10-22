@@ -307,6 +307,9 @@ class UserController extends AbstractController
         return $this->success($this->userService->deleteForMaterial([$id]));
     }
 
+    /**
+     * 删除文库.
+     */
     public function deleteForLibrary(User $request): ResponseInterface
     {
         $request->scene('get_library')->validateResolved();
@@ -314,6 +317,9 @@ class UserController extends AbstractController
         return $this->success($this->userService->deleteForLibrary([$id]));
     }
 
+    /**
+     * 批量删除素材.
+     */
     public function batchDeleteMaterial(User $request): ResponseInterface
     {
         $request->scene('batch_del_material')->validateResolved();
@@ -322,6 +328,9 @@ class UserController extends AbstractController
         return $this->success($this->userService->deleteForMaterial($idArr));
     }
 
+    /**
+     * 批量删除文库.
+     */
     public function batchDeleteLibrary(User $request): ResponseInterface
     {
         $request->scene('batch_del_library')->validateResolved();
@@ -344,5 +353,21 @@ class UserController extends AbstractController
     public function getMaterialFormat(): ResponseInterface
     {
         return $this->success($this->userService->getMaterialFormat());
+    }
+
+    /**
+     * 素材下载日志.
+     */
+    public function getMaterialDownLog(): ResponseInterface
+    {
+        return $this->success($this->userService->getMaterialDownLog(user()['id'], $this->request->all()));
+    }
+
+    /**
+     * 素材下载日志.
+     */
+    public function getLibraryDownLog(): ResponseInterface
+    {
+        return $this->success($this->userService->getLibraryDownLog(user()['id'], $this->request->all()));
     }
 }
