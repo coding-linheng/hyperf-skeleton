@@ -29,7 +29,7 @@ class PersonalHomePageService extends BaseService
     {
         $field = [
             'u.id', 'u.nickname', 'u.imghead', 'u.content', 'u.wx',
-            'u.money', 'u.qi', 'u.fans', 'u.guan', 'u.isview', 'd.shoucang', 'd.zhuanji', 'd.zuopin', 'd.sucainum', 'd.wenkunum',
+            'u.money', 'u.qi', 'u.fans', 'u.guan', 'u.isview', 'd.shoucang', 'd.zhuanji', 'd.zuopin', 'd.sucainum', 'd.wenkunum','d.cover_img'
         ];
 
         return $this->userRepository->getUserMerge($uid, $field);
@@ -58,9 +58,10 @@ class PersonalHomePageService extends BaseService
                 $tmp['sucai_list']  = [];
 
                 if ($val['sucainum'] > 1) {
-                    //循环从素材中获取图片
+                    //循环从素材中获取图片，只取6个
                     $where              = ['uid' => $val['id']];
-                    $tmp['sucai_list']  = $this->sucaiRepository->searchImgList('', [], $where, '');
+                    $imgLists  = $this->sucaiRepository->searchImgList('', [], $where, '',6);
+                    $tmp['sucai_list']  = $imgLists['data']??[];
                 }
                 $fansList['data'][$key]  = $tmp;
             }

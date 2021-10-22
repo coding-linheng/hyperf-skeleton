@@ -95,6 +95,8 @@ ALTER TABLE dczg_userdata
     ADD COLUMN `sucai_tui` int NOT NULL DEFAULT '0' COMMENT '素材推荐用户';
 ALTER TABLE dczg_userdata
     ADD COLUMN `album_tui` int NOT NULL DEFAULT '0' COMMENT '灵感推荐用户';
+ALTER TABLE dczg_userdata
+    ADD COLUMN `cover_img` varchar(255)NOT NULL DEFAULT '' COMMENT '个人主页封面图';
 ```
 
 
