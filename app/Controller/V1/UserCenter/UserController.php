@@ -8,6 +8,8 @@ use App\Common\Sms;
 use App\Common\Utils;
 use App\Constants\UserCenterStatus;
 use App\Controller\AbstractController;
+use App\Model\Keyword;
+use App\Model\KeywordsType;
 use App\Model\Noticelook;
 use App\Request\User;
 use App\Services\SmsService;
@@ -369,5 +371,22 @@ class UserController extends AbstractController
     public function getLibraryDownLog(): ResponseInterface
     {
         return $this->success($this->userService->getLibraryDownLog(user()['id'], $this->request->all()));
+    }
+
+    /**
+     * 获取关键词.
+     */
+    public function getKeywords(): ResponseInterface
+    {
+        $keyType  = KeywordsType::query()->select(['id', 'name', 'must'])->get()->toArray();
+        $keywords = Keyword::query()->select(['id', 'name', 'type'])->whereIn('type', array_column($keyType, 'id'))->get()->toArray();
+        $data     = [];
+        $keyType = array_column($keyType,null,'id');
+        foreach ($keywords as $v) {
+            $data[$v['type']]['name'] ??= $keyType[$v['type']]['name'];
+            $data[$v['type']]['must'] ??= $keyType[$v['type']]['must'];
+            $data[$v['type']]['list'][] = $v['name'];
+        }
+        return $this->success(array_values($data));
     }
 }
