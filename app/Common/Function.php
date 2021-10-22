@@ -44,6 +44,33 @@ if (!function_exists('redis')) {
     }
 }
 
+if (!function_exists('getCache')) {
+  /**
+   * 获取redis连接池实例.
+   */
+  function getCache(string $key): string
+  {
+    $redis= di()->get(RedisFactory::class)->get('cache');
+    return $redis->get($key);
+  }
+}
+
+if (!function_exists('setCache')) {
+  /**
+   * 获取redis连接池实例.
+   */
+  function setCache(string $key,$val,$ttl=3600*24*360): bool
+  {
+    $redis=  di()->get(RedisFactory::class)->get('cache');
+    if(!is_string($val)){
+      $val=serialize($val);
+    }
+    return $redis->setex($key,$val,$ttl);
+  }
+}
+
+
+
 if (!function_exists('logger')) {
     /**
      * 获取指定日志实例.

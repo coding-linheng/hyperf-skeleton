@@ -218,7 +218,7 @@ class AlbumRepository extends BaseRepository
     }
 
     //增加今日关注次数
-    //$guanzhu=cache('dayguan'.$this->uid.$id);
+    $guanzhu=getCache('dayguan'.$uid.$albumInfo['id']);
     if(!$guanzhu){
       //增加今日关注
       $newtime=strtotime(date('Y-m-d',time()));//今天的时间戳
@@ -235,7 +235,7 @@ class AlbumRepository extends BaseRepository
         throw new BusinessException(ErrorCode::ERROR, '操作失败！');
       }
       $shenyutime=strtotime(date('Y-m-d',time()))+86400;//明天的时间戳
-     // cache('dayguan'.$this->uid.$id,$id,$shenyutime-time());//缓存
+      setCache('dayguan'.$uid.$albumInfo['id'],$albumInfo['id'],$shenyutime-time());//缓存
     }
 
     //增加收藏次数
