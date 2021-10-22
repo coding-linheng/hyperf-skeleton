@@ -54,6 +54,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getCertification', [UserController::class, 'getCertification']);
         Router::get('getMaterialDownLog', [UserController::class, 'getMaterialDownLog']);
         Router::get('getLibraryDownLog', [UserController::class, 'getLibraryDownLog']);
+        Router::get('getKeywords', [UserController::class, 'getKeywords']);
         Router::post('uploadHeadImg', [UserController::class, 'uploadHeadImg']);
         Router::post('bindMobile', [UserController::class, 'bindMobile']);
         Router::post('profile', [UserController::class, 'profile']);
