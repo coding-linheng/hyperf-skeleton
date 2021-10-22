@@ -76,6 +76,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getOriginAlbumPic', [AlbumController::class, 'getOriginAlbumPic']);
         Router::post('captureAlbumImg', [AlbumCollectController::class, 'captureAlbumImg']);
         Router::post('collectAlbumImg', [AlbumCollectController::class, 'collectAlbumImg']);
+        Router::post('collectAlbum', [AlbumCollectController::class, 'collectAlbum']);
     });
 
     #素材

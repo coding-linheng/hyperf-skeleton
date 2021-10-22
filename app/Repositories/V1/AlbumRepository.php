@@ -170,6 +170,17 @@ class AlbumRepository extends BaseRepository
         return ['count' => $count, 'list' => $list->toArray()];
     }
 
+  /**
+   * todo 获取某个用户收藏专辑列表.
+   *
+   * @param $uid
+   *
+   * @return int|null
+   */
+  public function getCollectAlbumList($uid): int|null
+  {
+    return 1;
+  }
 
   /**
    * 收藏专辑.

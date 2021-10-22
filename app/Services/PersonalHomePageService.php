@@ -130,7 +130,7 @@ class PersonalHomePageService extends BaseService
         break;
       case 2:
         //2专辑
-        $list= $this->sucaiListByUid($uid);
+        $list= $this->albumRepository->getCollectAlbumList($uid);
         break;
       case 3:
         //3文库
