@@ -80,7 +80,7 @@ class SucaiRepository extends BaseRepository
      *
      * @return mixed
      */
-    public function searchImgList($query, $whereParam, $wheres, $order)
+    public function searchImgList($query, $whereParam, $wheres, $order,$perPage=200)
     {
         $orm = Img::search($query, es_callback($whereParam));
 
@@ -93,7 +93,7 @@ class SucaiRepository extends BaseRepository
                 $orm = $orm->where($field, $where);
             }
         }
-        $list = $orm->paginateRaw(200)->toArray();
+        $list = $orm->paginateRaw($perPage)->toArray();
         $list = format_es_page_raw_data($list);
         //处理数据
         if (!empty($list) && isset($list['data']) && !empty($list['data'])) {
