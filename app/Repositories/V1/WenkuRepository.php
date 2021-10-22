@@ -35,9 +35,6 @@ class WenkuRepository extends BaseRepository
         $randListArr = Db::select($sql, []);
         //处理数据
         if (!empty($randListArr)) {
-            //找到目录列表
-            $muluArr = $this->getMulu();
-
             foreach ($randListArr as $key => &$val) {
                 $tmp['id']         = $val->id ?? 0;
                 $tmp['path']       = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
@@ -47,7 +44,6 @@ class WenkuRepository extends BaseRepository
                 $tmp['leixing']    = $val->leixing  ?? 0;
                 $tmp['downnum']    = $val->downnum  ?? 0;
                 $tmp['dtime']      = $val->dtime    ?? 0;
-                $tmp['mulu']       = isset($val->mulu_id) && isset($muluArr[$val->mulu_id]) ? $muluArr[$val->mulu_id] : '';
                 $randListArr[$key] = $tmp;
                 $tmp               = [];
             }
@@ -115,6 +111,35 @@ class WenkuRepository extends BaseRepository
     public function isShouCang($uid, $targetId): Model|null
     {
         return Shouwen::query()->where(['uid' => $uid, 'wid' => $targetId])->first();
+    }
+
+  /**
+   * 获取某个用户的收藏文库列表.
+   *
+   * @param mixed $uid
+   *
+   * @return array
+   */
+    public function getShouCangList(mixed $uid): array {
+      $shouWenkuInfoList = Shouwen::from('shouwen as s')
+        ->leftJoin('wenku as w', 's.iid', '=', 'w.id')
+        ->where(['s.uid' => $uid])->select(['w.*'])->paginate()->toArray();
+      //处理数据
+      if (!empty($shouWenkuInfoList) && isset($shouWenkuInfoList['data']) && !empty($shouWenkuInfoList['data'])) {
+        foreach ($shouWenkuInfoList as $key => &$val) {
+          $tmp['id']         = $val->id ?? 0;
+          $tmp['path']       = get_img_path($val->path, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+          $tmp['title']      = $val->title    ?? '';
+          $tmp['shoucang']   = $val->shoucang ?? 0;
+          $tmp['price']      = $val->price    ?? 0;
+          $tmp['leixing']    = $val->leixing  ?? 0;
+          $tmp['downnum']    = $val->downnum  ?? 0;
+          $tmp['dtime']      = $val->dtime    ?? 0;
+          $shouWenkuInfoList[$key] = $tmp;
+          $tmp               = [];
+        }
+      }
+       return $shouWenkuInfoList;
     }
 
     /**

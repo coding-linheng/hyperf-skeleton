@@ -98,5 +98,9 @@ ALTER TABLE dczg_userdata
 ALTER TABLE dczg_userdata
     ADD COLUMN `cover_img` varchar(255)NOT NULL DEFAULT '' COMMENT '个人主页封面图';
 ```
-
-
+```sql
+ALTER TABLE dczg_guanzhu ADD COLUMN `img_url` varchar(255)NOT NULL DEFAULT '' COMMENT '专辑图片封面预览url';
+ALTER TABLE dczg_guanzhu ADD COLUMN `album_uid` varchar(255)NOT NULL DEFAULT '' COMMENT '专辑所属的用户id';
+ALTER TABLE dczg_guanzhu ADD COLUMN `remark` varchar(255)NOT NULL DEFAULT '' COMMENT '收藏备注，来源等';
+ALTER TABLE dczg_guanzhu ADD COLUMN `c_time` int unsigned NOT NULL DEFAULT '0' COMMENT '收藏时间';
+```

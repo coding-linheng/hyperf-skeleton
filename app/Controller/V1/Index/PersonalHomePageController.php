@@ -51,6 +51,64 @@ class PersonalHomePageController extends AbstractController
     }
 
     /**
+     * 获取某个用户的专辑列表.
+     */
+    public function albumListByUid(): ResponseInterface
+    {
+      $uid = $this->request->input('uid', 0);
+
+      if (empty($uid)) {
+        $this->response->error(ErrorCode::VALIDATE_FAIL, '未找到用户');
+      }
+      return $this->success($this->personalPageService->albumListByUid((int)$uid));
+    }
+
+    /**
+     * 获取某个用户的素材列表.
+     * @param :uid 用户id;
+     * @param :page 页面
+     *
+     */
+    public function sucaiListByUid(): ResponseInterface
+    {
+      $uid = $this->request->input('uid', 0);
+
+      if (empty($uid)) {
+        $this->response->error(ErrorCode::VALIDATE_FAIL, '未找到用户');
+      }
+      return $this->success($this->personalPageService->sucaiListByUid((int)$uid));
+    }
+
+   /**
+     * 获取某个用户的文库列表.
+     */
+    public function wenkuListByUid(): ResponseInterface
+    {
+      $uid = $this->request->input('uid', 0);
+
+      if (empty($uid)) {
+        $this->response->error(ErrorCode::VALIDATE_FAIL, '未找到用户');
+      }
+      return $this->success($this->personalPageService->wenkuListByUid((int)$uid));
+    }
+
+    /**
+     * 获取某个用户的收藏列表.
+     * @param :uid 用户id;
+     * @param :type 类型 1素材，2专辑，3文库
+     *
+     */
+    public function collectListByUid(): ResponseInterface
+    {
+      $uid = $this->request->input('uid', 0);
+      $type = $this->request->input('type', 0);
+      if (empty($uid)) {
+        $this->response->error(ErrorCode::VALIDATE_FAIL, '未找到用户');
+      }
+      return $this->success($this->personalPageService->collectListByUid((int)$uid));
+    }
+
+  /**
      * 获取收藏该专辑的设计师列表.
      */
     public function getDesignerByCollectAlbum(): ResponseInterface

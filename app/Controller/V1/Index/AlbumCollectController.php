@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\V1\Index;
 
+use App\Constants\ErrorCode;
 use App\Controller\AbstractController;
 use App\Request\Album;
 use App\Services\AlbumService;
@@ -55,7 +56,12 @@ class AlbumCollectController extends AbstractController
      */
     public function collectAlbum(): ResponseInterface
     {
-        return $this->response->success();
+        $id          = $this->request->input('id',0);
+        $type        = $this->request->input('type', 1);
+        if(empty($id)||empty($type)){
+          $this->response->error(ErrorCode::VALIDATE_FAIL,'缺少参数！');
+        }
+        return $this->response->success($this->albumService->collectAlbum(intval($id), intval($type)));
     }
 
     /**

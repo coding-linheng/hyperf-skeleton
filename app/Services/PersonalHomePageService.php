@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Repositories\V1\AlbumRepository;
 use App\Repositories\V1\SucaiRepository;
 use App\Repositories\V1\UserRepository;
+use App\Repositories\V1\WenkuRepository;
 use Hyperf\Database\Model\Model;
 use Hyperf\Di\Annotation\Inject;
 
@@ -15,13 +17,19 @@ use Hyperf\Di\Annotation\Inject;
  */
 class PersonalHomePageService extends BaseService
 {
-    #[Inject]
+  #[Inject]
   protected UserRepository $userRepository;
 
-    #[Inject]
+  #[Inject]
   protected SucaiRepository $sucaiRepository;
 
-    /**
+  #[Inject]
+  protected WenkuRepository $wenkuRepository;
+
+  #[Inject]
+  protected AlbumRepository $albumRepository;
+
+  /**
      * 个人主页.
      * @param mixed $uid
      */
@@ -68,4 +76,71 @@ class PersonalHomePageService extends BaseService
         }
         return $fansList;
     }
+
+  /**
+   * 获取某个用户的素材列表.
+   *
+   * @param mixed $uid
+   *
+   * @return array
+   */
+  public function sucaiListByUid(mixed $uid): array
+  {
+    return $this->sucaiRepository->searchImgList('', [], ['uid' => $uid], '',200);
+  }
+
+  /**
+   * 获取某个用户的专辑列表.
+   *
+   * @param mixed $uid
+   *
+   * @return array
+   */
+  public function albumListByUid(mixed $uid): array
+  {
+    $where = 'del=1 and uid='.$uid;
+    return $this->albumRepository->getAlbum($where, '');
+  }
+
+  /**
+   * 获取某个用户的文库列表.
+   *
+   * @param mixed $uid
+   *
+   * @return array
+   */
+  public function wenkuListByUid(mixed $uid): array
+  {
+    return $this->wenkuRepository->getSearchWenkuList(['uid' => $uid]);
+  }
+
+  /**
+   * 获取某个用户的收藏列表.
+   * @param :uid 用户id;
+   * @param :type 类型 1素材，2专辑，3文库
+   *
+   * @return array
+   */
+  public function collectListByUid(int $uid,$type): array
+  {
+    switch ($type){
+      case 1:
+        //1素材
+        $list=$this->sucaiRepository->getCollectSucaiImgListByUid($uid);
+        break;
+      case 2:
+        //2专辑
+        $list= $this->sucaiListByUid($uid);
+        break;
+      case 3:
+        //3文库
+        $list=$this->wenkuRepository->getShouCangList($uid);
+        break;
+      default:
+        $list=[];
+        break;
+    }
+    return $list;
+  }
+
 }

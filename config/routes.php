@@ -96,6 +96,10 @@ Router::addGroup($routerPath . '/', function () {
     Router::addGroup('personal/', function () {
         Router::get('homePage', [PersonalHomePageController::class, 'homePage']);
         Router::get('fansListByUid', [PersonalHomePageController::class, 'fansListByUid']);
+        Router::get('albumListByUid', [PersonalHomePageController::class, 'albumListByUid']);
+        Router::get('materialListByUid', [PersonalHomePageController::class, 'sucaiListByUid']);
+        Router::get('documentListByUid', [PersonalHomePageController::class, 'wenkuListByUid']);
+        Router::get('collectListByUid', [PersonalHomePageController::class, 'collectListByUid']);
     });
 
     #工具类
