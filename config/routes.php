@@ -102,6 +102,8 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('materialListByUid', [PersonalHomePageController::class, 'sucaiListByUid']);
         Router::get('documentListByUid', [PersonalHomePageController::class, 'wenkuListByUid']);
         Router::get('collectListByUid', [PersonalHomePageController::class, 'collectListByUid']);
+        Router::get('followListByUid', [PersonalHomePageController::class, 'followListByUid']);
+        Router::get('inviteListByUid', [PersonalHomePageController::class, 'inviteListByUid']);
     });
 
     #工具类

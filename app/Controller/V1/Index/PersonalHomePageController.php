@@ -108,6 +108,36 @@ class PersonalHomePageController extends AbstractController
       return $this->success($this->personalPageService->collectListByUid((int)$uid,$type));
     }
 
+
+    /**
+     * 获取某个用户的关注的用户列表.
+     * @param :uid 用户id;
+     *
+     */
+    public function followListByUid(): ResponseInterface
+    {
+        $uid = $this->request->input('uid', 0);
+        if (empty($uid)) {
+            $this->response->error(ErrorCode::VALIDATE_FAIL, '用户未找到！');
+        }
+        return $this->success($this->personalPageService->followListByUid((int)$uid));
+    }
+
+    /**
+     * 获取某个用户的关注的用户列表.
+     * @param :uid 用户id;
+     *
+     */
+    public function inviteListByUid(): ResponseInterface
+    {
+        $uid = $this->request->input('uid', 0);
+        if (empty($uid)) {
+            $this->response->error(ErrorCode::VALIDATE_FAIL, '用户未找到！');
+        }
+        return $this->success($this->personalPageService->inviteListByUid((int)$uid));
+    }
+
+
   /**
      * 获取收藏该专辑的设计师列表.
      */

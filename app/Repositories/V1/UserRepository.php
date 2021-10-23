@@ -11,6 +11,7 @@ use App\Constants\ImgSizeStyle;
 use App\Exception\BusinessException;
 use App\Model\Daywaterdc;
 use App\Model\Guanzhuuser;
+use App\Model\InviteProfit;
 use App\Model\Monthwaterdc;
 use App\Model\Picture;
 use App\Model\Tixian;
@@ -329,5 +330,29 @@ class UserRepository extends BaseRepository
     public function blockAlbumUser(): array
     {
         return User::query()->whereRaw('iszj=2 or isyczj=2')->select(['id', 'iszj', 'isyczj'])->get()->toArray();
+    }
+
+    /**
+     * 获取某个用户的关注的用户列表.
+     */
+    public function followListByUid($uid): array
+    {
+        $gzInfoList = Guanzhuuser::from('guanzhuuser as g')
+            ->leftJoin('user as u', 'g.bid', '=', 'u.id')
+            ->leftJoin('userdata as ud', 'ud.uid', '=', 'u.id')
+            ->where(['g.uid' => $uid])->select(['u.id','u.nickname','u.imghead', 'ud.shoucang', 'ud.zhuanji', 'ud.zuopin', 'ud.sucainum', 'ud.wenkunum'])->paginate()->toArray();
+        return $gzInfoList;
+    }
+
+    /**
+     * 获取某个用户的邀请的用户列表.
+     */
+    public function inviteListByUid($uid): array
+    {
+     $inviteInfoList = Inviteprofit::from('invite_profit as i')
+         ->leftJoin('user as u', 'i.tui', '=', 'u.id')
+         ->leftJoin('userdata as ud', 'ud.uid', '=', 'u.id')
+         ->where(['i.tui' => $uid])->select(['i.*','u.id','u.nickname','u.imghead', 'ud.shoucang', 'ud.zhuanji', 'ud.zuopin', 'ud.sucainum', 'ud.wenkunum'])->paginate()->toArray();
+        return $inviteInfoList;
     }
 }

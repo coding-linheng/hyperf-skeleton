@@ -114,6 +114,30 @@ class PersonalHomePageService extends BaseService
     return $this->wenkuRepository->getSearchWenkuList(['uid' => $uid]);
   }
 
+    /**
+     * 获取某个用户的关注的用户列表.
+     *
+     * @param mixed $uid
+     *
+     * @return array
+     */
+    public function followListByUid(mixed $uid): array
+    {
+        return $this->userRepository->followListByUid($uid);
+    }
+
+    /**
+     * 获取某个用户的邀请的用户列表.
+     *
+     * @param mixed $uid
+     *
+     * @return array
+     */
+    public function inviteListByUid(mixed $uid): array
+    {
+        return $this->userRepository->inviteListByUid($uid);
+    }
+
   /**
    * 获取某个用户的收藏列表.
    * @param :uid 用户id;
