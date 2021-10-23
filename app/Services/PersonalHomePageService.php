@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Constants\ErrorCode;
+use App\Exception\BusinessException;
 use App\Repositories\V1\AlbumRepository;
 use App\Repositories\V1\SucaiRepository;
 use App\Repositories\V1\UserRepository;
@@ -37,7 +39,7 @@ class PersonalHomePageService extends BaseService
     {
         $field = [
             'u.id', 'u.nickname', 'u.imghead', 'u.content', 'u.wx',
-            'u.money', 'u.qi', 'u.fans', 'u.guan', 'u.isview', 'd.shoucang', 'd.zhuanji', 'd.zuopin', 'd.sucainum', 'd.wenkunum', 'd.cover_img',
+            'u.money', 'u.qi', 'u.fans', 'u.guan', 'u.isview', 'd.shoucang', 'd.zhuanji', 'd.zuopin', 'd.sucainum', 'd.wenkunum', 'd.cover_img','d.cover_img_tmp', 'd.cover_img_msg', 'd.cover_img_status'
         ];
 
         return $this->userRepository->getUserMerge($uid, $field);
@@ -116,6 +118,25 @@ class PersonalHomePageService extends BaseService
     public function inviteListByUid(mixed $uid): array
     {
         return $this->userRepository->inviteListByUid($uid);
+    }
+
+    /**
+     * 修改封面.
+     * @param :uid 用户id
+     * @param :type 1使用默认，2自定义上传
+     * @param :file 文件上传，只支持格式，png,jpg,jpeg格式
+     */
+    public function changeBackground(mixed $uid,$type,$data): array
+    {
+        if(empty($uid) || $uid!=user()['id']){
+            throw new BusinessException(ErrorCode::ERROR, '不能修改别人的主页！');
+        }
+
+        $res= $this->userRepository->changeBackground($uid,$type,$data);
+        if(!$res){
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+        return $data;
     }
 
     /**

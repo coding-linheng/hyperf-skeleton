@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller\V1\Index;
 
+use App\Common\Utils;
 use App\Constants\ErrorCode;
 use App\Controller\AbstractController;
+use App\Request\User;
 use App\Services\AlbumService;
 use App\Services\PersonalHomePageService;
 use Hyperf\Di\Annotation\Inject;
@@ -133,6 +135,25 @@ class PersonalHomePageController extends AbstractController
             $this->response->error(ErrorCode::VALIDATE_FAIL, '用户未找到！');
         }
         return $this->success($this->personalPageService->inviteListByUid((int)$uid));
+    }
+    /**
+     * 修改封面.
+     *
+     * @param :uid 用户id
+     * @param :type 1使用默认，2自定义上传
+     * @param :file 文件上传，只支持格式，png,jpg,jpeg格式
+     */
+    public function changeBackground(User $request): ResponseInterface
+    {
+        $uid = $this->request->input('uid', 0);
+        if (empty($uid)) {
+            $this->response->error(ErrorCode::VALIDATE_FAIL, '用户未找到！');
+        }
+        $request->scene('upload')->validateResolved();
+        $file = $this->request->file('upload');
+        $type = (int)$this->request->input('type');
+        $data = Utils::upload($file, ['png', 'jpg', 'jpeg']);
+        return $this->success($this->personalPageService->changeBackground((int)$uid,$type,$data));
     }
 
     /**

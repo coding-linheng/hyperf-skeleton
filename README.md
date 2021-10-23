@@ -98,6 +98,13 @@ ALTER TABLE dczg_userdata
     ADD COLUMN `album_tui` int NOT NULL DEFAULT '0' COMMENT '灵感推荐用户';
 ALTER TABLE dczg_userdata
     ADD COLUMN `cover_img` varchar(255) NOT NULL DEFAULT '' COMMENT '个人主页封面图';
+ALTER TABLE dczg_userdata
+    ADD COLUMN `cover_img_tmp` varchar(255) NOT NULL DEFAULT '' COMMENT '个人主页封面图临时图，待审核通过';
+ALTER TABLE dczg_userdata
+    ADD COLUMN `cover_img_msg` varchar(255) NOT NULL DEFAULT '' COMMENT '未审核通过原因';
+ALTER TABLE dczg_userdata
+    ADD COLUMN `cover_img_status` int NOT NULL DEFAULT '0' COMMENT '封面状态，0无需审核，1有待审核，2审核拒绝，3审核通过';
+
 ```
 
 ```sql

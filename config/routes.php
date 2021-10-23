@@ -106,6 +106,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('collectListByUid', [PersonalHomePageController::class, 'collectListByUid']);
         Router::get('followListByUid', [PersonalHomePageController::class, 'followListByUid']);
         Router::get('inviteListByUid', [PersonalHomePageController::class, 'inviteListByUid']);
+        Router::get('changeBackground', [PersonalHomePageController::class, 'changeBackground']);
     });
 
     #签到/活动
