@@ -102,8 +102,8 @@ class PersonalHomePageController extends AbstractController
     {
       $uid = $this->request->input('uid', 0);
       $type = $this->request->input('type', 0);
-      if (empty($uid)) {
-        $this->response->error(ErrorCode::VALIDATE_FAIL, '未找到用户');
+      if (empty($uid) || empty($type)) {
+        $this->response->error(ErrorCode::VALIDATE_FAIL, '参数缺失');
       }
       return $this->success($this->personalPageService->collectListByUid((int)$uid,$type));
     }

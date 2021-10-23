@@ -180,8 +180,8 @@ class AlbumRepository extends BaseRepository
   public function getCollectAlbumList($uid): array
   {
       $shouAlbumInfoList = Guanzhu::from('guanzhu as g')
-          ->leftJoin('album as a', 'g.iid', '=', 'a.id')
-          ->where(['g.uid' => $uid])->select(['g.*'])->paginate()->toArray();
+          ->leftJoin('album as a', 'g.lid', '=', 'a.id')
+          ->where(['g.uid' => $uid])->select(['a.*'])->paginate()->toArray();
       //处理数据
       if (!empty($shouAlbumInfoList) && isset($shouAlbumInfoList['data']) && !empty($shouAlbumInfoList['data'])) {
           foreach ($shouAlbumInfoList['data'] as $key => &$val) {
