@@ -13,6 +13,7 @@ use App\Exception\BusinessException;
 use App\Model\Signin;
 use App\Repositories\V1\ActivityRepository;
 use Hyperf\Database\Model\Model;
+use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
 
 class ActivityService extends BaseService
@@ -21,24 +22,39 @@ class ActivityService extends BaseService
     protected ActivityRepository $activityRepository;
 
     /** @var array 签到奖励数组 */
-    private array $giftArr = [];
+    private array $giftArr = [
+        7  => ['type' => 2, 'day' => 1], //连续7天给vip一天
+        15 => ['type' => 3, 'day' => 1], //连续7天给vip一天
+        30 => ['type' => 2, 'day' => 3], //连续7天给vip一天
+    ];
+
+    //签到赠送积分
+    private int $giftScore = 50;
 
     public function signIn(int $userid): bool
     {
-        //判断今日是否已经签到
-        $where = [
-            ['sign_time', '>=', strtotime('today')],
-            ['sign_time', '<', strtotime('tomorrow')],
-            ['user_id', '=', $userid],
-        ];
+        Db::beginTransaction();
+        try {
+            //判断今日是否已经签到
+            $where = [
+                ['sign_time', '>=', strtotime('today')],
+                ['sign_time', '<', strtotime('tomorrow')],
+                ['user_id', '=', $userid],
+            ];
 
-        if ($this->activityRepository->getSignTodayLog($where)) {
-            throw new BusinessException(ErrorCode::ERROR, '今日已签到');
+            if ($this->activityRepository->getSignTodayLog($where)) {
+                throw new BusinessException(ErrorCode::ERROR, '今日已签到');
+            }
+            //更改签到信息
+            $sign = $this->updateSignInfo($userid);
+            //增加签到日志
+            $this->addSignLog($userid, 50, 1);
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '签到失败');
         }
-        //更改签到信息
-        $sign = $this->updateSignInfo($userid);
-        //增加签到日志
-        $this->addSignLog($userid, 50, 1);
+
         return true;
     }
 
