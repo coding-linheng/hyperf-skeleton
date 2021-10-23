@@ -93,6 +93,7 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getDetail', [WenkuController::class, 'getDetail']);
         Router::get('getDownUrl', [WenkuController::class, 'getDownUrl']);
         Router::get('getListByAuthor', [WenkuController::class, 'getListByAuthor']);
+        Router::post('collectDocument', [WenkuController::class, 'collectDocument']);
     });
 
     #个人主页

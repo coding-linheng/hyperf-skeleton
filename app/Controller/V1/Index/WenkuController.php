@@ -80,7 +80,7 @@ class WenkuController extends AbstractController
 
     /**
      * 文库详情页--作者其他.
-     * @param: id 素材的id
+     * @param: id 文库的id
      */
     public function getListByAuthor(Wenku $request): ResponseInterface
     {
@@ -90,5 +90,17 @@ class WenkuController extends AbstractController
         $query['page_size']       = $request->input('page_size', 20);
         $list                     = $this->wenkuService->getListByAuthor(intval($id), $query);
         return $this->success($list);
+    }
+    /**
+     * 文库详情页--收藏文库.
+     * @param: id 文库的id
+     */
+    public function collectDocument(Wenku $request): ResponseInterface
+    {
+        $request->scene('get')->validateResolved();
+        $id          = $request->input('id');
+        $type        = $request->input('type', 1);
+        $collectNum  = $this->wenkuService->collectDocument(intval($id), intval($type));
+        return $this->success(['collect_num' => $collectNum]);
     }
 }

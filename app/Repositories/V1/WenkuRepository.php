@@ -6,10 +6,13 @@ declare(strict_types=1);
 
 namespace App\Repositories\V1;
 
+use App\Constants\ErrorCode;
 use App\Constants\ImgSizeStyle;
+use App\Exception\BusinessException;
 use App\Model\Advertising;
 use App\Model\Daydown;
 use App\Model\Shouwen;
+use App\Model\Userdata;
 use App\Model\Wenku;
 use App\Model\Wenkudown;
 use App\Model\Wenkudowndc;
@@ -18,12 +21,16 @@ use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Collection;
 use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Db;
+use Hyperf\Di\Annotation\Inject;
 
 /**
  * 文库.
  */
 class WenkuRepository extends BaseRepository
 {
+    #[Inject]
+    protected WaterDoRepository $waterDoRepository;
+
     /**
      * 自定义随机分页列表.
      * @param mixed $uid
@@ -333,4 +340,108 @@ class WenkuRepository extends BaseRepository
     {
         return Wenku::query()->whereIn('id', $ids)->delete();
     }
+
+    /**
+     * 收藏素材图片.
+     *
+     * @param $info
+     * @param $uid
+     *
+     * @param $remark
+     *
+     * @return int|null
+     */
+    public function collectDocument($info, $uid): int|null
+    {
+        $shouWenInfo = Shouwen::where(['uid' => user()['id'], 'wid' => $info['id']])->first();
+
+        if (!empty($shouWenInfo)) {
+            return $shouWenInfo['shoucang'];
+        }
+
+        Db::beginTransaction();
+        $add             = [];
+        $add['uid']      = $uid;
+        $add['wid']      = $info['id'];
+
+        if (!Shouwen::insert($add)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '收藏失败！');
+        }
+        //增加收藏次数
+        if (!Wenku::where(['id' => $info['id']])->increment('shoucang', 1)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //统计你自己收藏了多少个
+        if (!Userdata::where(['uid' => $uid])->increment('shoucang', 1)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //统计文库一共收藏了多少个
+        if (!Userdata::where(['uid' => $uid])->increment('shouwen', 1)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+        //增加日志
+        if (!$this->waterDoRepository->addWaterDo($uid, $info['uid'], $info['id'], 5)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+        Db::commit();
+        return Wenku::where(['id' => $info['id']])->value('shoucang');
+    }
+
+    /**
+     * 取消收藏文库.
+     *
+     * @param $info
+     * @param $uid
+     *
+     * @return int|null
+     */
+    public function deleteCollectDocument($info, $uid): int|null
+    {
+        $shouWenInfo = Shouwen::where(['uid' => user()['id'], 'wid' => $info['id']])->first();
+        if (empty($shouWenInfo)) {
+            return $shouWenInfo['shoucang'];
+        }
+
+        Db::beginTransaction();
+
+        if (!Shouwen::where(['uid' => user()['id'], 'wid' => $info['id']])->delete()) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //减少收藏次数
+        if (!Wenku::where(['id' => $info['id']])->decrement('shoucang', 1)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //统计你自己收藏了多少个
+        if (!Userdata::where(['uid' => $uid])->decrement('shoucang', 1)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //统计文库一共收藏了多少个
+        if (!Userdata::where(['uid' => $uid])->decrement('shouwen', 1)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+
+        //增加日志
+        if (!$this->waterDoRepository->addWaterDo($uid, $info['uid'], $info['id'], 9)) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+        Db::commit();
+        return Wenku::where(['id' => $info['id']])->value('shoucang');
+    }
+
+
 }
