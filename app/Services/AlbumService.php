@@ -230,36 +230,35 @@ class AlbumService extends BaseService
         return $this->albumRepository->collectAlbumImg($albumlistInfo, $albumInfo, user()['id'], $remark);
     }
 
+    /**
+     * 收藏灵感专辑.
+     * 请求参数 id 收藏专辑的id.
+     *
+     * @param $type
+     *
+     * @param $remark
+     *
+     * @return null|int|mixed
+     */
+    public function collectAlbum(int $id, $type): int|null
+    {
+        //判断专辑是否存在
+        $albumInfo = $this->albumRepository->getAlbumDetailInfo(
+            ['id' => $id],
+            ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name', 'status', 'week', 'weekguanzhu', 'guanzhu', 'daynum', 'daytime']
+        );
 
-  /**
-   * 收藏灵感专辑.
-   * 请求参数 id 收藏专辑的id.
-   *
-   * @param $type
-   *
-   * @param $remark
-   *
-   * @return null|int|mixed
-   */
-  public function collectAlbum(int $id, $type): int|null
-  {
-    //判断专辑是否存在
-    $albumInfo = $this->albumRepository->getAlbumDetailInfo(
-      ['id' => $id],
-      ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name','status','week','weekguanzhu','guanzhu','daynum','daytime']
-    );
+        if ($albumInfo['uid'] == user()['id']) {
+            throw new BusinessException(ErrorCode::ERROR, '请勿操作自己的作品！');
+        }
 
-    if ($albumInfo['uid'] == user()['id']) {
-      throw new BusinessException(ErrorCode::ERROR, '请勿操作自己的作品！');
+        //取消采集
+        if ($type == 2) {
+            return $this->albumRepository->deleteCollectAlbum($albumInfo, user()['id']);
+        }
+        //采集
+        return $this->albumRepository->collectAlbum($albumInfo, user()['id']);
     }
-
-    //取消采集
-    if ($type == 2) {
-      return $this->albumRepository->deleteCollectAlbum($albumInfo, user()['id']);
-    }
-    //采集
-    return $this->albumRepository->collectAlbum( $albumInfo, user()['id']);
-  }
 
     /**
      * 采集图片灵感图片.

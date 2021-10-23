@@ -163,10 +163,11 @@ class WenkuService extends BaseService
         }
 
         //缓存七天，七天之内下载过的可以免费下载
-        $sevenDayDown= getCache($uid.$id.'wenku');
+        $sevenDayDown = getCache($uid . $id . 'wenku');
+
         if (!empty($sevenDayDown)) {
-          $downLoadUrl = get_img_path_private($info['path']);
-          return ['suffix' => $info['suffix'], 'title' => $info['title'], 'downLoadUrl' => $downLoadUrl];
+            $downLoadUrl = get_img_path_private($info['path']);
+            return ['suffix' => $info['suffix'], 'title' => $info['title'], 'downLoadUrl' => $downLoadUrl];
         }
 
         //如果是下载别人的则需要处理下载数量，扣除共享分等
@@ -188,7 +189,7 @@ class WenkuService extends BaseService
         $this->wenkuRepository->recodeWeekDownNum($info);
 
         //缓存七天，七天之内下载过的可以免费下载
-        setCache($uid.$id.'wenku','true',604800);
+        setCache($uid . $id . 'wenku', 'true', 604800);
         $downLoadUrl = get_img_path_private($info['path']);
         return ['suffix' => $info['suffix'], 'title' => $info['title'], 'downLoadUrl' => $downLoadUrl];
     }

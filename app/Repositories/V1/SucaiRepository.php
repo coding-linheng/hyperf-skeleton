@@ -77,10 +77,11 @@ class SucaiRepository extends BaseRepository
      * @param $where
      * @param $order
      * @param mixed $wheres
+     * @param mixed $perPage
      *
      * @return mixed
      */
-    public function searchImgList($query, $whereParam, $wheres, $order,$perPage=200)
+    public function searchImgList($query, $whereParam, $wheres, $order, $perPage = 200)
     {
         $orm = Img::search($query, es_callback($whereParam));
 
@@ -304,45 +305,42 @@ class SucaiRepository extends BaseRepository
         return Img::query()->where($where)->groupBy(['status'])->select(Db::raw('count(status) as count'), 'status')->get()->toArray();
     }
 
+    /**
+     * 收藏素材图片列表.
+     *
+     * @param $uid
+     */
+    public function getCollectSucaiImgListByUid($uid): array
+    {
+        $shouLingInfoList = Shouimg::from('shouimg as s')
+            ->leftJoin('img as i', 's.iid', '=', 'i.id')
+            ->where(['s.uid' => $uid])->select(['i.*'])->paginate()->toArray();
+        //处理数据
+        if (!empty($shouLingInfoList) && isset($shouLingInfoList['data']) && !empty($shouLingInfoList['data'])) {
+            //找到目录列表
+            $muluArr = $this->getMulu();
 
-  /**
-   * 收藏素材图片列表.
-   *
-   * @param $uid
-   *
-   * @return array
-   */
-  public function getCollectSucaiImgListByUid($uid): array {
-    $shouLingInfoList = Shouimg::from('shouimg as s')
-      ->leftJoin('img as i', 's.iid', '=', 'i.id')
-      ->where(['s.uid' => $uid])->select(['i.*'])->paginate()->toArray();
-    //处理数据
-    if (!empty($shouLingInfoList) && isset($shouLingInfoList['data']) && !empty($shouLingInfoList['data'])) {
-      //找到目录列表
-      $muluArr = $this->getMulu();
-
-      foreach ($shouLingInfoList['data'] as $key => &$val) {
-        if (!isset($val['id']) || empty($val['title'])) {
-          unset($shouLingInfoList['data'][$key]);
-          continue;
+            foreach ($shouLingInfoList['data'] as $key => &$val) {
+                if (!isset($val['id']) || empty($val['title'])) {
+                    unset($shouLingInfoList['data'][$key]);
+                    continue;
+                }
+                $tmp['id']            = $val['id'] ?? 0;
+                //$tmp['path']          = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['img']                       = $this->getPictureJson($val['img'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                $tmp['title']                     = $val['title']     ?? '';
+                $tmp['shoucang']                  = $val['shoucang']  ?? 0;
+                $tmp['downnum']                   = $val['downnum']   ?? 0;
+                $tmp['dtime']                     = $val['dtime']     ?? 0;
+                $tmp['price']                     = $val['price']     ?? 0;
+                $tmp['leixing']                   = $val['leixing']   ?? 0;
+                $tmp['mulu']                      = isset($val['mulu_id']) && isset($muluArr[$val['mulu_id']]) ? $muluArr[$val['mulu_id']] : '';
+                $shouLingInfoList['data'][$key]   = $tmp;
+                $tmp                              = [];
+            }
         }
-        $tmp['id']            = $val['id'] ?? 0;
-        //$tmp['path']          = get_img_path($val['path'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
-        $tmp['img']           = $this->getPictureJson($val['img'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
-        $tmp['title']         = $val['title']     ?? '';
-        $tmp['shoucang']      = $val['shoucang']  ?? 0;
-        $tmp['downnum']       = $val['downnum']   ?? 0;
-        $tmp['dtime']         = $val['dtime']     ?? 0;
-        $tmp['price']         = $val['price']     ?? 0;
-        $tmp['leixing']       = $val['leixing']   ?? 0;
-        $tmp['mulu']          = isset($val['mulu_id']) && isset($muluArr[$val['mulu_id']]) ? $muluArr[$val['mulu_id']] : '';
-        $shouLingInfoList['data'][$key]   = $tmp;
-        $tmp                  = [];
-      }
+        return $shouLingInfoList;
     }
-    return $shouLingInfoList;
-  }
-
 
     /**
      * 收藏素材图片.

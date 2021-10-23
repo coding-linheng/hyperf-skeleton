@@ -1,4 +1,5 @@
 ### 素材王国开发记录
+
 [toc]
 
 ---
@@ -10,7 +11,7 @@
 * [ ] **活动处理**
 * [ ] **微信扫码登录**
 * [ ] **支付对接**
-* [X] **右上角消息通知整合 2021年10月22日17:38:50** 
+* [X] **右上角消息通知整合 2021年10月22日17:38:50**
 * [X] **下载记录 2021年10月22日17:38:50**
 
 #### **2.素材王国数据表修改记录**
@@ -96,11 +97,43 @@ ALTER TABLE dczg_userdata
 ALTER TABLE dczg_userdata
     ADD COLUMN `album_tui` int NOT NULL DEFAULT '0' COMMENT '灵感推荐用户';
 ALTER TABLE dczg_userdata
-    ADD COLUMN `cover_img` varchar(255)NOT NULL DEFAULT '' COMMENT '个人主页封面图';
+    ADD COLUMN `cover_img` varchar(255) NOT NULL DEFAULT '' COMMENT '个人主页封面图';
 ```
+
 ```sql
-ALTER TABLE dczg_guanzhu ADD COLUMN `img_url` varchar(255)NOT NULL DEFAULT '' COMMENT '专辑图片封面预览url';
-ALTER TABLE dczg_guanzhu ADD COLUMN `album_uid` varchar(255)NOT NULL DEFAULT '' COMMENT '专辑所属的用户id';
-ALTER TABLE dczg_guanzhu ADD COLUMN `remark` varchar(255)NOT NULL DEFAULT '' COMMENT '收藏备注，来源等';
-ALTER TABLE dczg_guanzhu ADD COLUMN `c_time` int unsigned NOT NULL DEFAULT '0' COMMENT '收藏时间';
+ALTER TABLE dczg_guanzhu
+    ADD COLUMN `img_url` varchar(255) NOT NULL DEFAULT '' COMMENT '专辑图片封面预览url';
+ALTER TABLE dczg_guanzhu
+    ADD COLUMN `album_uid` varchar(255) NOT NULL DEFAULT '' COMMENT '专辑所属的用户id';
+ALTER TABLE dczg_guanzhu
+    ADD COLUMN `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '收藏备注，来源等';
+ALTER TABLE dczg_guanzhu
+    ADD COLUMN `c_time` int unsigned NOT NULL DEFAULT '0' COMMENT '收藏时间';
+```
+
+```sql
+CREATE TABLE `dczg_signin`
+(
+    `id`               int NOT NULL AUTO_INCREMENT,
+    `user_id`          int NOT NULL COMMENT '用户id',
+    `days`             int NOT NULL COMMENT '连续签到天数',
+    `total_days`       int NOT NULL COMMENT '累计签到天数',
+    `last_signin_time` int NOT NULL COMMENT '最后一次签到时间',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb3 COMMENT ='签到活动表';
+```
+
+```sql
+CREATE TABLE `dczg_signin_log`
+(
+    `id`          int NOT NULL AUTO_INCREMENT,
+    `user_id`     int NOT NULL COMMENT '用户id',
+    `sign_gift`   int NOT NULL COMMENT '签到奖励',
+    `sign_time`   int NOT NULL COMMENT '签到时间',
+    `type`        int NOT NULL COMMENT '1-签到  2-补签',
+    `create_time` int NOT NULL COMMENT '创建时间',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb3 COMMENT ='签到日志表';
 ```

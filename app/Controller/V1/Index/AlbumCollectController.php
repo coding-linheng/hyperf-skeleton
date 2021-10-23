@@ -56,10 +56,11 @@ class AlbumCollectController extends AbstractController
      */
     public function collectAlbum(): ResponseInterface
     {
-        $id          = $this->request->input('id',0);
+        $id          = $this->request->input('id', 0);
         $type        = $this->request->input('type', 1);
-        if(empty($id)||empty($type)){
-          $this->response->error(ErrorCode::VALIDATE_FAIL,'缺少参数！');
+
+        if (empty($id) || empty($type)) {
+            $this->response->error(ErrorCode::VALIDATE_FAIL, '缺少参数！');
         }
         return $this->response->success($this->albumService->collectAlbum(intval($id), intval($type)));
     }

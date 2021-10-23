@@ -15,6 +15,7 @@ use App\Controller\IndexController;
 use App\Controller\Sms;
 use App\Controller\Utils;
 use App\Controller\V1\HelpCenter;
+use App\Controller\V1\Index\Activity;
 use App\Controller\V1\Index\AlbumCollectController;
 use App\Controller\V1\Index\PersonalHomePageController;
 use App\Controller\V1\Index\SucaiController;
@@ -104,6 +105,11 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('collectListByUid', [PersonalHomePageController::class, 'collectListByUid']);
         Router::get('followListByUid', [PersonalHomePageController::class, 'followListByUid']);
         Router::get('inviteListByUid', [PersonalHomePageController::class, 'inviteListByUid']);
+    });
+
+    #签到/活动
+    Router::addGroup('activity/', function () {
+        Router::post('signin', [Activity::class, 'signin']);
     });
 
     #工具类

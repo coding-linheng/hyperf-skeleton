@@ -334,25 +334,25 @@ class UserRepository extends BaseRepository
 
     /**
      * 获取某个用户的关注的用户列表.
+     * @param mixed $uid
      */
     public function followListByUid($uid): array
     {
-        $gzInfoList = Guanzhuuser::from('guanzhuuser as g')
+        return Guanzhuuser::from('guanzhuuser as g')
             ->leftJoin('user as u', 'g.bid', '=', 'u.id')
             ->leftJoin('userdata as ud', 'ud.uid', '=', 'u.id')
-            ->where(['g.uid' => $uid])->select(['u.id','u.nickname','u.imghead', 'ud.shoucang', 'ud.zhuanji', 'ud.zuopin', 'ud.sucainum', 'ud.wenkunum'])->paginate()->toArray();
-        return $gzInfoList;
+            ->where(['g.uid' => $uid])->select(['u.id', 'u.nickname', 'u.imghead', 'ud.shoucang', 'ud.zhuanji', 'ud.zuopin', 'ud.sucainum', 'ud.wenkunum'])->paginate()->toArray();
     }
 
     /**
      * 获取某个用户的邀请的用户列表.
+     * @param mixed $uid
      */
     public function inviteListByUid($uid): array
     {
-     $inviteInfoList = Inviteprofit::from('invite_profit as i')
-         ->leftJoin('user as u', 'i.tui', '=', 'u.id')
-         ->leftJoin('userdata as ud', 'ud.uid', '=', 'u.id')
-         ->where(['i.tui' => $uid])->select(['i.*','u.id','u.nickname','u.imghead', 'ud.shoucang', 'ud.zhuanji', 'ud.zuopin', 'ud.sucainum', 'ud.wenkunum'])->paginate()->toArray();
-        return $inviteInfoList;
+        return Inviteprofit::from('invite_profit as i')
+            ->leftJoin('user as u', 'i.tui', '=', 'u.id')
+            ->leftJoin('userdata as ud', 'ud.uid', '=', 'u.id')
+            ->where(['i.tui' => $uid])->select(['i.*', 'u.id', 'u.nickname', 'u.imghead', 'ud.shoucang', 'ud.zhuanji', 'ud.zuopin', 'ud.sucainum', 'ud.wenkunum'])->paginate()->toArray();
     }
 }

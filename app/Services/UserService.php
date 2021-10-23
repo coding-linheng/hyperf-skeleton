@@ -10,6 +10,8 @@ use App\Exception\BusinessException;
 use App\Model\Geshi;
 use App\Model\Geshirelation;
 use App\Model\Img;
+use App\Model\Keyword;
+use App\Model\KeywordsType;
 use App\Model\Mulu;
 use App\Model\Mulurelation;
 use App\Model\Noticelook;
@@ -473,6 +475,24 @@ class UserService extends BaseService
         }
         unset($v);
         return $data;
+    }
+
+    /**
+     * 获取关键词数据.
+     */
+    public function getKeywords(): array
+    {
+        $keyType  = KeywordsType::query()->select(['id', 'name', 'must'])->get()->toArray();
+        $keywords = Keyword::query()->select(['id', 'name', 'type'])->whereIn('type', array_column($keyType, 'id'))->get()->toArray();
+        $data     = [];
+        $keyType  = array_column($keyType, null, 'id');
+
+        foreach ($keywords as $v) {
+            $data[$v['type']]['name']   ??= $keyType[$v['type']]['name'];
+            $data[$v['type']]['must']   ??= $keyType[$v['type']]['must'];
+            $data[$v['type']]['list'][] = $v['name'];
+        }
+        return array_values($data);
     }
 
     /**

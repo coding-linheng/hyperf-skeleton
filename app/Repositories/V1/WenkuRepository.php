@@ -39,7 +39,7 @@ class WenkuRepository extends BaseRepository
                 $tmp['id']         = $val->id ?? 0;
                 //$tmp['pdfimg']       = get_img_path($val->pdfimg, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
                 if (!empty($val->img)) {
-                    $pdfimg    = $this->getPictureJson($val->img);
+                    $pdfimg        = $this->getPictureJson($val->img);
                     $tmp['pdfimg'] = $pdfimg;
                 } else {
                     $tmp['pdfimg'] = '/' . $val->pdfimg;
@@ -119,38 +119,36 @@ class WenkuRepository extends BaseRepository
         return Shouwen::query()->where(['uid' => $uid, 'wid' => $targetId])->first();
     }
 
-  /**
-   * 获取某个用户的收藏文库列表.
-   *
-   * @param mixed $uid
-   *
-   * @return array
-   */
-    public function getShouCangList(mixed $uid): array {
-      $shouWenkuInfoList = Shouwen::from('shouwen as s')
-        ->leftJoin('wenku as w', 's.wid', '=', 'w.id')
-        ->where(['s.uid' => $uid])->select(['w.id','w.pdfimg','w.title','w.shoucang','w.price','w.leixing','w.downnum','w.dtime','w.pdfimg','w.img'])->paginate()->toArray();
-      //处理数据
-      if (!empty($shouWenkuInfoList) && isset($shouWenkuInfoList['data']) && !empty($shouWenkuInfoList['data'])) {
-        foreach ($shouWenkuInfoList['data'] as $key => &$val) {
-          $tmp['id']         = $val['id'] ?? 0;
-          if (!empty($val['img'])) {
-              $pdfimg    = $this->getPictureJson($val['img']);
-              $tmp['pdfimg'] = $pdfimg;
-          } else {
-              $tmp['pdfimg'] = '/' .$val['pdfimg'];
-          }
-          $tmp['title']      = $val['title']   ?? '';
-          $tmp['shoucang']   = $val['shoucang'] ?? 0;
-          $tmp['price']      = $val['price']    ?? 0;
-          $tmp['leixing']    = $val['leixing']  ?? 0;
-          $tmp['downnum']    = $val['downnum']  ?? 0;
-          $tmp['dtime']      = $val['dtime']    ?? 0;
-          $shouWenkuInfoList['data'][$key] = $tmp;
-          $tmp               = [];
+    /**
+     * 获取某个用户的收藏文库列表.
+     */
+    public function getShouCangList(mixed $uid): array
+    {
+        $shouWenkuInfoList = Shouwen::from('shouwen as s')
+            ->leftJoin('wenku as w', 's.wid', '=', 'w.id')
+            ->where(['s.uid' => $uid])->select(['w.id', 'w.pdfimg', 'w.title', 'w.shoucang', 'w.price', 'w.leixing', 'w.downnum', 'w.dtime', 'w.pdfimg', 'w.img'])->paginate()->toArray();
+        //处理数据
+        if (!empty($shouWenkuInfoList) && isset($shouWenkuInfoList['data']) && !empty($shouWenkuInfoList['data'])) {
+            foreach ($shouWenkuInfoList['data'] as $key => &$val) {
+                $tmp['id']         = $val['id'] ?? 0;
+
+                if (!empty($val['img'])) {
+                    $pdfimg        = $this->getPictureJson($val['img']);
+                    $tmp['pdfimg'] = $pdfimg;
+                } else {
+                    $tmp['pdfimg'] = '/' . $val['pdfimg'];
+                }
+                $tmp['title']                    = $val['title']    ?? '';
+                $tmp['shoucang']                 = $val['shoucang'] ?? 0;
+                $tmp['price']                    = $val['price']    ?? 0;
+                $tmp['leixing']                  = $val['leixing']  ?? 0;
+                $tmp['downnum']                  = $val['downnum']  ?? 0;
+                $tmp['dtime']                    = $val['dtime']    ?? 0;
+                $shouWenkuInfoList['data'][$key] = $tmp;
+                $tmp                             = [];
+            }
         }
-      }
-       return $shouWenkuInfoList;
+        return $shouWenkuInfoList;
     }
 
     /**

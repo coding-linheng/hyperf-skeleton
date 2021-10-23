@@ -208,7 +208,8 @@ class SucaiService extends BaseService
             throw new BusinessException(ErrorCode::ERROR, '素材暂时不能下载！');
         }
         //缓存七天，七天之内下载过的可以免费下载
-       $sevenDayDown= getCache($uid.$id.'sucai');
+        $sevenDayDown = getCache($uid . $id . 'sucai');
+
         if (!empty($sevenDayDown)) {
             $downLoadUrl = get_img_path_private($sucaiInfo['path']);
             return ['suffix' => $sucaiInfo['suffix'], 'title' => $sucaiInfo['title'], 'downLoadUrl' => $downLoadUrl];
@@ -233,7 +234,7 @@ class SucaiService extends BaseService
         $this->sucaiRepository->recodeWeekDownNum($sucaiInfo);
 
         //缓存七天，七天之内下载过的可以免费下载，新版忽略
-        setCache($uid.$id.'sucai','true',604800);
+        setCache($uid . $id . 'sucai', 'true', 604800);
         $downLoadUrl = get_img_path_private($sucaiInfo['path']);
         return ['suffix' => $sucaiInfo['suffix'], 'title' => $sucaiInfo['title'], 'downLoadUrl' => $downLoadUrl];
     }
