@@ -171,15 +171,58 @@ class AlbumRepository extends BaseRepository
     }
 
   /**
-   * todo 获取某个用户收藏专辑列表.
+   * 获取某个用户收藏专辑列表.
    *
    * @param $uid
    *
-   * @return int|null
+   * @return array
    */
-  public function getCollectAlbumList($uid): int|null
+  public function getCollectAlbumList($uid): array
   {
-    return 1;
+      $shouAlbumInfoList = Guanzhu::from('guanzhu as g')
+          ->leftJoin('album as a', 'g.iid', '=', 'a.id')
+          ->where(['g.uid' => $uid])->select(['g.*'])->paginate()->toArray();
+      //处理数据
+      if (!empty($shouAlbumInfoList) && isset($shouAlbumInfoList['data']) && !empty($shouAlbumInfoList['data'])) {
+          foreach ($shouAlbumInfoList['data'] as $key => &$val) {
+              if (!isset($val['id'])) {
+                  unset($shouAlbumInfoList['data'][$key]);
+                  continue;
+              }
+              //预览图
+              if (!empty($val['preview_imgs'])) {
+                  $val['preview_imgs'] = json_decode($val['preview_imgs'], true);
+              }
+              //循环判断是否有封面图
+              if ($val['fengmian'] != '') {
+                  $tmp['fengmian'] = get_img_path($val['fengmian'], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+              } else {
+                  //从预览图里面获取
+                  if (!empty($val['preview_imgs']) && isset($val['preview_imgs'][0])) {
+                      $tmp['fengmian'] = get_img_path($val['preview_imgs'][0], ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
+                  } else {
+                      $tmp['fengmian'] = '';
+                  }
+              }
+
+              if (!empty($val['preview_imgs']) && is_array($val['preview_imgs'])) {
+                  foreach ($val['preview_imgs'] as &$v) {
+                      $tmp['preview_imgs'][] = get_img_path($v, ImgSizeStyle::ALBUM_LIST_PREVIEW_PIC);
+                  }
+              } else {
+                  $tmp['preview_imgs'] = [];
+              }
+              $tmp['id']           = $val['id']       ?? 0;
+              $tmp['name']         = $val['name']     ?? '';
+              $tmp['num']          = $val['num']      ?? 0;
+              $tmp['looknum']      = $val['looknum']  ?? 0;
+              $tmp['guanzhu']      = $val['guanzhu']  ?? 0;
+              $tmp['g_time']       = $val['g_time']   ?? 0;
+              $shouAlbumInfoList['data'][$key]  = $tmp;
+              $tmp                 = [];
+          }
+      }
+    return $shouAlbumInfoList;
   }
 
   /**
