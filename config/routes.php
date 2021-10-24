@@ -78,7 +78,8 @@ Router::addGroup($routerPath . '/', function () {
         Router::post('captureAlbumImg', [AlbumCollectController::class, 'captureAlbumImg']);
         Router::post('collectAlbumImg', [AlbumCollectController::class, 'collectAlbumImg']);
         Router::post('collectAlbum', [AlbumCollectController::class, 'collectAlbum']);
-
+        Router::get('getDesignerByCollectImg', [AlbumCollectController::class, 'getDesignerByCollectImg']);
+        Router::get('getDesignerByCollectAlbum', [AlbumCollectController::class, 'getDesignerByCollectAlbum']);
     });
 
     #素材
@@ -143,8 +144,6 @@ Router::addGroup($routerPath . '/', function () {
         Router::get('getBrandCollectionList', [AlbumController::class, 'getBrandCollectionList']);
         Router::get('getLandedCollectionList', [AlbumController::class, 'getLandedCollectionList']);
         Router::get('getAlbumListById', [AlbumController::class, 'getAlbumListById']);
-        Router::get('getDesignerByCollectImg', [AlbumCollectController::class, 'getDesignerByCollectImg']);
-        Router::get('getDesignerByCollectAlbum', [AlbumCollectController::class, 'getDesignerByCollectAlbum']);
     });
 
     #素材
