@@ -40,7 +40,7 @@ class QueueHandleListener implements ListenerInterface
 
     public function __construct(LoggerFactory $loggerFactory, FormatterInterface $formatter)
     {
-        $this->logger    = $loggerFactory->get('queue');
+        $this->logger    = $loggerFactory->get('queue', 'queue');
         $this->formatter = $formatter;
     }
 

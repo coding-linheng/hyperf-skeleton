@@ -35,6 +35,17 @@ return [
         'handle_timeout' => 10,
         'processes' => 1,
     ],
+    'activity_plan' => [
+        'driver' => App\Driver\AsyncQueue\MyRedisDriver::class,
+        'redis' => [
+            'pool' => 'queue',
+        ],
+        'channel' => 'activity_plan',
+        'timeout' => 2,
+        'retry_seconds' => 5,
+        'handle_timeout' => 10,
+        'processes' => 1,
+    ],
     'logger_plan' => [
         'driver'         => App\Driver\AsyncQueue\MyRedisDriver::class,
         'redis' => [

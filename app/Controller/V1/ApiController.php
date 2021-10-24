@@ -8,6 +8,7 @@ use App\Controller\AbstractController;
 use App\Model\Member;
 use App\Request\User;
 use App\Services\UserService;
+use App\Task\Producer\ActivityPlanProducer;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Http\Message\ResponseInterface;
 use Qbhy\HyperfAuth\AuthManager;
@@ -20,6 +21,9 @@ class ApiController extends AbstractController
     #[Inject]
     protected AuthManager $auth;
 
+    #[Inject]
+    protected ActivityPlanProducer $activityPlanProducer;
+
     /**
      * 用户登录.
      */
@@ -30,6 +34,10 @@ class ApiController extends AbstractController
         $password = $this->request->input('password');
         $user     = di()->get(UserService::class)->login($username, $password);
         $token    = $this->auth->guard('jwt')->login($user);
+        //登录进行上传活动队列
+        $data = ['user_id' => $user['id']];
+        $this->activityPlanProducer->uploadMaterial($data);
+        $this->activityPlanProducer->uploadLibrary($data);
         return $this->response->success(['token' => $token]);
     }
 

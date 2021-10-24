@@ -61,4 +61,21 @@ return [
             ],
         ],
     ],
+    'queue' => [   //队列日志
+        'handler'   => [
+            'class'       => Monolog\Handler\StreamHandler::class,
+            'constructor' => [
+                'stream' => BASE_PATH . '/runtime/logs/queue.log',
+                'level'    => Monolog\Logger::DEBUG,
+            ],
+        ],
+        'formatter' => [
+            'class'       => Monolog\Formatter\LineFormatter::class,
+            'constructor' => [
+                'format'                => "[%datetime%]%level_name%:%message%\n",
+                'dateFormat'            => 'Y-m-d H:i:s',
+                'allowInlineLineBreaks' => true,
+            ],
+        ],
+    ],
 ];
