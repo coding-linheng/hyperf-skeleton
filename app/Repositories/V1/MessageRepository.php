@@ -69,4 +69,12 @@ class MessageRepository extends BaseRepository
         $list  = $orm->orderBy('id', 'desc')->get();
         return ['count' => $count, 'list' => $list->toArray()];
     }
+
+    /**
+     * 给用户发送私信
+     */
+    public function sendPrivateMessage(array $data)
+    {
+        Notice::query()->insert($data);
+    }
 }

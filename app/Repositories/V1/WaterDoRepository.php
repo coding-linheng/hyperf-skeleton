@@ -302,9 +302,9 @@ class WaterDoRepository extends BaseRepository
     }
 
     /**
-     * 增加素材vip时间.
+     * 增加用户相关vip时间.
      */
-    public function incSucaiVip(array $where, array $data): Uservip|Model
+    public function incUserVip(array $where, array $data): Uservip|Model
     {
         return Uservip::updateOrCreate($where, $data);
     }

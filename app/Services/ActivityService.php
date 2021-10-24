@@ -12,6 +12,7 @@ use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Model\Signin;
 use App\Repositories\V1\ActivityRepository;
+use App\Repositories\V1\MessageRepository;
 use App\Repositories\V1\UserRepository;
 use App\Repositories\V1\WaterDoRepository;
 use Hyperf\Database\Model\Model;
@@ -29,6 +30,9 @@ class ActivityService extends BaseService
     #[Inject]
     protected UserRepository $userRepository;
 
+    #[Inject]
+    protected MessageRepository $messageRepository;
+
     /** @var array 签到奖励数组 */
     private array $giftArr = [
         7  => ['type' => 2, 'day' => 1], //连续7天给vip一天 1-共享分 2-素材 3-文库
@@ -39,7 +43,7 @@ class ActivityService extends BaseService
     //签到赠送积分
     private int $giftScore = 50;
 
-    public function signIn(int $userid): bool
+    public function signIn(int $userid): array
     {
         Db::beginTransaction();
         //判断今日是否已经签到
@@ -65,7 +69,7 @@ class ActivityService extends BaseService
         if (!array_key_exists($days, $this->giftArr)) {
             //天数没有奖励直接结束
             Db::commit();
-            return true;
+            return ['score' => $this->giftScore];
         }
         $gift = $this->giftArr[$days];
         //判断该奖励是否已经领过
@@ -77,12 +81,14 @@ class ActivityService extends BaseService
             ['create_time', '<', strtotime('first day of next month')],
         ];
         //已领取天数奖励直接跳过
-        if (empty($this->activityRepository->getSignLog($where))) {
-            $this->addSignLog($userid, $gift['day'], $gift['type']);
+        if (!empty($this->activityRepository->getSignLog($where))) {
+            Db::commit();
+            return ['score' => $this->giftScore];
         }
+        $this->addSignLog($userid, $gift['day'], $gift['type']);
         Db::commit();
-
-        return true;
+        //奖励信息
+        return ['score' => $this->giftScore] + $gift;
     }
 
     /**
@@ -126,32 +132,42 @@ class ActivityService extends BaseService
                 $this->waterDoRepository->addUserScore($userid, $gift);
                 break;
             case 2:
-                //判断会员是否过期
                 $where = ['type' => 3, 'uid' => $userid]; //收费素材vip
-                $vip   = $this->userRepository->getUserVip($where);
-                $time  = $vip['time'] ?? time();
-
-                if (empty($vip) || $time < time()) {
-                    $time = time();
-                }
-                $data = ['time' => $time + $gift * 86400]; //不改动vip等级 没有则为0 体验会员
-                $this->waterDoRepository->incSucaiVip($where, $data); //给用户增加素材vip时间
+                $this->incUserVip($where, $gift);
                 break;
             case 3:
                 //判断文库会员是否过期
                 $where = ['type' => 6, 'uid' => $userid]; //收费文库vip
-                $vip   = $this->userRepository->getUserVip($where);
-                $time  = $vip['time'] ?? time();
-
-                if (empty($vip) || $time < time()) {
-                    $time = time();
-                }
-                $data = ['time' => $time + $gift * 86400]; //不改动vip等级 没有则为0 体验会员
-                $this->waterDoRepository->incSucaiVip($where, $data); //给用户增加文库vip时间
+                $this->incUserVip($where, $gift);
                 break;
             default:
                 return false;
         }
         return true;
+    }
+
+    /**
+     * 增加用户相关vip时间.
+     */
+    private function incUserVip(array $where, int $gift)
+    {
+        //判断会员是否过期
+        $vip  = $this->userRepository->getUserVip($where);
+        $time = $vip['time'] ?? time();
+
+        if (empty($vip) || $time < time()) {
+            $time = time();
+        }
+        $data    = ['time' => $time + $gift * 86400]; //不改动vip等级 没有则为0 体验会员
+        $vip     = $where['type'] == 3 ? '素材' : '文库';
+        $type    = $where['type'] == 3 ? '素材' : '方案';
+        $message = sprintf('您的%s天%s体验vip权限现已生效,体验vip可以免费下载3款共享%s+3款原创%s,请您尽快使用,避免过期,如未使用,过期不补', $gift, $vip, $type, $type);
+        $this->waterDoRepository->incUserVip($where, $data); //给用户增加vip时间
+        $this->messageRepository->sendPrivateMessage([
+            'pid'   => $where['uid'],
+            'title' => '恭喜获得每日签到奖励',
+            'des'   => $message,
+            'time'  => time(),
+        ]);
     }
 }
