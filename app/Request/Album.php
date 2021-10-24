@@ -48,7 +48,7 @@ class Album extends FormRequest
     public function messages(): array
     {
         return [
-            'id.exists' => '专辑不存在',
+            'id.exists' => '灵感图片不存在',
         ];
     }
 

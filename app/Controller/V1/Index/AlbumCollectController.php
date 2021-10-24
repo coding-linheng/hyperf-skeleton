@@ -25,15 +25,21 @@ class AlbumCollectController extends AbstractController
      */
     public function getDesignerByCollectAlbum(): ResponseInterface
     {
-        return $this->response->success();
+      $id          = $this->request->input('id', 0);
+      if (empty($id) ) {
+        $this->response->error(ErrorCode::VALIDATE_FAIL, '缺少参数！');
+      }
+      return $this->response->success($this->albumService->getDesignerByCollectAlbum(intval($id)));
     }
 
     /**
      * 获取收藏该图片的设计师列表.
      */
-    public function getDesignerByCollectImg(): ResponseInterface
+    public function getDesignerByCollectImg(Album $request): ResponseInterface
     {
-        return $this->response->success();
+        $request->scene('get')->validateResolved();
+        $id          = $request->input('id');
+        return $this->response->success($this->albumService->getDesignerByCollectImg(intval($id)));
     }
 
     /**
