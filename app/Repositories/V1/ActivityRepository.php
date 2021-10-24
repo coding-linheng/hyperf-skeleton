@@ -33,7 +33,6 @@ class ActivityRepository extends BaseRepository
 
     /**
      * 修改签到信息.
-     * @return Model|Signin
      */
     public function updateSignInfo(array $where, array $data): Model|Signin
     {

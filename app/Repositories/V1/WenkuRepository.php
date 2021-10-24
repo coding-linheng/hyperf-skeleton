@@ -348,8 +348,6 @@ class WenkuRepository extends BaseRepository
      * @param $uid
      *
      * @param $remark
-     *
-     * @return null|int
      */
     public function collectDocument($info, $uid): int|null
     {
@@ -399,8 +397,6 @@ class WenkuRepository extends BaseRepository
      *
      * @param $info
      * @param $uid
-     *
-     * @return null|int
      */
     public function deleteCollectDocument($info, $uid): int|null
     {

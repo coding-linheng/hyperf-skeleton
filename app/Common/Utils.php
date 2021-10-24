@@ -78,7 +78,6 @@ class Utils
      * @param string $path 新生成图片所在路径 (/public/pdf/)
      *
      * @throws Exception
-     * @return array|bool
      */
     public static function pdfToMultiPng(string $pdf, string $path): bool|array
     {

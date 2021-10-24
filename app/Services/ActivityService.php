@@ -88,7 +88,6 @@ class ActivityService extends BaseService
 
     /**
      * 修改签到信息.
-     * @return Model|Signin
      */
     private function updateSignInfo(int $userid): Model|Signin
     {

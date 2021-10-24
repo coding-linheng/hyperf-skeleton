@@ -276,8 +276,8 @@ class AlbumRepository extends BaseRepository
 
         if (!$guanzhu) {
             //增加今日关注
-      $newtime = strtotime(date('Y-m-d', time())); //今天的时间戳
-      $save    = [];
+            $newtime = strtotime(date('Y-m-d', time())); //今天的时间戳
+            $save    = [];
 
             if ($albumInfo['daytime'] != $newtime) {
                 $save['daynum']  = 1;
@@ -291,7 +291,7 @@ class AlbumRepository extends BaseRepository
                 throw new BusinessException(ErrorCode::ERROR, '操作失败！');
             }
             $shenyutime = strtotime(date('Y-m-d', time())) + 86400; //明天的时间戳
-      setCache('dayguan' . $uid . $albumInfo['id'], $albumInfo['id'], $shenyutime - time()); //缓存
+            setCache('dayguan' . $uid . $albumInfo['id'], $albumInfo['id'], $shenyutime - time()); //缓存
         }
 
         //增加收藏次数

@@ -134,8 +134,6 @@ class WenkuService extends BaseService
      * 请求参数 id 收藏文库的id.
      *
      * @param $type
-     *
-     * @return null|int
      */
     public function collectDocument(int $id, $type): int|null
     {
