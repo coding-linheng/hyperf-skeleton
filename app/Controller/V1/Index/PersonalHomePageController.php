@@ -136,6 +136,7 @@ class PersonalHomePageController extends AbstractController
         }
         return $this->success($this->personalPageService->inviteListByUid((int)$uid));
     }
+
     /**
      * 修改封面.
      *
@@ -146,6 +147,7 @@ class PersonalHomePageController extends AbstractController
     public function changeBackground(User $request): ResponseInterface
     {
         $uid = $this->request->input('uid', 0);
+
         if (empty($uid)) {
             $this->response->error(ErrorCode::VALIDATE_FAIL, '用户未找到！');
         }
@@ -153,7 +155,7 @@ class PersonalHomePageController extends AbstractController
         $file = $this->request->file('upload');
         $type = (int)$this->request->input('type');
         $data = Utils::upload($file, ['png', 'jpg', 'jpeg']);
-        return $this->success($this->personalPageService->changeBackground((int)$uid,$type,$data));
+        return $this->success($this->personalPageService->changeBackground((int)$uid, $type, $data));
     }
 
     /**

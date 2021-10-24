@@ -361,16 +361,17 @@ class UserRepository extends BaseRepository
      * @param :uid 用户id
      * @param :type 1使用默认，2自定义上传
      * @param :file 文件上传，只支持格式，png,jpg,jpeg格式
-     *
+     * @param mixed $uid
+     * @param mixed $type
+     * @param mixed $data
      */
-    public function changeBackground($uid,$type,$data): int
+    public function changeBackground($uid, $type, $data): int
     {
-        if($type==1){
-            $res = Userdata::where('uid',$uid)->update(['cover_img'=>'','cover_img_status'=>0]);
-        }else{
-            $res =  Userdata::where('uid',$uid)->update(['cover_img_tmp'=>'/' .$data['path'],'cover_img_status'=>1,'cover_img_msg'=>'审核中']);
+        if ($type == 1) {
+            $res = Userdata::where('uid', $uid)->update(['cover_img' => '', 'cover_img_status' => 0]);
+        } else {
+            $res =  Userdata::where('uid', $uid)->update(['cover_img_tmp' => '/' . $data['path'], 'cover_img_status' => 1, 'cover_img_msg' => '审核中']);
         }
         return $res;
     }
-
 }

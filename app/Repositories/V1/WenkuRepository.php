@@ -349,7 +349,7 @@ class WenkuRepository extends BaseRepository
      *
      * @param $remark
      *
-     * @return int|null
+     * @return null|int
      */
     public function collectDocument($info, $uid): int|null
     {
@@ -400,11 +400,12 @@ class WenkuRepository extends BaseRepository
      * @param $info
      * @param $uid
      *
-     * @return int|null
+     * @return null|int
      */
     public function deleteCollectDocument($info, $uid): int|null
     {
         $shouWenInfo = Shouwen::where(['uid' => user()['id'], 'wid' => $info['id']])->first();
+
         if (empty($shouWenInfo)) {
             return $shouWenInfo['shoucang'];
         }
@@ -442,6 +443,4 @@ class WenkuRepository extends BaseRepository
         Db::commit();
         return Wenku::where(['id' => $info['id']])->value('shoucang');
     }
-
-
 }

@@ -91,6 +91,7 @@ class WenkuController extends AbstractController
         $list                     = $this->wenkuService->getListByAuthor(intval($id), $query);
         return $this->success($list);
     }
+
     /**
      * 文库详情页--收藏文库.
      * @param: id 文库的id

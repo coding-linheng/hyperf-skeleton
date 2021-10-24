@@ -133,19 +133,20 @@ class WenkuService extends BaseService
      * 文库详情页--收藏文库
      * 请求参数 id 收藏文库的id.
      *
-     * @param  int  $id
-     * @param       $type
+     * @param $type
      *
-     * @return int|null
+     * @return null|int
      */
     public function collectDocument(int $id, $type): int|null
     {
         //判断是否存在
         $info =  $this->wenkuRepository->getDetailInfoById($id);
+
         if (empty($info)) {
             throw new BusinessException(ErrorCode::ERROR, '文库不存在！');
         }
-        $info=json_decode(json_encode($info),true);
+        $info = json_decode(json_encode($info), true);
+
         if ($info['uid'] == user()['id']) {
             throw new BusinessException(ErrorCode::ERROR, '请勿操作自己的文库！');
         }

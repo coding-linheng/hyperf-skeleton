@@ -15,9 +15,9 @@ use Hyperf\Database\Model\Model;
 class ActivityRepository extends BaseRepository
 {
     /**
-     * 查看当日是否签到.
+     * 查看是否签到.
      */
-    public function getSignTodayLog(array $where): bool
+    public function getSignLog(array $where): bool
     {
         return SigninLog::query()->where($where)->exists();
     }

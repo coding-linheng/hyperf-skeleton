@@ -58,11 +58,11 @@ class WaterDoRepository extends BaseRepository
      */
     public function deleteWaterDo($doid, $uid, $cid, $type): int
     {
-        $where             = [];
-        $where['doid']     = $doid;
-        $where['uid']      = $uid;
-        $where['cid']      = $cid;
-        $where['type']     = $type;
+        $where         = [];
+        $where['doid'] = $doid;
+        $where['uid']  = $uid;
+        $where['cid']  = $cid;
+        $where['type'] = $type;
         return Waterdo::where($where)->delete();
     }
 
@@ -126,7 +126,7 @@ class WaterDoRepository extends BaseRepository
      * @param mixed $bid
      * @param mixed $title
      */
-    public function addUserScore($uid, $score, $wid, $status, $type, $bid, $title): bool
+    public function addUserScore($uid, $score, $wid = 0, $status = 0, $type = 2, $bid = 0, $title = ''): bool
     {
         if (!User::query()->where(['id' => $uid])->increment('score', $score)) {
             return false;
