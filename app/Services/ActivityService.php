@@ -12,6 +12,7 @@ use App\Constants\ErrorCode;
 use App\Exception\BusinessException;
 use App\Model\Signin;
 use App\Repositories\V1\ActivityRepository;
+use App\Repositories\V1\UserRepository;
 use App\Repositories\V1\WaterDoRepository;
 use Hyperf\Database\Model\Model;
 use Hyperf\DbConnection\Db;
@@ -25,11 +26,14 @@ class ActivityService extends BaseService
     #[Inject]
     protected WaterDoRepository $waterDoRepository;
 
+    #[Inject]
+    protected UserRepository $userRepository;
+
     /** @var array 签到奖励数组 */
     private array $giftArr = [
         7  => ['type' => 2, 'day' => 1], //连续7天给vip一天 1-共享分 2-素材 3-文库
-        15 => ['type' => 3, 'day' => 1], //连续7天给vip一天
-        30 => ['type' => 2, 'day' => 3], //连续7天给vip一天
+        15 => ['type' => 3, 'day' => 1], //连续15天给文库vip一天
+        30 => ['type' => 2, 'day' => 3], //连续30天给素材vip三天
     ];
 
     //签到赠送积分
@@ -38,50 +42,45 @@ class ActivityService extends BaseService
     public function signIn(int $userid): bool
     {
         Db::beginTransaction();
-        try {
-            //判断今日是否已经签到
-            $where = [
-                ['sign_time', '>=', strtotime('today')],
-                ['sign_time', '<', strtotime('tomorrow')],
-                ['user_id', '=', $userid],
-            ];
+        //判断今日是否已经签到
+        $where = [
+            ['sign_time', '>=', strtotime('today')],
+            ['sign_time', '<', strtotime('tomorrow')],
+            ['user_id', '=', $userid],
+        ];
 
-            if ($this->activityRepository->getSignLog($where)) {
-                throw new BusinessException(ErrorCode::ERROR, '今日已签到');
-            }
-            //更改签到信息
-            $sign = $this->updateSignInfo($userid);
-            //增加签到日志  每日签到固定增加积分
-            if (empty($this->addSignLog($userid, $this->giftScore, 1))) {
-                Db::rollBack();
-                throw new BusinessException(ErrorCode::ERROR, '签到失败');
-            }
-            //根据连续签到天数进行奖励
-            $days = $sign->days ?? 1;
-
-            if (!array_key_exists($days, $this->giftArr)) {
-                //天数没有奖励直接结束
-                Db::commit();
-                return true;
-            }
-            $gift = $this->giftArr[$days];
-            //判断该奖励是否已经领过
-            $where = [
-                ['user_id', '=', $userid],
-                ['type', '=', $gift['type']],
-                ['sign_gift', '=', $gift['day']],
-                ['create_time', '>=', strtotime('first day of this month')],
-                ['create_time', '<', strtotime('first day of next month')],
-            ];
-            //已领取天数奖励直接跳过
-            if (empty($this->activityRepository->getSignLog($where))) {
-                $this->addSignLog($userid, $gift['day'], $gift['type']);
-            }
-            Db::commit();
-        } catch (\Exception $e) {
-            Db::rollBack();
-            throw new BusinessException($e->getCode(), $e->getMessage());
+        if ($this->activityRepository->getSignLog($where)) {
+            throw new BusinessException(ErrorCode::ERROR, '今日已签到');
         }
+        //更改签到信息
+        $sign = $this->updateSignInfo($userid);
+        //增加签到日志  每日签到固定增加积分
+        if (empty($this->addSignLog($userid, $this->giftScore, 1))) {
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '签到失败');
+        }
+        //根据连续签到天数进行奖励
+        $days = $sign->days ?? 1;
+
+        if (!array_key_exists($days, $this->giftArr)) {
+            //天数没有奖励直接结束
+            Db::commit();
+            return true;
+        }
+        $gift = $this->giftArr[$days];
+        //判断该奖励是否已经领过
+        $where = [
+            ['user_id', '=', $userid],
+            ['type', '=', $gift['type']],
+            ['sign_gift', '=', $gift['day']],
+            ['create_time', '>=', strtotime('first day of this month')],
+            ['create_time', '<', strtotime('first day of next month')],
+        ];
+        //已领取天数奖励直接跳过
+        if (empty($this->activityRepository->getSignLog($where))) {
+            $this->addSignLog($userid, $gift['day'], $gift['type']);
+        }
+        Db::commit();
 
         return true;
     }
@@ -109,9 +108,6 @@ class ActivityService extends BaseService
 
     /**
      * 签到日志.
-     * @param mixed $userid
-     * @param mixed $gift
-     * @param mixed $type
      */
     private function addSignLog(int $userid, int $gift, int $type): bool
     {
@@ -124,8 +120,38 @@ class ActivityService extends BaseService
         ];
         $this->activityRepository->insertSignLog($data);
         //根据奖励增加用户相关数据
-        return match ($type) {
-            1 => $this->waterDoRepository->addUserScore($userid, $gift), //给用户增加积分
-        };
+        switch ($type) {
+            case 1:
+                //给用户增加积分
+                $this->waterDoRepository->addUserScore($userid, $gift);
+                break;
+            case 2:
+                //判断会员是否过期
+                $where = ['type' => 3, 'uid' => $userid]; //收费素材vip
+                $vip   = $this->userRepository->getUserVip($where);
+                $time  = $vip['time'] ?? time();
+
+                if (empty($vip) || $time < time()) {
+                    $time = time();
+                }
+                $data = ['time' => $time + $gift * 86400]; //不改动vip等级 没有则为0 体验会员
+                $this->waterDoRepository->incSucaiVip($where, $data); //给用户增加素材vip时间
+                break;
+            case 3:
+                //判断文库会员是否过期
+                $where = ['type' => 6, 'uid' => $userid]; //收费文库vip
+                $vip   = $this->userRepository->getUserVip($where);
+                $time  = $vip['time'] ?? time();
+
+                if (empty($vip) || $time < time()) {
+                    $time = time();
+                }
+                $data = ['time' => $time + $gift * 86400]; //不改动vip等级 没有则为0 体验会员
+                $this->waterDoRepository->incSucaiVip($where, $data); //给用户增加文库vip时间
+                break;
+            default:
+                return false;
+        }
+        return true;
     }
 }

@@ -223,45 +223,39 @@ class AlbumRepository extends BaseRepository
         return $shouAlbumInfoList;
     }
 
+    /**
+     * 获取收藏该图片的设计师列表.
+     *
+     * @param $id
+     */
+    public function getDesignerByCollectImg($id): array
+    {
+        return Shouling::from('shouling as s')
+            ->join('user as u', 'u.id', '=', 's.uid')
+            ->leftJoin('userdata as d', 'u.id', '=', 'd.uid')
+            ->where('s.lid', $id)
+            ->select([
+                'u.id', 'u.nickname', 'u.imghead', 'u.content', 'u.wx',
+                'u.money', 'u.qi', 'u.fans', 'u.guan', 'u.isview', 'd.shoucang', 'd.zhuanji', 'd.zuopin', 'd.sucainum', 'd.wenkunum',
+            ])->paginate()->toArray();
+    }
 
-  /**
-   * 获取收藏该图片的设计师列表.
-   *
-   * @param $id
-   *
-   * @return array
-   */
-  public function getDesignerByCollectImg($id): array {
-
-       return  Shouling::from('shouling as s')
-               ->join('user as u', 'u.id', '=', 's.uid')
-               ->leftJoin('userdata as d', 'u.id', '=', 'd.uid')
-               ->where('s.lid',$id)
-               ->select([
-                 'u.id', 'u.nickname', 'u.imghead', 'u.content', 'u.wx',
-                 'u.money', 'u.qi', 'u.fans', 'u.guan', 'u.isview', 'd.shoucang', 'd.zhuanji', 'd.zuopin', 'd.sucainum', 'd.wenkunum',
-               ])->paginate()->toArray();
-  }
-
-  /**
-   * 获取收藏该专辑的设计师列表.
-   *
-   * @param $id
-   *
-   * @return array
-   */
-  public function getDesignerByCollectAlbum($id): array {
-
-    return  Guanzhu::from('guanzhu as g')
-      ->join('user as u', 'u.id', '=', 'g.uid')
-      ->leftJoin('userdata as d', 'u.id', '=', 'd.uid')
-      ->where('g.lid',$id)
-      ->select([
-        'u.id', 'u.nickname', 'u.imghead', 'u.content', 'u.wx',
-        'u.money', 'u.qi', 'u.fans', 'u.guan', 'u.isview', 'd.shoucang', 'd.zhuanji', 'd.zuopin', 'd.sucainum', 'd.wenkunum',
-      ])->paginate()->toArray();
-  }
-
+    /**
+     * 获取收藏该专辑的设计师列表.
+     *
+     * @param $id
+     */
+    public function getDesignerByCollectAlbum($id): array
+    {
+        return Guanzhu::from('guanzhu as g')
+            ->join('user as u', 'u.id', '=', 'g.uid')
+            ->leftJoin('userdata as d', 'u.id', '=', 'd.uid')
+            ->where('g.lid', $id)
+            ->select([
+                'u.id', 'u.nickname', 'u.imghead', 'u.content', 'u.wx',
+                'u.money', 'u.qi', 'u.fans', 'u.guan', 'u.isview', 'd.shoucang', 'd.zhuanji', 'd.zuopin', 'd.sucainum', 'd.wenkunum',
+            ])->paginate()->toArray();
+    }
 
     /**
      * 收藏专辑.

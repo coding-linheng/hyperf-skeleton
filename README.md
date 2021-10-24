@@ -66,6 +66,11 @@ ALTER TABLE dczg_wenku
     ADD COLUMN `guanjianci` varchar(255) NOT NULL DEFAULT '' COMMENT '关键词';
 ```
 
+```sql
+ALTER TABLE dczg_uservip
+    ADD COLUMN `id` int NOT NULL AUTO_INCREMENT;
+```
+
 ---
 
 - 新增数据表

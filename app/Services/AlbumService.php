@@ -264,88 +264,82 @@ class AlbumService extends BaseService
         return $this->albumRepository->collectAlbum($albumInfo, user()['id']);
     }
 
+    /**
+     * 获取收藏该图片的设计师列表.
+     * 请求参数 id 收藏图片的id.
+     */
+    public function getDesignerByCollectImg(int $id): array
+    {
+        //判断图片是否存在
+        $albumlistInfo = $this->albumRepository->getAlbumListDetail(
+            ['id' => $id],
+            ['id', 'aid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'shoucang']
+        );
 
-  /**
-   * 获取收藏该图片的设计师列表.
-   * 请求参数 id 收藏图片的id.
-   *
-   * @param int $id
-   *
-   * @return array
-   */
-  public function getDesignerByCollectImg(int $id): array {
-    //判断图片是否存在
-    $albumlistInfo = $this->albumRepository->getAlbumListDetail(
-      ['id' => $id],
-      ['id', 'aid', 'suffix', 'size', 'height', 'name', 'path', 'title', 'shoucang']
-    );
-
-    if (empty($albumlistInfo)) {
-      throw new BusinessException(ErrorCode::ERROR, '图片不存在！');
-    }
-    $designerList= $this->albumRepository->getDesignerByCollectImg($id);
-    if (!empty($designerList) && isset($designerList['data']) && !empty($designerList['data'])) {
-      foreach ($designerList['data'] as $key => &$val) {
-        if (!isset($val['id'])) {
-          unset($designerList['data'][$key]);
-          continue;
+        if (empty($albumlistInfo)) {
+            throw new BusinessException(ErrorCode::ERROR, '图片不存在！');
         }
-        $tmp                = $val;
-        $tmp['sucai_list']  = [];
+        $designerList = $this->albumRepository->getDesignerByCollectImg($id);
 
-        if ($val['sucainum'] > 1) {
-          //循环从素材中获取图片，只取6个
-          $where              = ['uid' => $val['id']];
-          $imgLists           = $this->sucaiRepository->searchImgList('', [], $where, '', 6);
-          $tmp['sucai_list']  = $imgLists['data'] ?? [];
+        if (!empty($designerList) && isset($designerList['data']) && !empty($designerList['data'])) {
+            foreach ($designerList['data'] as $key => &$val) {
+                if (!isset($val['id'])) {
+                    unset($designerList['data'][$key]);
+                    continue;
+                }
+                $tmp                = $val;
+                $tmp['sucai_list']  = [];
+
+                if ($val['sucainum'] > 1) {
+                    //循环从素材中获取图片，只取6个
+                    $where              = ['uid' => $val['id']];
+                    $imgLists           = $this->sucaiRepository->searchImgList('', [], $where, '', 6);
+                    $tmp['sucai_list']  = $imgLists['data'] ?? [];
+                }
+                $designerList['data'][$key]  = $tmp;
+            }
         }
-        $designerList['data'][$key]  = $tmp;
-      }
-    }
-   return $designerList;
-  }
-
-
-  /**
-   * 获取收藏该专辑的设计师列表.
-   * 请求参数 id 收藏专辑的id.
-   *
-   * @param int $id
-   *
-   * @return array
-   */
-  public function getDesignerByCollectAlbum(int $id): array {
-    //判断专辑是否存在
-    $albumInfo = $this->albumRepository->getAlbumDetailInfo(
-      ['id' => $id],
-      ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name', 'status', 'week', 'weekguanzhu', 'guanzhu', 'daynum', 'daytime']
-    );
-
-    if (empty($albumInfo)) {
-      throw new BusinessException(ErrorCode::ERROR, '该专辑不存在！');
+        return $designerList;
     }
 
-    $designerList= $this->albumRepository->getDesignerByCollectAlbum($id);
-    if (!empty($designerList) && isset($designerList['data']) && !empty($designerList['data'])) {
-      foreach ($designerList['data'] as $key => &$val) {
-        if (!isset($val['id'])) {
-          unset($designerList['data'][$key]);
-          continue;
-        }
-        $tmp                = $val;
-        $tmp['sucai_list']  = [];
+    /**
+     * 获取收藏该专辑的设计师列表.
+     * 请求参数 id 收藏专辑的id.
+     */
+    public function getDesignerByCollectAlbum(int $id): array
+    {
+        //判断专辑是否存在
+        $albumInfo = $this->albumRepository->getAlbumDetailInfo(
+            ['id' => $id],
+            ['id', 'uid', 'ltui', 'tui', 'isoriginal', 'name', 'status', 'week', 'weekguanzhu', 'guanzhu', 'daynum', 'daytime']
+        );
 
-        if ($val['sucainum'] > 1) {
-          //循环从素材中获取图片，只取6个
-          $where              = ['uid' => $val['id']];
-          $imgLists           = $this->sucaiRepository->searchImgList('', [], $where, '', 6);
-          $tmp['sucai_list']  = $imgLists['data'] ?? [];
+        if (empty($albumInfo)) {
+            throw new BusinessException(ErrorCode::ERROR, '该专辑不存在！');
         }
-        $designerList['data'][$key]  = $tmp;
-      }
+
+        $designerList = $this->albumRepository->getDesignerByCollectAlbum($id);
+
+        if (!empty($designerList) && isset($designerList['data']) && !empty($designerList['data'])) {
+            foreach ($designerList['data'] as $key => &$val) {
+                if (!isset($val['id'])) {
+                    unset($designerList['data'][$key]);
+                    continue;
+                }
+                $tmp                = $val;
+                $tmp['sucai_list']  = [];
+
+                if ($val['sucainum'] > 1) {
+                    //循环从素材中获取图片，只取6个
+                    $where              = ['uid' => $val['id']];
+                    $imgLists           = $this->sucaiRepository->searchImgList('', [], $where, '', 6);
+                    $tmp['sucai_list']  = $imgLists['data'] ?? [];
+                }
+                $designerList['data'][$key]  = $tmp;
+            }
+        }
+        return $designerList;
     }
-    return $designerList;
-  }
 
     /**
      * 采集图片灵感图片.

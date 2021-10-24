@@ -25,11 +25,12 @@ class AlbumCollectController extends AbstractController
      */
     public function getDesignerByCollectAlbum(): ResponseInterface
     {
-      $id          = $this->request->input('id', 0);
-      if (empty($id) ) {
-        $this->response->error(ErrorCode::VALIDATE_FAIL, '缺少参数！');
-      }
-      return $this->response->success($this->albumService->getDesignerByCollectAlbum(intval($id)));
+        $id          = $this->request->input('id', 0);
+
+        if (empty($id)) {
+            $this->response->error(ErrorCode::VALIDATE_FAIL, '缺少参数！');
+        }
+        return $this->response->success($this->albumService->getDesignerByCollectAlbum(intval($id)));
     }
 
     /**

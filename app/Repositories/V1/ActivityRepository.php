@@ -24,7 +24,6 @@ class ActivityRepository extends BaseRepository
 
     /**
      * 获取用户签到信息.
-     * @return Model|Signin
      */
     public function getSignInfo(array $where, array $column = ['*']): Model|Signin|null
     {

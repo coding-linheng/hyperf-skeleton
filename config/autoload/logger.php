@@ -46,9 +46,9 @@ return [
     ],
     'error' => [   //错误日志
         'handler'   => [
-            'class'       => Monolog\Handler\RotatingFileHandler::class,
+            'class'       => Monolog\Handler\StreamHandler::class,
             'constructor' => [
-                'filename' => BASE_PATH . '/runtime/logs/error.log',
+                'stream' => BASE_PATH . '/runtime/logs/error.log',
                 'level'    => Monolog\Logger::ERROR,
             ],
         ],

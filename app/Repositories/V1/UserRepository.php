@@ -242,11 +242,9 @@ class UserRepository extends BaseRepository
     /**
      * 判断是否有Vip.
      *
-     * @param mixed $uid
-     * @param $type
      * @param mixed $array
      */
-    public function getUserVip($array): Model|null
+    public function getUserVip($array): Model|null|Uservip
     {
         return Uservip::query()->where($array)->first();
     }

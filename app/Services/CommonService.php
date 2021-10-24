@@ -35,8 +35,7 @@ class CommonService extends BaseService
 
     /**
      * 推荐用户.
-     *
-     * @param $type
+     * @param mixed $type
      */
     public function getRecommendUserList($type): array
     {

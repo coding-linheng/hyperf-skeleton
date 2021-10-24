@@ -10,12 +10,15 @@ use App\Model\Daywaterdc;
 use App\Model\Monthwaterdc;
 use App\Model\User;
 use App\Model\Userdata;
+use App\Model\Uservip;
 use App\Model\Waterdc;
 use App\Model\Waterdo;
 use App\Model\Waterdown;
 use App\Model\Waterscore;
 use App\Model\Weekwaterdc;
 use App\Repositories\BaseRepository;
+use Hyperf\Database\Model\Model;
+use Hyperf\Utils\Collection;
 
 /**
  * 流水.
@@ -289,9 +292,20 @@ class WaterDoRepository extends BaseRepository
         return ['count' => $count, 'list' => $list];
     }
 
-    public function getMovingLimit(array $where, int $limit, array $column = ['*'])
+    /**
+     *获取N条动态
+     */
+    public function getMovingLimit(array $where, int $limit, array $column = ['*']): Collection
     {
         return Waterdo::from('waterdo as w')->join('user as u', 'u.id', 'w.doid')->where($where)->select($column)
             ->orderBy('id', 'desc')->limit($limit)->get();
+    }
+
+    /**
+     * 增加素材vip时间.
+     */
+    public function incSucaiVip(array $where, array $data): Uservip|Model
+    {
+        return Uservip::updateOrCreate($where, $data);
     }
 }
