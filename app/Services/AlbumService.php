@@ -38,6 +38,15 @@ class AlbumService extends BaseService
     }
 
     /**
+     * 获取专辑分类.
+     */
+    public function getAlbumCategory(): array
+    {
+        return $this->albumRepository->getAlbumCategory();
+    }
+
+
+    /**
      * getList.
      */
     public function getListPageRand(mixed $queryData): array

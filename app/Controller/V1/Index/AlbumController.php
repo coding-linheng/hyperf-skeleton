@@ -32,6 +32,15 @@ class AlbumController extends AbstractController
     }
 
     /**
+     * 获取专辑分类.
+     */
+    public function getAlbumCategory(): ResponseInterface
+    {
+        $data    = $this->albumService->getAlbumCategory();
+        return $this->response->success($data);
+    }
+
+    /**
      * 获取随机专辑灵感图片推荐展示列表.
      */
     public function getRandList(): ResponseInterface

@@ -12,6 +12,7 @@ use App\Model\Album;
 use App\Model\Albumlist;
 use App\Model\Caiji;
 use App\Model\Guanzhu;
+use App\Model\Lingfenlei;
 use App\Model\Shouling;
 use App\Model\Userdata;
 use App\Repositories\BaseRepository;
@@ -30,6 +31,14 @@ class AlbumRepository extends BaseRepository
     #[Inject]
     protected WaterDoRepository $waterDoRepository;
 
+
+    /**
+     * 获取专辑分类.
+     */
+    public function getAlbumCategory(): array
+    {
+       return  Lingfenlei::query()->orderBy('lists')->get()->toArray();
+    }
     /**
      * 创建专辑.
      */
