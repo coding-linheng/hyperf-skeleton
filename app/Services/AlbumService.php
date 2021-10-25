@@ -29,6 +29,15 @@ class AlbumService extends BaseService
     #[Inject]
     protected SucaiRepository $sucaiRepository;
 
+
+    /**
+     * addAlbum.
+     */
+    public function addAlbum(array $addData): int
+    {
+        return $this->albumRepository->addAlbum($addData);
+    }
+
     /**
      * getList.
      */

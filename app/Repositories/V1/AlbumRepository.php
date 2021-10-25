@@ -7,6 +7,7 @@ namespace App\Repositories\V1;
 use App\Constants\ErrorCode;
 use App\Constants\ImgSizeStyle;
 use App\Exception\BusinessException;
+use App\Model\Alabel;
 use App\Model\Album;
 use App\Model\Albumlist;
 use App\Model\Caiji;
@@ -28,6 +29,61 @@ class AlbumRepository extends BaseRepository
 {
     #[Inject]
     protected WaterDoRepository $waterDoRepository;
+
+    /**
+     * 创建专辑.
+     */
+    public function addAlbum(mixed $addData): int
+    {
+        $uid=user()['id'];
+        //判断专辑个数，每个人最多可以创建500个专辑
+        $albumNum=Album::query()->where('uid',$uid)->count();
+        if ($albumNum>=500) {
+            throw new BusinessException(ErrorCode::ERROR, '每个人最多只可以创建500个专辑！');
+        }
+        //事务开始
+        Db::beginTransaction();
+
+        $insertData=[];
+        $insertData['unnum']=snow_flake();
+        $insertData['uid']=$uid;
+        $insertData['isoriginal']=$addData['isoriginal'];
+        $insertData['isopensale']=$addData['isopensale'];
+        $insertData['brandscenes']=isset($addData['brand_scenes']) && !empty($addData['brand_scenes'])?$addData['brand_scenes']:0;
+        $insertData['brandname']=isset($addData['brand_name']) && !empty($addData['brand_name'])?$addData['brand_name']:0;
+        $insertData['branduse']=isset($addData['brand_use']) && !empty($addData['brand_use'])?$addData['brand_use']:0;
+        $insertData['paintcountry']=isset($addData['paint_country']) && !empty($addData['paint_country'])?$addData['paint_country']:0;
+        $insertData['paintname']=isset($addData['paint_name']) && !empty($addData['paint_name'])?$addData['paint_name']:0;
+        $insertData['paintstyle']=isset($addData['paint_style']) && !empty($addData['paint_style'])?$addData['paint_style']:0;
+        $insertData['name']=$addData['name'];
+        $insertData['fenlei']=$addData['fenlei'];
+        $insertData['time']=time();
+        $aid=Album::query()->insertGetId($insertData);
+        if(!$aid){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+        //插入标签，这个部分后续已经废除
+        if(!empty($data['label'])){
+            $arr=[];
+            $arr['aid']=$aid;
+            foreach($data['label'] as $v){
+                $arr['name']=$v;
+                $ids=Alabel::query()->insert($arr);
+                if(!$ids){
+                    Db::rollBack();
+                    throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+                }
+            }
+        }
+        //统计个人的专辑数量
+        if(!Userdata::query()->where(['uid'=>$uid])->increment('zhuanji')){
+            Db::rollBack();
+            throw new BusinessException(ErrorCode::ERROR, '操作失败！');
+        }
+        Db::commit();
+        return $aid;
+    }
 
     /**
      * 获取分页列表.

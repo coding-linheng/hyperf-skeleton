@@ -20,6 +20,17 @@ class AlbumController extends AbstractController
     #[Inject]
     protected AlbumService $albumService;
 
+
+    /**
+     * 创建专辑.
+     */
+    public function addAlbum(Album $request): ResponseInterface
+    {
+        $request->scene('addAlbum')->validateResolved();
+        $addData= $request->all();
+        $data = $this->albumService->addAlbum($addData);
+        return $this->response->success($data);
+    }
     /**
      * 获取随机专辑灵感图片推荐展示列表.
      */
