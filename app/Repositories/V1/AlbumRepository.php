@@ -48,7 +48,7 @@ class AlbumRepository extends BaseRepository
         $insertData['unnum']=snow_flake();
         $insertData['uid']=$uid;
         $insertData['isoriginal']=$addData['isoriginal'];
-        $insertData['isopensale']=$addData['isopensale'];
+        $insertData['isopensale']=$addData['isopensale']??0;
         $insertData['brandscenes']=isset($addData['brand_scenes']) && !empty($addData['brand_scenes'])?$addData['brand_scenes']:0;
         $insertData['brandname']=isset($addData['brand_name']) && !empty($addData['brand_name'])?$addData['brand_name']:0;
         $insertData['branduse']=isset($addData['brand_use']) && !empty($addData['brand_use'])?$addData['brand_use']:0;
