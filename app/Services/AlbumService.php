@@ -29,7 +29,6 @@ class AlbumService extends BaseService
     #[Inject]
     protected SucaiRepository $sucaiRepository;
 
-
     /**
      * addAlbum.
      */

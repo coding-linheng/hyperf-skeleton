@@ -23,6 +23,7 @@ use Hyperf\Utils\ApplicationContext;
 use HyperfLibraries\Sms\Contract\SmsInterface;
 use Overtrue\EasySms\Exceptions\InvalidArgumentException;
 use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
+use Psr\Http\Message\ResponseInterface;
 use Qbhy\HyperfAuth\AuthManager;
 
 #[AutoController]
@@ -57,7 +58,7 @@ class IndexController extends AbstractController
      * {"username":"Johnny","nickname":"Johnny","imghead":"http:\/\/thirdwx.qlogo.cn\/mmopen\/VvN4UQJFx7zmbQwaic4JPHHliaCnmicjibstIrw1L1j0QVErsUuzL466VNR1N3G9Ow36Uia8d7n4SayHAPcxhIWBVg614znjmvB6p\/132","shoucang":0,"zhuanji":0,"zuopin":0,"sucainum":0,"wenkunum":0},
      * ]}
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function getRecommendUserList()
     {
@@ -69,7 +70,7 @@ class IndexController extends AbstractController
     /**
      * 首页推荐作品列表.
      * @param: type 1 素材类 2 灵感类,默认素材类
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function getRecommendZpList()
     {
@@ -80,7 +81,7 @@ class IndexController extends AbstractController
 
     /**
      * 获取首页轮播图.
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function getIndexBanner()
     {
@@ -90,7 +91,7 @@ class IndexController extends AbstractController
 
     /**
      * 获取首页广告位.
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function getAdvertisement()
     {
@@ -100,7 +101,7 @@ class IndexController extends AbstractController
 
     /**
      * 获取首页顶部广告位.
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function getIndexTopAdvertisement()
     {
@@ -110,7 +111,7 @@ class IndexController extends AbstractController
 
     /**
      * 获取友情链接.
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function getBlogRoll()
     {
@@ -170,10 +171,24 @@ class IndexController extends AbstractController
     {
         $res = '';
         try {
-            $res =  \App\Common\Utils::pdfToOnePng(BASE_PATH . '/public/pdf/aa.pdf', BASE_PATH . '/public/pdf/');
+            $res = \App\Common\Utils::pdfToOnePng(BASE_PATH . '/public/pdf/aa.pdf', BASE_PATH . '/public/pdf/');
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
         var_dump($res);
+    }
+
+    public function insertAll(): ResponseInterface
+    {
+        $data = [
+            ['id' => 19, 'user_id' => 12123, 'gift' => 1, 'type' => 1, 'create_time' => 1],
+            ['id' => 20, 'user_id' => 13333, 'gift' => 1, 'type' => 2, 'create_time' => 1],
+            ['id' => 21, 'user_id' => 242, 'gift' => 1, 'type' => 1, 'create_time' => 1],
+            ['id' => 22, 'user_id' => 245, 'gift' => 1, 'type' => 1, 'create_time' => 1],
+            ['id' => 23, 'user_id' => 3655, 'gift' => 1, 'type' => 1, 'create_time' => 1],
+            ['id' => 24, 'user_id' => 372, 'gift' => 1, 'type' => 1, 'create_time' => 1],
+        ];
+
+        return $this->success(update_all($data, 'dczg_activity_log'));
     }
 }

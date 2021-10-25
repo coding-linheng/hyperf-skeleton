@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Hyperf\DbConnection\Db;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Redis\RedisFactory;
@@ -63,7 +64,7 @@ if (!function_exists('setCache')) {
      */
     function setCache(string $key, $val, $ttl = 3600 * 24 * 360): bool
     {
-        $redis =  di()->get(RedisFactory::class)->get('cache');
+        $redis = di()->get(RedisFactory::class)->get('cache');
 
         if (!is_string($val)) {
             $val = serialize($val);
@@ -149,7 +150,7 @@ if (!function_exists('es_query_format')) {
                 default:
                     continue 2;
             }
-            $queryString  = $v[1];
+            $queryString = $v[1];
 
             if (empty($queryString)) {
                 $queryString = '*';
@@ -315,5 +316,25 @@ if (!function_exists('get_img_path_private')) {
         $filesystem = di()->get(Filesystem::class);
         //获取私有地址,默认过期一个小时
         return $filesystem->getAdapter()->privateDownloadUrl($path, $expires);
+    }
+}
+
+if (!function_exists('update_all')) {
+    /**
+     * 批量更新数据库(更新数据内必要要有表主键)  主键存在则替换 不存在则插入.
+     * @param $data
+     * @param $table //包含表前缀的数据表名
+     */
+    function update_all($data, $table): bool
+    {
+        $keyList = array_keys(reset($data));
+        $keyStr  = implode(',', $keyList);
+        $sql     = 'replace into ' . $table . "({$keyStr})" . ' values';
+
+        foreach ($data as $item) {
+            $sql .= "('" . implode("','", array_values($item)) . "'),";
+        }
+        $sql = substr($sql, 0, -1);
+        return Db::insert($sql);
     }
 }

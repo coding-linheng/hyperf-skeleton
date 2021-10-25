@@ -30,6 +30,7 @@ $routerPath = env('API_BASE_URL', '/v1');
 
 #公用部分
 Router::Get($routerPath . '/test', [App\Controller\IndexController::class, 'test']);
+Router::get($routerPath . '/insertAll', [App\Controller\IndexController::class, 'insertAll']);
 Router::post($routerPath . '/login', [App\Controller\V1\ApiController::class, 'Login']);
 Router::post($routerPath . '/logout', [App\Controller\V1\ApiController::class, 'Logout'],
     ['middleware' => [JwtMiddleware::class]]);
