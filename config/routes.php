@@ -18,6 +18,7 @@ use App\Controller\V1\HelpCenter;
 use App\Controller\V1\Index\Activity;
 use App\Controller\V1\Index\AlbumCollectController;
 use App\Controller\V1\Index\PersonalHomePageController;
+use App\Controller\V1\Index\Report;
 use App\Controller\V1\Index\SucaiController;
 use App\Controller\V1\Index\WenkuController;
 use App\Controller\V1\UserCenter\UserController;
@@ -117,6 +118,16 @@ Router::addGroup($routerPath . '/', function () {
     #签到/活动
     Router::addGroup('activity/', function () {
         Router::post('signin', [Activity::class, 'signin']);
+    });
+
+    #举报/投诉
+    Router::addGroup('report/', function () {
+        Router::post('reportMaterial', [Report::class, 'reportMaterial']);
+        Router::post('complaintMaterial', [Report::class, 'complaintMaterial']);
+        Router::post('reportLibrary', [Report::class, 'reportLibrary']);
+        Router::post('complaintLibrary', [Report::class, 'complaintLibrary']);
+        Router::post('reportAlbum', [Report::class, 'reportAlbum']);
+        Router::post('reportImage', [Report::class, 'reportImage']);
     });
 
     #工具类

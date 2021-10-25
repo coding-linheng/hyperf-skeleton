@@ -28,7 +28,7 @@ class AlbumController extends AbstractController
         $request->scene('addAlbum')->validateResolved();
         $addData = $request->all();
         $data    = $this->albumService->addAlbum($addData);
-        return $this->response->success(['id'=>$data]);
+        return $this->response->success(['id' => $data]);
     }
 
     /**

@@ -45,7 +45,6 @@ class AlbumService extends BaseService
         return $this->albumRepository->getAlbumCategory();
     }
 
-
     /**
      * getList.
      */

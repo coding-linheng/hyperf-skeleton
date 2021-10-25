@@ -188,7 +188,10 @@ class IndexController extends AbstractController
             ['id' => 23, 'user_id' => 3655, 'gift' => 1, 'type' => 1, 'create_time' => 1],
             ['id' => 24, 'user_id' => 372, 'gift' => 1, 'type' => 1, 'create_time' => 1],
         ];
-
-        return $this->success(update_all($data, 'dczg_activity_log'));
+        $c = 10;
+        $s = microtime(true);
+        update_all($data, 'dczg_activity_log');
+        $s = microtime(true) - $s;
+        return $this->success(sprintf("qps=%f, memory=%d, peak_memory=%d\n", $c / $s, memory_get_usage(true), memory_get_peak_usage(true)));
     }
 }
