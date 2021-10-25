@@ -43,7 +43,7 @@ class WenkuRepository extends BaseRepository
         //处理数据
         if (!empty($randListArr)) {
             foreach ($randListArr as $key => &$val) {
-                $tmp['id']         = $val->id ?? 0;
+                $tmp['id'] = $val->id ?? 0;
                 //$tmp['pdfimg']       = get_img_path($val->pdfimg, ImgSizeStyle::ALBUM_LIST_SMALL_PIC);
                 if (!empty($val->img)) {
                     $pdfimg        = $this->getPictureJson($val->img);
@@ -133,11 +133,13 @@ class WenkuRepository extends BaseRepository
     {
         $shouWenkuInfoList = Shouwen::from('shouwen as s')
             ->leftJoin('wenku as w', 's.wid', '=', 'w.id')
-            ->where(['s.uid' => $uid])->select(['w.id', 'w.pdfimg', 'w.title', 'w.shoucang', 'w.price', 'w.leixing', 'w.downnum', 'w.dtime', 'w.pdfimg', 'w.img'])->paginate()->toArray();
+            ->where(['s.uid' => $uid])->select([
+                'w.id', 'w.pdfimg', 'w.title', 'w.shoucang', 'w.price', 'w.leixing', 'w.downnum', 'w.dtime', 'w.pdfimg', 'w.img',
+            ])->paginate()->toArray();
         //处理数据
         if (!empty($shouWenkuInfoList) && isset($shouWenkuInfoList['data']) && !empty($shouWenkuInfoList['data'])) {
             foreach ($shouWenkuInfoList['data'] as $key => &$val) {
-                $tmp['id']         = $val['id'] ?? 0;
+                $tmp['id'] = $val['id'] ?? 0;
 
                 if (!empty($val['img'])) {
                     $pdfimg        = $this->getPictureJson($val['img']);
@@ -358,9 +360,9 @@ class WenkuRepository extends BaseRepository
         }
 
         Db::beginTransaction();
-        $add             = [];
-        $add['uid']      = $uid;
-        $add['wid']      = $info['id'];
+        $add        = [];
+        $add['uid'] = $uid;
+        $add['wid'] = $info['id'];
 
         if (!Shouwen::insert($add)) {
             Db::rollBack();
@@ -438,5 +440,13 @@ class WenkuRepository extends BaseRepository
         }
         Db::commit();
         return Wenku::where(['id' => $info['id']])->value('shoucang');
+    }
+
+    /**
+     * 统计文库数量.
+     */
+    public function totalWenkuCount(array $where): int
+    {
+        return Wenku::query()->where($where)->count();
     }
 }
