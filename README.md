@@ -8,7 +8,7 @@
 
 * [ ] **上传60天未通过的素材和文库删除**
 * [X] **签到 2021年10月24日19:12:10**
-* [ ] **活动处理**
+* [X] **活动处理 2021年10月25日15:42:32**
 * [ ] **微信扫码登录**
 * [ ] **支付对接**
 * [X] **右上角消息通知整合 2021年10月22日17:38:50**
@@ -155,4 +155,17 @@ CREATE TABLE `dczg_signin_log`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb3 COMMENT ='签到日志表';
+```
+
+```sql
+CREATE TABLE `dczg_activity_log`
+(
+    `id`          int NOT NULL AUTO_INCREMENT,
+    `user_id`     int NOT NULL COMMENT '用户id',
+    `gift`        int NOT NULL COMMENT '奖励内容',
+    `type`        int NOT NULL COMMENT '奖励类型 1-素材 2-文库',
+    `create_time` int NOT NULL COMMENT '奖励时间',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb3 COMMENT ='活动奖励记录表';
 ```

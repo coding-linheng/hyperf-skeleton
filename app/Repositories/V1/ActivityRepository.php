@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories\V1;
 
+use App\Model\ActivityLog;
 use App\Model\Signin;
 use App\Model\SigninLog;
 use App\Repositories\BaseRepository;
@@ -44,5 +45,21 @@ class ActivityRepository extends BaseRepository
     public function insertSignLog(array $data): int
     {
         return SigninLog::query()->insertGetId($data);
+    }
+
+    /**
+     * 是否获得活动奖励.
+     */
+    public function getActivityGiftExists(array $where): bool
+    {
+        return ActivityLog::query()->where($where)->exists();
+    }
+
+    /**
+     * 增加活动日志.
+     */
+    public function insertActivityLog(array $data): int
+    {
+        return ActivityLog::query()->insertGetId($data);
     }
 }
