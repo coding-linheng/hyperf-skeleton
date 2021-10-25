@@ -13,13 +13,16 @@
 * [ ] **支付对接**
 * [X] **右上角消息通知整合 2021年10月22日17:38:50**
 * [X] **下载记录 2021年10月22日17:38:50**
-* [ ] **举报投诉**
+* [X] **举报投诉 2021年10月25日23:14:40**
 
 #### **2.后台新增待完成逻辑**
 
 * [ ] **用户主页封面审核**
 * [ ] **首页用户推荐设置-素材，灵感类**
 * [ ] **后台效果图变更相关项目**
+* [ ] **关键词分类/关键词**
+* [ ] **签到/上传活动配置**
+* [ ] **投诉/举报页面完善**
 
 #### **3.素材王国数据表修改记录**
 
@@ -70,6 +73,12 @@ ALTER TABLE dczg_wenku
 ```sql
 ALTER TABLE dczg_uservip
     ADD COLUMN `id` int NOT NULL AUTO_INCREMENT;
+```
+
+```sql
+ALTER TABLE dczg_jubao
+    ADD COLUMN `status` int NOT NULL COMMENT '1-举报 2-投诉',
+    ADD COLUMN `type`   int NOT NULL DEFAULT '1' COMMENT '1灵感；2文库；3素材；4用户封面'
 ```
 
 ---
