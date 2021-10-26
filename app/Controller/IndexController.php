@@ -25,6 +25,7 @@ use Overtrue\EasySms\Exceptions\InvalidArgumentException;
 use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 use Psr\Http\Message\ResponseInterface;
 use Qbhy\HyperfAuth\AuthManager;
+use Yansongda\HyperfPay\Pay;
 
 #[AutoController]
 class IndexController extends AbstractController
@@ -124,7 +125,7 @@ class IndexController extends AbstractController
         //$request->scene('edit')->validateResolved();
         $mobile = $request->post('mobile', 111);
         $name   = $request->post('name', 111);
-        $member = new Member();
+        $member = new Member;
 
         $member->nickname = $name;
         $member->username = $name;
@@ -161,7 +162,7 @@ class IndexController extends AbstractController
                 'create_time' => time(),
             ]);
             return true;
-        } catch (InvalidArgumentException|NoGatewayAvailableException $e) {
+        } catch (InvalidArgumentException | NoGatewayAvailableException $e) {
             return $this->success($e->getResults());
         }
     }
@@ -188,10 +189,33 @@ class IndexController extends AbstractController
             ['id' => 23, 'user_id' => 3655, 'gift' => 1, 'type' => 1, 'create_time' => 1],
             ['id' => 24, 'user_id' => 372, 'gift' => 1, 'type' => 1, 'create_time' => 1],
         ];
-        $c = 10;
-        $s = microtime(true);
+        $c    = 10;
+        $s    = microtime(true);
         update_all($data, 'dczg_activity_log');
         $s = microtime(true) - $s;
-        return $this->success(sprintf("qps=%f, memory=%d, peak_memory=%d\n", $c / $s, memory_get_usage(true), memory_get_peak_usage(true)));
+        return $this->success(sprintf("qps=%f, memory=%d, peak_memory=%d\n", $c / $s, memory_get_usage(true),
+            memory_get_peak_usage(true)));
+    }
+
+    public function pay(Pay $pay): ResponseInterface
+    {
+        try {
+            $order  = [
+                'out_trade_no' => time() . '',
+                'description'  => 'subject-测试',
+                'notify_url'   => 'https://meeting.codelin.ink/addons/epay',
+                'amount'       => [
+                    'total'    => 101,
+                    'currency' => 'CNY',
+                ],
+                'payer'        => [
+                    'openid' => '123fsdf234',
+                ]
+            ];
+            $result = $pay->wechat()->mini($order);
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+        }
+        return $this->success($result);
     }
 }
