@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Task\Consumer\CachePlan;
 
 use App\Task\Consumer\CachePlan\Handler\CachePicture;
+use App\Task\Consumer\CachePlan\Handler\ReformatMysql;
 use App\Task\Consumer\ConsumerProcess;
 use Hyperf\Process\Annotation\Process;
 
@@ -19,5 +20,6 @@ class CacheConsumer extends ConsumerProcess
 
     protected array $handlers = [
         'CACHE_PIC' => CachePicture::class,
+        'REFRESH_MYSQL'=> ReformatMysql::class,
     ];
 }
