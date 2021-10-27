@@ -64,4 +64,9 @@ class ErrorCode extends AbstractConstants
      * @Message("超出当日最大查看次数")
      */
     public const DAY_MAX_LOOK_TIMES = 30000;
+
+    /**
+     * @Message("支付错误")
+     */
+    public const PAY_ERROR = 40001;
 }

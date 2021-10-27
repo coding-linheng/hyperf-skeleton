@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Constants\ErrorCode;
+use App\Exception\BusinessException;
 use Hyperf\DbConnection\Db;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Logger\LoggerFactory;
@@ -336,5 +338,15 @@ if (!function_exists('update_all')) {
         }
         $sql = substr($sql, 0, -1);
         return Db::insert($sql);
+    }
+}
+
+if (!function_exists('exception')) {
+    /**
+     * 快速抛出异常.
+     */
+    function exception(string $message, int $code = ErrorCode::ERROR)
+    {
+        throw new BusinessException($code, $message);
     }
 }

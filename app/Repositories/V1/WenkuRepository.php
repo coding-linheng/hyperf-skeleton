@@ -340,7 +340,7 @@ class WenkuRepository extends BaseRepository
      */
     public function deleteLibrary(array $ids): int
     {
-        return Wenku::query()->whereIn('id', $ids)->delete();
+        return Wenku::query()->whereIn('id', $ids)->update(['del' => 0]);
     }
 
     /**

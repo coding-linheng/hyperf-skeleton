@@ -201,25 +201,32 @@ class IndexController extends AbstractController
         ));
     }
 
-    public function pay(Pay $pay): ResponseInterface
+    public function pay(\App\Common\Pay $pay): ResponseInterface
     {
-        try {
-            $order  = [
-                'out_trade_no' => time() . '',
-                'description'  => 'subject-测试',
-                'notify_url'   => env('PAY_WECHAT_NOTIFY', 'https://meeting.codelin.ink/addons/epay/index/notifyx/type/wechat'),
-                'amount'       => [
-                    'total'    => 101,
-                    'currency' => 'CNY',
-                ],
-                'payer'        => [
-                    'openid' => 'ozCs-408Pi6GHCnxIc59SyjqQwBA',
-                ],
-            ];
-            $result = $pay->wechat()->mini($order);
-        } catch (\Throwable $e) {
-            $this->error($e->extra['message']);
-        }
+        $order = [
+            'out_trade_no' => time() . '',
+            'description'  => 'subject-测试',
+            'notify_url'   => env('PAY_WECHAT_NOTIFY', 'https://meeting.codelin.ink/addons/epay/index/notifyx/type/wechat'),
+            'amount'       => [
+                'total'    => 1,
+                'currency' => 'CNY',
+            ],
+            'payer'        => [
+                'openid' => 'ozCs-408Pi6GHCnxIc59SyjqQwBA',
+            ],
+        ];
+
+        return $this->success($pay->pay($order, 'wechat', 'mini'));
+    }
+
+    public function find(Pay $pay): ResponseInterface
+    {
+        $orderId = $this->request->input('order_id');
+        $order   = [
+            'out_trade_no' => $orderId,
+        ];
+
+        $result = $pay->wechat()->find($order);
         return $this->success($result);
     }
 }

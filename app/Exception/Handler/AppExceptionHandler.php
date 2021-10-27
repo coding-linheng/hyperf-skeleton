@@ -41,7 +41,13 @@ class AppExceptionHandler extends ExceptionHandler
 
     public function handle(Throwable $throwable, ResponseInterface $response)
     {
-        $message = sprintf('%s[%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile());
+        $message = sprintf(
+            '%s:%s[%s] in %s',
+            $throwable->getPrevious(),
+            $throwable->getMessage(),
+            $throwable->getLine(),
+            $throwable->getFile()
+        );
         // 判断是否由业务异常类抛出的异常
         if ($throwable instanceof BusinessException) {
             // 阻止异常冒泡

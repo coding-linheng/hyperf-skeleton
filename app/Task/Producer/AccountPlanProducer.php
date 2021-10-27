@@ -7,17 +7,17 @@ namespace App\Task\Producer;
 class AccountPlanProducer extends BaseProducer
 {
     /**
-     * 队列名称.
+     * 用户相关队列.
      */
     protected string $queueName = 'account_plan';
 
     /**
-     * 添加账号即注册.
+     * 素材过期检查队列.
      */
-    public function accountAdd(array $data, int $delay = 0): bool
+    public function checkExpireImg(array $data, int $delay = 0): bool
     {
         $newData = [
-            'type' => 'ACCOUNT_LOGIN',
+            'type' => 'CHECK_EXPIRE_IMG',
             'data' => $data,
         ];
 
@@ -25,38 +25,12 @@ class AccountPlanProducer extends BaseProducer
     }
 
     /**
-     * 登陆.
+     * 文库过期检查队列.
      */
-    public function login(array $data, int $delay = 0): bool
+    public function checkExpireLibrary(array $data, int $delay = 0): bool
     {
         $newData = [
-            'type' => 'LOGIN',
-            'data' => $data,
-        ];
-
-        return $this->push($newData, $delay);
-    }
-
-    /**
-     * 退出.
-     */
-    public function logout(array $data, int $delay = 0): bool
-    {
-        $newData = [
-            'type' => 'LOGOUT',
-            'data' => $data,
-        ];
-
-        return $this->push($newData, $delay);
-    }
-
-    /**
-     * 修改密码
-     */
-    public function resetPassword(array $data, int $delay = 0): bool
-    {
-        $newData = [
-            'type' => 'RESET_PASSWORD',
+            'type' => 'CHECK_EXPIRE_Library',
             'data' => $data,
         ];
 
