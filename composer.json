@@ -48,7 +48,8 @@
         "hyperf/validation": "2.2.x-dev",
         "openzipkin/zipkin": "~3.0",
         "overtrue/flysystem-qiniu": "^1.0",
-        "yansongda/hyperf-pay": "^1.0@beta"
+        "yansongda/hyperf-pay": "^1.0@beta",
+        "ext-imagick": "*"
     },
     "require-dev": {
         "hyperf/devtool": "~2.2.0",

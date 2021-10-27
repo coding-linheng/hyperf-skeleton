@@ -21,7 +21,7 @@ return [
         'formatter' => [
             'class'       => Monolog\Formatter\LineFormatter::class,
             'constructor' => [
-                'format'                => "[%datetime%]%channel%.%level_name%:%message%\n",
+                'format'                => "[%datetime%]%channel%.%level_name%:%message%\n %context%",
                 'dateFormat'            => 'Y-m-d H:i:s',
                 'allowInlineLineBreaks' => true,
             ],

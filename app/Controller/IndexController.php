@@ -125,7 +125,7 @@ class IndexController extends AbstractController
         //$request->scene('edit')->validateResolved();
         $mobile = $request->post('mobile', 111);
         $name   = $request->post('name', 111);
-        $member = new Member;
+        $member = new Member();
 
         $member->nickname = $name;
         $member->username = $name;
@@ -162,7 +162,7 @@ class IndexController extends AbstractController
                 'create_time' => time(),
             ]);
             return true;
-        } catch (InvalidArgumentException | NoGatewayAvailableException $e) {
+        } catch (InvalidArgumentException|NoGatewayAvailableException $e) {
             return $this->success($e->getResults());
         }
     }
@@ -193,8 +193,12 @@ class IndexController extends AbstractController
         $s    = microtime(true);
         update_all($data, 'dczg_activity_log');
         $s = microtime(true) - $s;
-        return $this->success(sprintf("qps=%f, memory=%d, peak_memory=%d\n", $c / $s, memory_get_usage(true),
-            memory_get_peak_usage(true)));
+        return $this->success(sprintf(
+            "qps=%f, memory=%d, peak_memory=%d\n",
+            $c / $s,
+            memory_get_usage(true),
+            memory_get_peak_usage(true)
+        ));
     }
 
     public function pay(Pay $pay): ResponseInterface
@@ -203,18 +207,18 @@ class IndexController extends AbstractController
             $order  = [
                 'out_trade_no' => time() . '',
                 'description'  => 'subject-测试',
-                'notify_url'   => 'https://meeting.codelin.ink/addons/epay',
+                'notify_url'   => env('PAY_WECHAT_NOTIFY', 'https://meeting.codelin.ink/addons/epay/index/notifyx/type/wechat'),
                 'amount'       => [
                     'total'    => 101,
                     'currency' => 'CNY',
                 ],
                 'payer'        => [
-                    'openid' => '123fsdf234',
-                ]
+                    'openid' => 'ozCs-408Pi6GHCnxIc59SyjqQwBA',
+                ],
             ];
             $result = $pay->wechat()->mini($order);
-        } catch (\Exception $e) {
-            var_dump($e->getMessage());
+        } catch (\Throwable $e) {
+            $this->error($e->extra['message']);
         }
         return $this->success($result);
     }

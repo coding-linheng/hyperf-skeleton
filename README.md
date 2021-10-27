@@ -178,3 +178,6 @@ CREATE TABLE `dczg_activity_log`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb3 COMMENT ='活动奖励记录表';
 ```
+
+#### **4.素材王国相关插件文档**
+* **[支付插件](https://pay.yansongda.cn/docs/v3/)  composer require yansongda/hyperf-pay:~1.0.0 -W**

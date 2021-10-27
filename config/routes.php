@@ -11,6 +11,7 @@ declare(strict_types=1);
  * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
  */
 
+use App\Common\Pay;
 use App\Controller\IndexController;
 use App\Controller\Sms;
 use App\Controller\Utils;
@@ -177,6 +178,10 @@ Router::addGroup($routerPath . '/', function () {
         Router::post('send', [Sms::class, 'send']);
     });
 
+    #支付类
+    Router::addGroup('pay/', function () {
+        Router::post('wechatNotify', [Pay::class, 'wechatNotify']);
+    });
     #帮助中心
     Router::addGroup('help/', function () {
         Router::get('getHelpList', [HelpCenter::class, 'getHelpList']);

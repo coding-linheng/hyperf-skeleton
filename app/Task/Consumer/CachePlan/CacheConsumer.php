@@ -19,7 +19,7 @@ class CacheConsumer extends ConsumerProcess
     protected $queue = 'cache_plan';
 
     protected array $handlers = [
-        'CACHE_PIC' => CachePicture::class,
-        'REFRESH_MYSQL'=> ReformatMysql::class,
+        'CACHE_PIC'     => CachePicture::class,
+        'REFRESH_MYSQL' => ReformatMysql::class,
     ];
 }

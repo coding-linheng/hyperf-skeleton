@@ -19,7 +19,7 @@ class TaskType
     public const CACHE_PIC = 2001;
 
     //更新旧数据库数据兼容最新系统
-    public const REFRESH_MYSQL=3306;
+    public const REFRESH_MYSQL = 3306;
 
     /**
      * 获取计划任务类型.
