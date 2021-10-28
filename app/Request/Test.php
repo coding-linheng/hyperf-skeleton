@@ -8,7 +8,10 @@ use Hyperf\DbConnection\Db;
 use Hyperf\Validation\Request\FormRequest;
 use Hyperf\Validation\Rule;
 
-class User extends FormRequest
+/**
+ * 验证器使用示例
+ */
+class Test extends FormRequest
 {
     /**
      * Set scene values.
