@@ -16,6 +16,7 @@ use App\Middleware\JwtMiddleware;
 use App\Model\Member;
 use App\Model\Sms as SmsModel;
 use App\Services\CommonService;
+use Hyperf\Contract\ConfigInterface;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\AutoController;
 use Hyperf\HttpServer\Annotation\Middleware;
@@ -25,7 +26,6 @@ use Overtrue\EasySms\Exceptions\InvalidArgumentException;
 use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 use Psr\Http\Message\ResponseInterface;
 use Qbhy\HyperfAuth\AuthManager;
-use Yansongda\HyperfPay\Pay;
 
 #[AutoController]
 class IndexController extends AbstractController
@@ -219,14 +219,8 @@ class IndexController extends AbstractController
         return $this->success($pay->pay($order, 'wechat', 'mini'));
     }
 
-    public function find(Pay $pay): ResponseInterface
+    public function find(ConfigInterface $config): ResponseInterface
     {
-        $orderId = $this->request->input('order_id');
-        $order   = [
-            'out_trade_no' => $orderId,
-        ];
-
-        $result = $pay->wechat()->find($order);
-        return $this->success($result);
+        var_dump($config->get('hyperf_dc10000_db_host'));
     }
 }

@@ -24,6 +24,8 @@
         "hyperf/cache": "~2.2.0",
         "hyperf/command": "~2.2.0",
         "hyperf/config": "~2.2.0",
+        "hyperf/config-apollo": "^2.2",
+        "hyperf/config-center": "^2.2",
         "hyperf/constants": "~2.2.0",
         "hyperf/crontab": "^2.2",
         "hyperf/database": "~2.2.0",
