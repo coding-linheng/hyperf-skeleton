@@ -28,6 +28,18 @@ return [
                 Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
             ],
         ],
+        [
+            'name' => 'socket-io',
+            'type' => Server::SERVER_WEBSOCKET,
+            'host' => '0.0.0.0',
+            'port' => (int)env('WEBSOCKET_PORT', 9901),
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
+                Event::ON_MESSAGE => [Hyperf\WebSocketServer\Server::class, 'onMessage'],
+                Event::ON_CLOSE => [Hyperf\WebSocketServer\Server::class, 'onClose'],
+            ],
+        ],
     ],
     'settings'  => [
         Constant::OPTION_ENABLE_COROUTINE    => true,
@@ -40,6 +52,7 @@ return [
         Constant::OPTION_SOCKET_BUFFER_SIZE  => 2 * 1024 * 1024,
         Constant::OPTION_BUFFER_OUTPUT_SIZE  => 2 * 1024 * 1024,
         Constant::OPTION_PACKAGE_MAX_LENGTH  => 1024 * 1024 * 1024, //包体最大尺寸1G
+
     ],
     'callbacks' => [
         Event::ON_WORKER_START => [Hyperf\Framework\Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],

@@ -13,7 +13,6 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=8.0",
-        "ext-imagick": "*",
         "ext-json": "*",
         "ext-redis": "*",
         "96qbhy/hyperf-auth": "^2.4",
@@ -47,8 +46,10 @@
         "hyperf/rpc-server": "~2.2.0",
         "hyperf/scout": "^2.2",
         "hyperf/snowflake": "^2.2",
+        "hyperf/socketio-server": "^2.2",
         "hyperf/translation": "^2.2",
         "hyperf/validation": "2.2.x-dev",
+        "hyperf/websocket-server": "^2.2",
         "openzipkin/zipkin": "~3.0",
         "overtrue/flysystem-qiniu": "^1.0",
         "yansongda/hyperf-pay": "^1.0@beta"
@@ -65,7 +66,8 @@
         "ext-openssl": "Required to use HTTPS.",
         "ext-json": "Required to use JSON.",
         "ext-pdo": "Required to use MySQL Client.",
-        "ext-pdo_mysql": "Required to use MySQL Client."
+        "ext-pdo_mysql": "Required to use MySQL Client.",
+        "ext-imagick": "Required to imagick."
     },
     "autoload": {
         "psr-4": {
