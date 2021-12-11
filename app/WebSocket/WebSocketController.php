@@ -24,7 +24,6 @@ class WebSocketController extends BaseNamespace
      */
     public function onBind(Socket $socket, $data)
     {
-        var_dump($data);
         $socketId = $socket->getSid();
 
         $socket->emit('bind', Json::encode([
