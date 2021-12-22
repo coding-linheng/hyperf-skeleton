@@ -18,16 +18,14 @@ class WebSocketController extends BaseNamespace
     /**
      * @Event("bind")
      *
-     * @param Socket $socket
      * @param string $data
-     *
      */
     public function onBind(Socket $socket, $data)
     {
         $socketId = $socket->getSid();
 
         $socket->emit('bind', Json::encode([
-            'msg' => '绑定成功',
+            'msg'  => '绑定成功',
             'code' => 1,
         ]));
     }

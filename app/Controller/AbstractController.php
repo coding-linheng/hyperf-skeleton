@@ -13,13 +13,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Constants\ErrorCode;
-use App\Constants\StatusCode;
 use App\Container\Response;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LoggerInterface;
 
 abstract class AbstractController
 {
