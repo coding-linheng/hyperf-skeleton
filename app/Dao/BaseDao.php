@@ -8,6 +8,6 @@ namespace App\Dao;
  * BaseDao
  * 数据处理基类.
  */
-class baseDao
+class BaseDao
 {
 }
